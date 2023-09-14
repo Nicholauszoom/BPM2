@@ -61,6 +61,9 @@ class Task extends \yii\db\ActiveRecord
             [['title', 'budget', 'code', 'project_id', 'team_id','description'], 'required'],
             [['budget', 'created_at', 'updated_at', 'created_by', 'project_id', 'team_id'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
+            ['start_at', 'date', 'format' => 'php:Y-m-d'],
+            ['end_at', 'date', 'format' => 'php:Y-m-d'],
+
         ];
     }
 
@@ -74,6 +77,8 @@ class Task extends \yii\db\ActiveRecord
             'title' => 'Title',
             'budget' => 'Budget',
             'code' => 'Code',
+            'start_at'=>'Start Date',
+            'end_at'=>'End Date',
             'project_id' => 'Project',
             'description'=> 'Description',
             'team_id' => 'Team',
@@ -92,6 +97,15 @@ class Task extends \yii\db\ActiveRecord
     public function getTeam()
     {
         return $this->hasOne(Team::class, ['id' => 'team_id']);
+    }
+    public function beforeSave($insert)
+    {
+        if ($this->start_at && $this->end_at) {
+            $this->start_at = strtotime($this->start_at);
+            $this->end_at = strtotime($this->end_at);
+        }
+
+        return parent::beforeSave($insert);
     }
   
 }

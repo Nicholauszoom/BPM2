@@ -18,6 +18,10 @@ $config = [
         'auth' => [
             'class' => 'app\modules\auth\Module',
         ],
+        'datecontrol' => [
+            'class' => 'kartik\datecontrol\Module',
+            // other configuration options
+        ],
     ],
     'components' => [
         'request' => [

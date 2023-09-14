@@ -57,10 +57,12 @@ class Tender extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'description', 'status'], 'required'],
-            [[ 'status', 'updated_at', 'created_by','budget','isViewed','assigned_to','supervisor','submit_to'], 'integer'],
+            [['status', 'updated_at', 'created_by','budget','isViewed','assigned_to','supervisor','submit_to'], 'integer'],
             [['title', 'description','PE','TenderNo'], 'string', 'max' => 255],
             [['isViewed'], 'default', 'value' => 0],
-            [['expired_at','publish_at','document','isViewed','submission'], 'safe'],
+            [['document','isViewed','submission'], 'safe'],
+            ['expired_at', 'date', 'format' => 'php:Y-m-d'],
+            ['publish_at', 'date', 'format' => 'php:Y-m-d'],
             
 
         ];
@@ -108,7 +110,15 @@ public function getDepartment()
 {
     return $this->hasOne(Department::class, ['id' => 'submit_to']);
 }
+public function beforeSave($insert)
+    {
+        if ($this->publish_at && $this->expired_at) {
+            $this->publish_at = strtotime($this->publish_at);
+            $this->expired_at = strtotime($this->expired_at);
+        }
 
+        return parent::beforeSave($insert);
+    }
 
 
 }

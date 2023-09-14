@@ -70,7 +70,10 @@ class Project extends \yii\db\ActiveRecord
             // [['start_at','end_at'], 'date', 'format' => 'MM-dd-yyyy'],
             [['isViewed'], 'default', 'value' => 0],
 
-            [['isViewed','start_at','end_at'], 'safe'],
+            ['start_at', 'date', 'format' => 'php:Y-m-d'],
+            ['end_at', 'date', 'format' => 'php:Y-m-d'],
+
+            [['isViewed'], 'safe'],
 
 
             // [['end_at',], 'compare', 'compareAttribute' => 'start_at', 'operator' => '>='],
@@ -129,6 +132,16 @@ public function getTender()
 {
     return $this->hasOne(Tender::class, ['id' => 'tender_id']);
 }
+
+public function beforeSave($insert)
+    {
+        if ($this->start_at && $this->end_at) {
+            $this->start_at = strtotime($this->start_at);
+            $this->end_at = strtotime($this->end_at);
+        }
+
+        return parent::beforeSave($insert);
+    }
 
 
     

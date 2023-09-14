@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Analysis;
 use app\models\Project;
 use app\models\Task;
 use app\models\Team;
@@ -285,6 +286,28 @@ $options = [
 ];
       //cont...   /////
 
+      //GRAPH PLOT OF THE PROJECT AGAINST BUDGET
+    
+
+      $projects = Project::find()->all();
+      
+
+      $projectNames = [];
+      $budgetData = [];
+  
+      foreach ($projects as $project) {
+        $tender_det=Tender::findOne($project->tender_id);
+          $projectNames[] = $tender_det->title;
+          $analysis_proj_cost = Analysis::find()
+          ->where(['project' => $project->id])
+          ->sum('cost');
+
+          $proj_prof=$project->budget - $analysis_proj_cost;
+          $budgetData[] = $proj_prof;
+      }
+  
+// Calculate the total budget
+$totalBudget = array_sum($budgets);
 
 
         
@@ -318,6 +341,8 @@ $options = [
             'tenderPend'=>$tenderPend,//count tender pending
             'chartData'=>$chartData,
             'options'=>$options,
+            'projectNames' => $projectNames,//graph data for project name
+            'budgetData' => $budgetData,//graph data for project name
 
             
 

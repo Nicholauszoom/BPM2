@@ -1,5 +1,6 @@
 <?php
 
+use kartik\datecontrol\DateControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -61,11 +62,10 @@ use yii\web\View;
     <?php $form = ActiveForm::begin(); ?>
    <?php if(Yii::$app->user->can('admin')) :?>
 
-    <!--<?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?> -->
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'budget')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'budget')->textInput(['type'=>'number']) ?>
 
     <?= $form->field($model, 'document')->fileInput() ?>
 
@@ -80,15 +80,23 @@ use yii\web\View;
 ); ?>
 
 
-<?= $form->field($model, 'start_at')->widget(\yii\jui\DatePicker::class, [
+
+<?= $form->field($model, 'start_at')->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',
-    'options' => ['class' => 'form-control', 'type' => 'date'],
+    'options' => [
+        'class' => 'form-control',
+        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+    ],
 ]) ?>
-<?= $form->field($model, 'end_at')->widget(\yii\jui\DatePicker::class, [
+
+<?= $form->field($model, 'end_at')->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',
-    'options' => ['class' => 'form-control', 'type' => 'date'],
+    'options' => [
+        'class' => 'form-control',
+        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+    ],
 ]) ?>
 
     <?php endif;?>

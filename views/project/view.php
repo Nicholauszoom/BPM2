@@ -294,6 +294,8 @@ function getStatusClass($status)
       <th scope="col">Budget</th>
       <th scope="col">Description</th>
       <th scope="col">Team</th>
+      <th scope="col">Start At</th>
+      <th scope="col">End At</th>
       <th scope="col">Status</th>
       <td scope="col"></td>
       
@@ -307,6 +309,8 @@ function getStatusClass($status)
       <td><?= $task->budget ?></td>
       <td><?= $task->description ?></td>
       <td><?= $task->team->name?></td>
+      <td><?= Yii::$app->formatter->asDatetime($task->start_at) ?></td>
+      <td><?= Yii::$app->formatter->asDatetime($task->end_at) ?></td>
       <td><?=getStatusLabel($task->status)?></td>
 
       <td>

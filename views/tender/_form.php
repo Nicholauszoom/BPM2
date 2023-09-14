@@ -10,6 +10,7 @@ use app\models\Department;
 use app\models\User;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\jui\DatePicker;
 // use yii\jui\DatePicker;
 use yii\widgets\ActiveForm;
 
@@ -44,18 +45,23 @@ $department=Department::find()->all();
     ['prompt' => 'Supervisor']
 ); ?>
 
-<?= $form->field($model, 'publish_at')->widget(\yii\jui\DatePicker::class, [
+<?= $form->field($model, 'publish_at')->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',
-    'options' => ['class' => 'form-control', 'type' => 'date'],
+    'options' => [
+        'class' => 'form-control',
+        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+    ],
 ]) ?>
 
-    <?= $form->field($model, 'expired_at')->widget(\yii\jui\DatePicker::class, [
+<?= $form->field($model, 'expired_at')->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',
-    'options' => ['class' => 'form-control', 'type' => 'date'],
+    'options' => [
+        'class' => 'form-control',
+        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+    ],
 ]) ?>
-
 
 
     

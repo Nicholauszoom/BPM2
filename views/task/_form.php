@@ -2,6 +2,7 @@
 
 use yii\bootstrap5\Modal;
 use yii\helpers\Html;
+use yii\jui\DatePicker;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
@@ -39,8 +40,25 @@ echo $form->field($model, 'status')->dropDownList(
         2 => 'Not Complete',
         0 => 'On Process',
     ],
-    ['prompt' => 'Select Team Status']
+    ['prompt' => 'Select Task Status']
 );
+echo $form->field($model, 'start_at')->widget(DatePicker::class, [
+  'language' => 'ru',
+  'dateFormat' => 'MM/dd/yyyy',
+  'options' => [
+      'class' => 'form-control',
+      'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+  ],
+]);
+
+echo $form->field($model, 'end_at')->widget(DatePicker::class, [
+  'language' => 'ru',
+  'dateFormat' => 'MM/dd/yyyy',
+  'options' => [
+      'class' => 'form-control',
+      'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+  ],
+]);
 // Add remaining form fields...
 
 echo '<div class="modal-footer">';
@@ -64,6 +82,8 @@ Modal::end();
       <th scope="col">code</th>
       <th scope="col">description</th>
       <th scope="col">team</th>
+      <th scope="col">Start At</th>
+      <th scope="col">End At</th>
       <th scope="col">status</th>
       <th scope="col"></th>
     </tr>
@@ -76,6 +96,8 @@ Modal::end();
       <td><?= $task->budget ?></td>
       <td><?= $task->description ?></td>
       <td><?= $task->team->name?></td>
+      <td><?= Yii::$app->formatter->asDatetime($task->start_at) ?></td>
+      <td><?= Yii::$app->formatter->asDatetime($task->end_at) ?></td>
       <td><?=getStatusLabel($task->status)?></td>
       <td>
                 <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $task->id], [

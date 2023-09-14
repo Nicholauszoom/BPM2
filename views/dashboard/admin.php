@@ -5,6 +5,7 @@ use app\models\Department;
 use yii\helpers\Url;
 use app\models\Project;
 use app\models\Tender;
+use yii\helpers\Json;
 use yii\web\View;
 
    // Get the current route URL
@@ -24,9 +25,12 @@ $sidebarItems = [
 
 $this->title = 'My Yii Application';
 
-$this->context->layout = 'admin';
+$this->context->layout = 'admin'; 
 
+//PROJECT CONVERSION DATA FROM ARRAY TO STRING
 
+$projectNamesJson = Json::encode($projectNames);
+$budgetDataJson = Json::encode($budgetData);
 ?>
 
 
@@ -257,93 +261,84 @@ $formattedBudget = number_format($projectBudget, 2)
        
            
           <div class="row">
-            <div class="col-md-12 col-sm-12 ">
-              <div class="dashboard_graph">
-
-                <div class="row x_title">
-                  <div class="col-md-6">
-                   
-                  
-
-                  </div>
-                  <div class="col-md-6">
-                   
-                  </div>
-                </div>
-                <?php if (Yii::$app->user->can('admin')) : ?>
-                  <div class="col-md-9 col-sm-9 ">
-
-<div class="chart-container">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<center><h1>Tender Chart</h1></center>
-
-
-<div class="chart-container">
-  <center><canvas id="tenderChart" ></canvas></center>
-</div>
-
-
-<script>
-    var ctx = document.getElementById('tenderChart').getContext('2d');
-    
-    var chartData = {
-        labels: <?= json_encode($chartData['labels']) ?>,
-        datasets: [
-            {
-                label: '  win',
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: ' rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-                data: <?= json_encode($chartData['datasets'][0]['data']) ?>
-            },
-            {
-                label: 'lose',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)' ,
-                borderWidth: 1,
-                data: <?= json_encode($chartData['datasets'][1]['data']) ?>
-            }
-        ]
-    };
-    
-    var chartOptions = <?= json_encode($options) ?>;
-    
-    var tenderChart = new Chart(ctx, {
-        type: 'bar',
-        data: chartData,
-        options: chartOptions
-    });
-</script>
-</div>
-                </div>
-              
-
-              
-                <div class="col-md-3 col-sm-3  bg-white">
-                  <div class="x_title">
-
-<!-- Include the Chart.js library -->
-
-
-                  </div>
-
-                
-                </div>
-               
-  
-<?php endif; ?>
-
-
-
-
-
-                <div class="clearfix"></div>
+  <div class="col-md-12 col-sm-12">
+    <div class="dashboard_graph">
+      <div class="row x_title">
+        <div class="col-md-6">
+        </div>
+      </div>
+      <?php if (Yii::$app->user->can('admin')) : ?>
+        <div>
+          <h2 class="text-muted mt-10 text-center">A Graph Of Project Against Profit</h2>
+          <div class="row">
+            <div class="col-md-8 offset-md-2">
+              <div class="chart-container">
+                <canvas id="lineChart" style="width: 100%; height: 400px;"></canvas>
               </div>
             </div>
-
           </div>
-          <br />
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              var projectNames = <?= $projectNamesJson ?>;
+              var budgetData = <?= $budgetDataJson ?>;
 
+              var ctx = document.getElementById('lineChart').getContext('2d');
+              new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: projectNames,
+                  datasets: [{
+                    label: 'Profit',
+                    data: budgetData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1,
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1000,
+                      },
+                    },
+                  },
+                }
+              });
+            });
+          </script>
+        </div>
+
+        <h2 class="text-muted mt-20 text-center">A Graph Of Tender Status Against Time</h2>
+        <div class="col-md-8 offset-md-2 bg-white mt-20">
+          <div class="chart-container" style="margin-top: 20px;">
+            <canvas id="tenderChart" style="width: 100%; height: 400px;"></canvas>
+          </div>
+
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              var chartData = <?= json_encode($chartData) ?>;
+              var options = <?= json_encode($options) ?>;
+
+              var ctx = document.getElementById('tenderChart').getContext('2d');
+              new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: options
+              });
+            });
+          </script>
+        </div>
+      <?php endif; ?>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
        
 
 
