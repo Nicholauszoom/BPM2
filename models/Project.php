@@ -18,8 +18,9 @@ use yii\filters\AccessControl;
  * @property int|null $updated_at
  * @property int|null $created_by
  * @property int $status
- * @property string $ducument
+ * @property string $document
  * @property int $progress
+ * @property int $tender_id
  * @property int|null $start_at
  * @property int|null $user_id
  *@property int|null $end_at
@@ -28,6 +29,9 @@ use yii\filters\AccessControl;
  */
 class Project extends \yii\db\ActiveRecord
 {
+
+  
+    
     /**
      * {@inheritdoc}
      */
@@ -55,15 +59,21 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'budget','status'], 'required'],
+            [[ 'description', 'budget','status'], 'required'],
             [['description'], 'string'],
-            [['created_at', 'updated_at','progress','status', 'created_by','user_id','start_at','end_at'], 'integer'],
-            [['title', 'budget', 'ducument'], 'string', 'max' => 255],
-            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
-            [['ducument'], 'file', 'extensions' => 'pdf'],
-            [['progress'], 'integer', 'min' => 0, 'max' => 100],
+            [['created_at', 'updated_at','progress','status','isViewed', 'created_by','user_id','tender_id'], 'integer'],
+            [[ 'budget'], 'string', 'max' => 255],
             
-            // [['end_at'], 'compare', 'compareAttribute' => 'start_at', 'operator' => '>='],
+            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
+            [['document'], 'file'],
+            [['progress'], 'integer', 'min' => 0, 'max' => 100],
+            // [['start_at','end_at'], 'date', 'format' => 'MM-dd-yyyy'],
+            [['isViewed'], 'default', 'value' => 0],
+
+            [['isViewed','start_at','end_at'], 'safe'],
+
+
+            // [['end_at',], 'compare', 'compareAttribute' => 'start_at', 'operator' => '>='],
         ];
     }
 
@@ -74,18 +84,19 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
             'description' => 'Description',
-            'budget' => 'Budget',
+            'budget' => 'Contract value',
             'status' => 'Status',
             'progress' => 'Progress',
+            'isViewed'=>'isViewed',
+            'tender_id'=>'tender',
             'user_id' => 'Project Manager',
             'start_at'=>'Start Date',
             'end_at'=> 'End Date',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
-            'ducument' => 'Document',
+            'document' => 'Document',
         ];
     }
 
@@ -113,4 +124,13 @@ class Project extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
     
+
+public function getTender()
+{
+    return $this->hasOne(Tender::class, ['id' => 'tender_id']);
+}
+
+
+    
+ 
 }

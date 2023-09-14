@@ -36,6 +36,7 @@ $this->context->layout = 'admin';
     <?= $this->render('_form', [
         'model' => $model,
         'users'=>$users,
+        'details'=>$details,
         
     ]) ?>
 

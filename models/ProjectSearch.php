@@ -18,7 +18,7 @@ class ProjectSearch extends Project
     {
         return [
             [['id', 'created_at', 'updated_at', 'created_by','status', 'progress','start_at','end_at'], 'integer'],
-            [['title', 'description', 'budget', 'ducument'], 'safe'],
+            [['description', 'budget', 'document'], 'safe'],
         ];
     }
 
@@ -68,10 +68,10 @@ class ProjectSearch extends Project
             'created_by' => $this->created_by,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
+        $query
             ->andFilterWhere(['like', 'description', $this->description])
             ->andFilterWhere(['like', 'budget', $this->budget])
-            ->andFilterWhere(['like', 'ducument', $this->ducument]);
+            ->andFilterWhere(['like', 'document', $this->document]);
 
         return $dataProvider;
     }

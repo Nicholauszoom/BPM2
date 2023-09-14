@@ -4,8 +4,11 @@ namespace app\controllers;
 
 use app\models\Department;
 use app\models\DepartmentSearch;
+use app\models\Tender;
 use app\models\User;
+use Yii;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -62,10 +65,15 @@ class DepartmentController extends Controller
         $user = User::find()
             ->where(['department' => $department->id])
             ->all();
+
+            $tender = Tender::find()
+            ->where(['submit_to' => $department->id])
+            ->all();
     
         return $this->render('view', [
             'model' => $this->findModel($id),
             'user' => $user,
+            'tender'=>$tender,
         ]);
     }
 
@@ -102,6 +110,7 @@ class DepartmentController extends Controller
      */
     public function actionUpdate($id)
     {
+        if(Yii::$app->user->can('admin')){
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
@@ -111,6 +120,9 @@ class DepartmentController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
+    }else{
+        throw new ForbiddenHttpException;
+    }
     }
 
     /**
@@ -122,9 +134,13 @@ class DepartmentController extends Controller
      */
     public function actionDelete($id)
     {
+        if(Yii::$app->user->can('admin')){
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+        }else{
+            throw new ForbiddenHttpException;
+        }
     }
 
     /**

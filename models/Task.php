@@ -58,7 +58,7 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'budget', 'code', 'project_id', 'team_id','status','description'], 'required'],
+            [['title', 'budget', 'code', 'project_id', 'team_id','description'], 'required'],
             [['budget', 'created_at', 'updated_at', 'created_by', 'project_id', 'team_id'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
         ];

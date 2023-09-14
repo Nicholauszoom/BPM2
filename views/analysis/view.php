@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\models\Analysis $model */
 
-$this->title = $model->title;
+$this->title = $model->item;
 $this->params['breadcrumbs'][] = ['label' => 'Analyses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -38,7 +38,6 @@ $createdByName = $createdByUser ? $createdByUser->username : 'Unknown';
         'model' => $model,
         'attributes' => [
             'id',
-            'title',
             'item',
             'description',
             'quantity',

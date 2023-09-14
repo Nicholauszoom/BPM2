@@ -1,6 +1,8 @@
 <?php
 
 use app\models\Project;
+use app\models\Tender;
+use app\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -28,6 +30,8 @@ $sidebarItems = [
     ['url' => ['/report'], 'label' => 'Report', 'icon' => 'bi bi-file-text'],
     ['url' => ['/setting'], 'label' => 'Settings', 'icon' => 'bi bi-gear'],
 ];
+
+
 ?>
 
 <a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
@@ -42,21 +46,40 @@ $sidebarItems = [
         <div class="row"></div>
        
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
             <?= GridView::widget([
-    
-                
     'dataProvider' => new \yii\data\ArrayDataProvider([
         'allModels' => $projects,
         'pagination' => [
             'pageSize' => 10, // Adjust the page size as per your requirement
         ],
+        'sort' => [
+            'attributes' => [
+                'created_at' => [
+                    'asc' => ['created_at' => SORT_ASC],
+                    'desc' => ['created_at' => SORT_DESC],
+                    'default' => SORT_DESC,
+                    'label' => 'Created At',
+                ],
+            ],
+            'defaultOrder' => [
+                'created_at' => SORT_DESC,
+            ],
+        ],
     ]),
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
-        'id',
-        'title',
+        // 'id',
+        [
+            'attribute'=>'tender_id',
+            'format'=>'raw',
+            'value'=>function ($model){
+                $tender = Tender::findOne($model->tender_id);
+                $tenderTitle = $tender ? $tender->title : 'Unknown';
+                 return $tenderTitle;
+            },
+        ],
         'budget',
+        
                     
         [
             'attribute' => 'progress',
@@ -81,11 +104,57 @@ $sidebarItems = [
             },
         ],
         [
-            'attribute' => 'created_at',
+            'attribute' => 'end_at',
+            'format' => 'raw',
+            'label' => 'Submitted Date',
             'value' => function ($model) {
-                return Yii::$app->formatter->asDatetime($model->created_at);
+                $now = time();
+                $expiredDate = $model->end_at;
+                $oneWeekAhead = strtotime('+1 week');
+                $labelClass = '';
+
+                if ($expiredDate - $now <= 0) {
+                    $labelClass = 'badge badge-danger'; // Red label
+                } elseif ($expiredDate > $oneWeekAhead) {
+                    $labelClass = 'badge badge-success'; // Yellow label
+                } elseif($expiredDate - $now > 0) {
+                    $labelClass = 'badge badge-warning'; // Green label
+                }else{
+                    $labelClass = 'badge badge-secondary';
+                }
+
+                $formatter = new Formatter();
+                $formattedDate = $formatter->asDate($model->end_at, 'php:Y-m-d H:i:s');
+                $label = Html::tag('span', Html::encode($formattedDate), ['class' => $labelClass]);
+                return $label;
             },
         ],
+        // [
+        //     'attribute' => 'created_at',
+        //     'value' => function ($model) {
+        //         return Yii::$app->formatter->asDatetime($model->created_at);
+        //     },
+        // ],
+       
+        [
+            'attribute' => 'isViewed',
+            'label' => 'alert',
+            'format' => 'raw',
+            'value' => function ($model) {
+                return $model->isViewed ? '' : Html::tag('span', 'New', ['class' => 'badge badge-success']);
+            },
+        ],
+        
+        [
+            'attribute'=>'created_by',
+            'format'=>'raw',
+            'value'=>function ($model){
+                $createdByUser = User::findOne($model->created_by);
+                $createdByName = $createdByUser ? $createdByUser->username : 'Unknown';
+                 return $createdByName;
+            },
+        ],
+       
         // [
         //     'class' => ActionColumn::className(),
         //     'urlCreator' => function ($action, Project $model, $key, $index, $column) {
@@ -94,16 +163,41 @@ $sidebarItems = [
         // ],
         [
             'class' => 'yii\grid\ActionColumn',
-            'template' => '{create-analysis} {view} {update} {delete}',
+            'template' => '{view} {create-analysis} {create-task} {update}',
             'buttons' => [
                 'create-analysis' => function ($url, $model, $key) {
                     return Html::a('<span class="glyphicon glyphicon-file"></span>', ['analysis/create', 'projectId' => $model->id], [
-                        'class' => 'btn btn-success',
-                        'title' => 'Create Analysis',
-                        'aria-label' => 'Create Analysis',
+                        // 'class' => 'btn btn-success',
+                        'title' => 'view Analysis',
+                        'aria-label' => 'Analysis',
+                    ]);
+                },
+                'create-task' => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-folder-open"></span>', ['task/create', 'projectId' => $model->id], [
+                        // 'class' => 'btn btn-success',
+                        'title' => 'View Task',
+                        'aria-label' => ' Task',
+                    ]);
+                },
+
+                'view' => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $model->id], [
+                        // 'class' => 'btn btn-success',
+                        'title' => 'view project',
+                        'aria-label' => 'Project view',
+                    ]);
+                },
+
+
+                'update' => function ($url, $model, $key) {
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $model->id], [
+                        // 'class' => 'btn btn-success',
+                        'title' => 'view project',
+                        'aria-label' => 'Project view',
                     ]);
                 },
             ],
+            
         ],
         // Additional columns if needed
     ],

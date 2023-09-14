@@ -36,7 +36,7 @@ $this->context->layout = 'admin';
             ['class' => 'yii\grid\SerialColumn'],
 
             // 'id',
-            'title',
+            
             'item',
             'description',
             'quantity',

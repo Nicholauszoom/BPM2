@@ -1,6 +1,9 @@
 <?php
 
 use app\models\Project;
+use app\models\Tender;
+use app\models\User;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -44,15 +47,28 @@ $sidebarItems = [
                 <?= Html::a('Create Project', ['create'], ['class' => 'btn btn-success']) ?>
             </p>
 
-            <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+            <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            $dataProvider = new ActiveDataProvider([
+                'query' => Project::find()->orderBy(['created_at' => SORT_DESC]),
+                'sort' => false, // Disable sorting in the GridView
+            ]);
+            ?>
 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
-                    'id',
-                    'title',
+                    // 'id',
+                    [
+                        'attribute'=>'tender_id',
+                        'format'=>'raw',
+                        'value'=>function ($model){
+                            $tender = Tender::findOne($model->tender_id);
+                            $tenderTitle = $tender ? $tender->title : 'Unknown';
+                             return $tenderTitle;
+                        },
+                    ],
                     // 'description:ntext',
                     'budget',
                     
@@ -79,31 +95,82 @@ $sidebarItems = [
                         },
                     ],
                     [
-                        'attribute' => 'created_at',
+                        'attribute' => 'end_at',
+                        'format' => 'raw',
+                        'label' => 'Submitted Date',
                         'value' => function ($model) {
-                            return Yii::$app->formatter->asDatetime($model->created_at);
+                            $now = time();
+                            $expiredDate = $model->end_at;
+                            $oneWeekAhead = strtotime('+1 week');
+                            $labelClass = '';
+            
+                            if ($expiredDate - $now <= 0) {
+                                $labelClass = 'badge badge-danger'; // Red label
+                            } elseif ($expiredDate > $oneWeekAhead) {
+                                $labelClass = 'badge badge-success'; // Yellow label
+                            } elseif($expiredDate - $now > 0) {
+                                $labelClass = 'badge badge-warning'; // Green label
+                            }else{
+                                $labelClass = 'badge badge-secondary';
+                            }
+            
+                            $formatter = new Formatter();
+                            $formattedDate = $formatter->asDate($model->end_at, 'php:Y-m-d H:i:s');
+                            $label = Html::tag('span', Html::encode($formattedDate), ['class' => $labelClass]);
+                            return $label;
                         },
                     ],
+                //     [
+                //         'attribute' => 'created_at',
+
+                //         'value' => function ($model) {
+                //             return Yii::$app->formatter->asDatetime($model->created_at);
+                //         },
+                       
+                // ],
+                [
+                    'attribute'=>'user_id',
+                    'format'=>'raw',
+                    'value'=>function ($model){
+                        $createdByUser = User::findOne($model->user_id);
+                        $createdByName = $createdByUser ? $createdByUser->username : 'Unknown';
+                         return $createdByName;
+                    },
+                ],
+                [
+                    'attribute' => 'isViewed',
+                    'label' => 'alert',
+                    'format' => 'raw',
+                    'value' => function ($model) {
+                        return $model->isViewed ? '' : Html::tag('span', 'New', ['class' => 'badge badge-success']);
+                    },
+                ],
+                
+              
                     //'updated_at',
                     //'created_by',
                     //'ducument',
-                    // [
-                    //     'class' => ActionColumn::className(),
-                    //     'urlCreator' => function ($action, Project $model, $key, $index, $column) {
-                    //         return Url::toRoute([$action, 'id' => $model->id]);
-                    //     }
-                    // ],
+                    [
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($action, Project $model, $key, $index, $column) {
+                            return Url::toRoute([$action, 'id' => $model->id]);
+                        }
+                    ],
                    
                 ],
+                
+                
             ]); ?>
 
 <?php
 function getStatusLabel($status)
 {
     $statusLabels = [
-        1 => '<span class="badge badge-success">Active</span>',
-        2 => '<span class="badge badge-warning">Inactive</span>',
+        1 => '<span class="badge badge-success">Completed</span>',
+        2 => '<span class="badge badge-warning">Onprogress</span>',
         3 => '<span class="badge badge-secondary">On Hold</span>',
+
+       
     ];
 
     return isset($statusLabels[$status]) ? $statusLabels[$status] : '';

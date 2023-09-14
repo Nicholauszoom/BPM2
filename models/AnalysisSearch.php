@@ -17,8 +17,8 @@ class AnalysisSearch extends Analysis
     public function rules()
     {
         return [
-            [['id', 'quantity', 'cost', 'created_at', 'updated_at', 'created_by'], 'integer'],
-            [['title', 'item', 'description', 'boq', 'files','project'], 'safe'],
+            [['id', 'quantity', 'cost', 'created_at', 'updated_at', 'created_by','unit'], 'integer'],
+            [[ 'item', 'description', 'boq', 'files','project','source'], 'safe'],
         ];
     }
 
@@ -61,6 +61,8 @@ class AnalysisSearch extends Analysis
             'id' => $this->id,
             'quantity' => $this->quantity,
             'cost' => $this->cost,
+            'unit' =>$this->unit,
+            'source'=>$this->source,
             'project' => $this->project,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

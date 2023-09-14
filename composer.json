@@ -24,7 +24,12 @@
         "kartik-v/yii2-report": "@dev",
         "tecnickcom/tc-lib-pdf": "^8.0",
         "swiftmailer/swiftmailer": "^5.4",
-        "yiisoft/yii2-swiftmailer": "^2.0"
+        "yiisoft/yii2-swiftmailer": "^2.0",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "miloschuman/yii2-highcharts-widget": "^10.0",
+        "miloschuman/yii-highcharts": "^5.0",
+        "practically/yii2-chartjs": "^1.1",
+        "2amigos/yii2-chartjs-widget": "^3.0"
         
     },
     "require-dev": {

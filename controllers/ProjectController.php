@@ -2,12 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Analysis;
 use app\models\AuthAssignment;
 use app\models\Project;
 use app\models\ProjectSearch;
 use app\models\Role;
 use app\models\RoleUser;
 use app\models\Task;
+use app\models\Tender;
 use app\models\User;
 use app\models\Users;
 use Yii;
@@ -27,6 +29,7 @@ use yii\helpers\Html;
  */
 class ProjectController extends Controller
 {
+   
     /**
      * @inheritDoc
      */
@@ -118,14 +121,69 @@ class ProjectController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
+   
     public function actionView($id)
     {
+        $profit = 0;
+        $profitPerce = 0;
+        $projectId=0;
         $project = Project::findOne($id);
-        $tasks = $project->tasks;
+
+        $model= $this->findModel($id);
+
+        if ($model !== null) {
+           
+            // Set isViewed attribute to 1
+            $model->isViewed = 1;
+    
+            // Save the model to persist the changes
+            $model->save();
+        }
+        // $tasks = $project->tasks;
+
+        // find task by  project id
+        $tasks= Task::find()
+         ->where(['project_id'=> $id])
+         ->all();
+
+
+        $analysis= Analysis::find()
+         ->where(['project' => $id])
+         ->all();
+
+         // Find projects assigned 
+            $analy = Analysis::find()
+               ->where(['project' => $id])
+                ->all();
+
+// Calculate the total project budget for the assigned projects
+               $projectAmount = 0;
+               foreach ($analy as $analy) {
+               $projectAmount += $analy->cost;
+
+
+               //Calculate profit gained  
+               $profit =$project->budget - $projectAmount;
+
+            //* Percent of the project profit gained
+            $profitPerce = ($profit / $project->budget) * 100;
+             
+              $id = $projectId;
+             
+     
+        }
+
         
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
             'tasks' => $tasks,
+            'analysis'=>$analysis,
+            'projectAmount'=>$projectAmount,
+            'profit' => $profit,
+            'profitPerce'=> $profitPerce,
+            'projectId' =>$projectId,
+            'id'=>$id,
+
         ]);
     }
 
@@ -140,142 +198,167 @@ class ProjectController extends Controller
     
 
      
+    
+
+
      public function actionCreate()
-     {
-         if (Yii::$app->user->can('admin')) {
-             $model = new Project();
-             $users = User::find()->all();
-     
-             if ($model->load(Yii::$app->request->post())) {
-                 $model->ducument = UploadedFile::getInstance($model, 'ducument');
-     
-                 if ($model->validate()) {
-                     // Save the uploaded PDF file and perform any other necessary actions
-                     if ($model->ducument) {
-                         $filePath = 'path/to/save/' . $model->ducument->name;
-                         $model->ducument->saveAs($filePath);
-                         $model->ducument = $filePath;
-                     }
+{
+    if (Yii::$app->user->can('admin')) {
+        $model = new Project();
+        $users = User::find()->all();
+        
+        $details= Tender::find()
+        ->where(['status'=>1])
+        ->all();
+         $model->tender_id=$details;
 
-                  
-                     // Assign the project manager ID from the selected user
-                     $selectedProjectManager = Yii::$app->request->post('Project')['user_id'];
-                     if (!empty($selectedProjectManager)) {
-                         $model->user_id = $selectedProjectManager;
-                         // Save the project
-                         if ($model->save()) {
-                             // Send an email to the assigned project user
-                                     // Find the user with the same ID as the created_by ID in the project
-                        $projectManagers = User::findOne(['id' => $model->created_by]);
-                             $projectManager = User::findOne($selectedProjectManager);
-                             if ($projectManager && !empty($projectManager->email)) {
-                                 /** @var MailerInterface $mailer */
-                                 $mailer = Yii::$app->mailer;
-                                 $message = $mailer->compose()
-                                     ->setFrom('nicholaussomi5@gmail.com')
-                                     ->setTo($projectManager->email)
-                                     ->setSubject('TeraTech Company')
-                                     ->setHtmlBody('
-                                     <html>
-                                     <head>
-                                         <style>
-                                             /* CSS styles for the email body */
-                                             body {
-                                                 font-family: Arial, sans-serif;
-                                                 background-color: #f4f4f4;
-                                             }
-                                 
-                                             .container {
-                                                 max-width: 600px;
-                                                 margin: 0 auto;
-                                                 padding: 20px;
-                                                 background-color: #ffffff;
-                                                 border: 1px solid #dddddd;
-                                                 border-radius: 4px;
-                                                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                                             }
-                                 
-                                             h1 {
-                                                 color: blue;
-                                                 text-align: center;
+         $tender = Tender::findOne($model->tender_id);
 
-                                             }
-                                           
-                                 
-                                             p {
-                                                 color: #666666;
-                                             }
-                                 
-                                             .logo {
-                                                 text-align: center;
-                                                 margin-bottom: 20px;
-                                             }
-                                 
-                                             .logo img {
-                                                 max-width: 200px;
-                                             }
-                                 
-                                             .assigned-by {
-                                                 font-weight: bold;
-                                             }
-                                 
-                                             .button {
-                                                 display: inline-block;
-                                                 padding: 10px 20px;
-                                                 background-color: #3366cc;
-                                                 color: white;
-                                                 text-decoration: none;
-                                                 border-radius: 4px;
-                                                 margin-top: 20px;
-                                             }
-                                 
-                                             .button:hover {
-                                                 background-color: #235daa;
-                                             }
-                                         </style>
-                                     </head>
-                                     <body>
-                                         <div class="container">
-                                             <div class="logo">
-                                             <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">                                           </div>
-                                             <h1>TERATECH ANNOUCEMENT</h1>
-                                             <p>Dear ' . Html::encode($projectManager->username) . ',</p>
-                                             <p>Your project has been assigned to you Please find the details below:</p>
-                                             <ul>
-                                                 <li>Project Name: ' . Html::encode($model->title) . '</li>
-                                                 <li>Project Deadline: ' . Html::encode($model->end_at) . '</li>
-                                                 <li>Assigned By: ' . Html::encode($projectManagers->username) . '</li>
-                                             </ul>
-                                             <p>If you have any questions or need further assistance, feel free to contact us.</p>
-                                             <a href="http//localhost:8080/" class="button">View Project</a>
-                                         </div>
-                                     </body>
-                                     </html>
-                                 ');
-                                     
-                                 if ($model->ducument) {
-                                     $message->attach($model->ducument);
-                                 }
-                                     
-                                 $message->send();
-                             }
-                             return $this->redirect(['view', 'id' => $model->id]);
-                         }
-                     }
-                 }
-             } else {
-                 $model->loadDefaultValues();
-             }
+        
+
+        if ($model->load(Yii::$app->request->post())) {
+            // select to upload document
+          
+            // Assign the project manager ID from the selected user
+            $selectedProjectManager = Yii::$app->request->post('Project')['user_id'];
+            if (!empty($selectedProjectManager)&& !empty($tender)) {
+                $model->user_id = $selectedProjectManager;
+                $tenderTitle = $tender->title;
+                // Save the project
+                $model->document = UploadedFile::getInstance($model, 'document');
+   
+                if ($model->validate()){
+                    if ($model->document){
+                        $filePath = Yii::getAlias('@webroot/upload/') . $model->document;
+    
+                        // if ($model->document->saveAs($filePath)) {
+                        //     $model->document = $filePath;
+                        // Add the file path to attachments array
+                         $attachments[] = $filePath;
+                        // }
+                         // Process the CSV file
+                    
+                    }
+                    
+                    
+                if ($model->save()) {
+                    // Send an email to the assigned project user
+                    // Find the user with the same ID as the created_by ID in the project
+                    $projectManagers = User::findOne(['id' => $model->created_by]);
+                    $projectManager = User::findOne($selectedProjectManager);
+                    
+                    if ($projectManager && !empty($projectManager->email)) {
+                        /** @var MailerInterface $mailer */
+                        $mailer = Yii::$app->mailer;
+                        $message = $mailer->compose()
+                            ->setFrom('nicholaussomi5@gmail.com')
+                            ->setTo($projectManager->email)
+                            ->setSubject('TeraTech Company')
+                            ->setHtmlBody('
+                                <html>
+                                <head>
+                                    <style>
+                                        /* CSS styles for the email body */
+                                        body {
+                                            font-family: Arial, sans-serif;
+                                            background-color: #f4f4f4;
+                                        }
+
+                                        .container {
+                                            max-width: 600px;
+                                            margin: 0 auto;
+                                            padding: 20px;
+                                            background-color: #ffffff;
+                                            border: 1px solid #dddddd;
+                                            border-radius: 4px;
+                                            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                                        }
+
+                                        h1 {
+                                            color: blue;
+                                            text-align: center;
+                                        }
+
+                                        p {
+                                            color: #666666;
+                                        }
+
+                                        .logo {
+                                            text-align: center;
+                                            margin-bottom: 20px;
+                                        }
+
+                                        .logo img {
+                                            max-width: 200px;
+                                        }
+
+                                        .assigned-by {
+                                            font-weight: bold;
+                                        }
+
+                                        .button {
+                                            display: inline-block;
+                                            padding: 10px 20px;
+                                            background-color: #3366cc;
+                                            color: white;
+                                            text-decoration: none;
+                                            border-radius: 4px;
+                                            margin-top: 20px;
+                                        }
+
+                                        .button:hover {
+                                            background-color: #235daa;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="container">
+                                        <div class="logo">
+                                            <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
+                                        </div>
+                                        <h1>TERATECH ANNOUCEMENT</h1>
+                                        <p>Dear ' . Html::encode($projectManager->username) . ',</p>
+                                        <p>Your project has been assigned to you. Please find the details below:</p>
+                                        <ul>
+                                            <li>Project Name: ' . Html::encode($tenderTitle) . '</li>
+                                            <li>Project Deadline: ' . Html::encode($model->end_at) . '</li>
+                                            <li>Assigned By: ' . Html::encode($projectManagers->username) . '</li>
+                                        </ul>
+                                        <p>If you have any questions or need further assistance, feel free to contact us.</p>
+                                        <a href="' . Yii::$app->request->getHostInfo() . '/upload/' . $model->document . '">View Attachment</a>                                </html>
+                            ');
+
+                    // Attach the document file to the email
+    foreach ($attachments as $attachment) {
+        $message->attach($attachment);
+    }
+
+                        // $message->send();
+                        $mailer->send($message);
+                    }
+                    // return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(['index']);
+                }
+            }
+    else {
+            $model->loadDefaultValues();
+        }
+    }
+}
+
+        return $this->render('create', [
+            'model'=> $model,
+            'users' => $users,
+            'details'=>$details,
+           
+        ]);
+    } else {
+        throw new ForbiddenHttpException;
+    }
+}
+
+
      
-             return $this->render('create', [
-                 'model' => $model,
-                 'users' => $users,
-             ]);
-         } else {
-             throw new ForbiddenHttpException;
-         }
-     }
-
     /**
      * Updates an existing Project model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -287,8 +370,8 @@ class ProjectController extends Controller
      public function actionUpdate($id)
      {
         $users= User::find()->all();
-        if(Yii::$app->user->can('admin'))
-        {
+    
+    
          $model = $this->findModel($id);
                      // Retrieve project manager role
 
@@ -303,10 +386,7 @@ class ProjectController extends Controller
             
          ]);
 
-        }else
-        {
-            throw new ForbiddenHttpException;
-        }
+        
      }
     // public function actionUpdate($id)
     // {
@@ -363,6 +443,33 @@ class ProjectController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionNotify()
+    {
+        $expirationDate = date('Y-m-d', strtotime('+1 month'));
+
+        $models = Project::find()
+            ->where(['>=', 'end_at', $expirationDate])
+            ->all();
+
+
+        foreach ($models as $model) {
+            $user=User::findOne($model->user_id);
+            // Send email notification
+            $this->sendEmail($user->email, 'Expiration Notification', 'Your expiration date is approaching.');
+        }
+    }
+
+    private function sendEmail($to, $subject, $body)
+    {
+        return Yii::$app->mailer->compose()
+            ->setFrom('nicholaussomi5@gmail.com')
+            ->setTo($to)
+            ->setSubject($subject)
+            ->setTextBody($body)
+            ->send();
     }
 
 

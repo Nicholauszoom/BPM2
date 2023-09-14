@@ -13,6 +13,17 @@ $('#toggle-left-menu').click(function() {
     $('#logo').toggleClass('p-0 pl-1');
 });
 
+$(document).ready(function() {
+    $('#datepicker').datepicker({
+        dateFormat: 'yy-mm-dd',
+    });
+});
+$(document).ready(function() {
+    $('#datepickers').datepicker({
+        dateFormat: 'yy-mm-dd',
+    });
+});
+
 $(document).on('mouseover', '#left-menu.small-left-menu > ul > li', function() {
     if (!$(this).hasClass('has-sub')) {
         var label = $(this).find('span').text();
@@ -101,3 +112,4 @@ function windowResize() {
         $('#logo').removeClass('small-left-menu p-0 pl-1');
     }
 }
+

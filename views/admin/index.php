@@ -45,6 +45,7 @@ $sidebarItems = [
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -56,7 +57,6 @@ $sidebarItems = [
             'first_name',
             'last_name',
             'email:email',
-            'phone',
             [
                 'attribute' => 'status',
                 'value' => function ($model) {

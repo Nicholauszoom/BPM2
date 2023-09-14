@@ -1,8 +1,11 @@
 <?php
     // Get the current route URL
-
+use dosamigos\chartjs\ChartJs;
+use app\models\Department;
 use yii\helpers\Url;
 use app\models\Project;
+use app\models\Tender;
+use yii\web\View;
 
    // Get the current route URL
 $currentUrl = Url::toRoute(Yii::$app->controller->getRoute());
@@ -22,6 +25,8 @@ $sidebarItems = [
 $this->title = 'My Yii Application';
 
 $this->context->layout = 'admin';
+
+
 ?>
 
 
@@ -29,6 +34,7 @@ $this->context->layout = 'admin';
    <!-- top tiles -->
 
 <div class="row justify-content-center">
+  <!-- PROJECT MANAGEMENT SUMMARY-->
   <div class="tile_count">
 
   <!-- /admin dash  -->
@@ -36,17 +42,74 @@ $this->context->layout = 'admin';
           
         
     <div class="col-md-2 col-sm-4 tile_stats_count">
-      <span class="count_top"><i class="fa fa-clone"></i> Total Projects</span>
-      <div class="count"><?= $total ?></div>
+      <span class="count_top"><i class="fa fa-bullhorn"></i> Announced Tender</span>
+      <div class="count"><?= $tender ?></div>
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
     </div>
-   
-   <div class="col-md-2 col-sm-4 tile_stats_count">
-      <span class="count_top"><i class="fa fa-users"></i> Team </span>
-      <div class="count "><?=$team?></div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-check-square"></i>Tender Win</span>
+      <div class="count "><?= $tenderWin ?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+    </div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+    <?php
+        
+        $projectHolds = Project::find()
+            ->Where(['status' => 3])
+            ->count();
+            
+        ?>
+      <span class="count_top"><i class="fa fa-circle-o-notch"></i>Tender Pending..</span>
+      <div class="count "><?= $tenderPend?></div>
+      <span class="count_bottom"><i class="orange"><i class="fa fa-sort-desc"></i></i> </span>
+    </div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-minus-circle"></i> Tender Lose</span>
+      <div class="count "><?= $tenderFail?></div>
+      <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i></i> </span>
+    </div>
+
+     <!-- <div class="col-md-2 col-sm-4 tile_stats_count">
+        <?php
+          $department = Department::find()
+          ->count();
+        ?>
+      <span class="count_top"><i class="fa fa-users"></i> Departments </span>
+      <div class="count "><?=$department?></div>
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
     </div> 
 
+    <div class="col-md-2 col-sm-6 tile_stats_count">
+  <span class="count_top"><i class="fa fa-money"></i>Total Projects Budget</span>
+  <div class="">
+    TSH <?=$totalBudget ?>
+  </div>
+  <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+</div>-->
+<?php endif; ?>
+<!-- /admin dash end -->
+
+<!-- /Project Manager Dashboard -->
+
+<!-- /pm end -->
+  </div>
+
+
+  <!-- TENDER MANAGEMENT SUMMARY-->
+  <div class="tile_count">
+
+  <!-- /admin dash  -->
+  <?php if (Yii::$app->user->can('admin')) : ?>
+          
+        
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-folder"></i> Total Projects</span>
+      <div class="count"><?= $total ?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div>
 
     <div class="col-md-2 col-sm-4 tile_stats_count">
       <span class="count_top"><i class="fa fa-check"></i> Complete Projects</span>
@@ -54,6 +117,18 @@ $this->context->layout = 'admin';
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
     </div>
 
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+    <?php
+        
+        $projectHolds = Project::find()
+            ->Where(['status' => 3])
+            ->count();
+            
+        ?>
+      <span class="count_top"><i class="fa fa-clone"></i> OnHold Projects</span>
+      <div class="count "><?= $projectHolds?></div>
+      <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i></i> </span>
+    </div>
 
     <div class="col-md-2 col-sm-4 tile_stats_count">
       <span class="count_top"><i class="fa fa-close"></i> Fail Projects</span>
@@ -61,6 +136,15 @@ $this->context->layout = 'admin';
       <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i></i> </span>
     </div>
 
+      <div class="col-md-2 col-sm-4 tile_stats_count">
+        <?php
+          $department = Department::find()
+          ->count();
+        ?>
+      <span class="count_top"><i class="fa fa-users"></i> Departments </span>
+      <div class="count "><?=$department?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div> 
 
     <div class="col-md-2 col-sm-6 tile_stats_count">
   <span class="count_top"><i class="fa fa-money"></i>Total Projects Budget</span>
@@ -74,6 +158,18 @@ $this->context->layout = 'admin';
 
 <!-- /Project Manager Dashboard -->
 <?php if (Yii::$app->user->can('author')) : ?>
+
+  <div class="col-md-2 col-sm-4 tile_stats_count">
+    <?php
+        $userId = Yii::$app->user->getId();
+        $tender = Tender::find()
+            ->where(['assigned_to' => $userId])
+            ->count();
+        ?>
+      <span class="count_top"><i class="fa fa-folder"></i> Assigned Tender</span>
+      <div class="count"><?= $tender ?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div>
       
 <div class="col-md-2 col-sm-4 tile_stats_count">
       <span class="count_top"><i class="fa fa-clone"></i> Assigned Project</span>
@@ -86,6 +182,7 @@ $this->context->layout = 'admin';
         <div class="count"><?= $projectCount ?></div>
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
     </div>
+
 
     <div class="col-md-2 col-sm-4 tile_stats_count">
     <?php
@@ -144,10 +241,11 @@ $projectBudget = 0;
 foreach ($projects as $project) {
     $projectBudget += $project->budget;
 }
+$formattedBudget = number_format($projectBudget, 2)
 ?>
   <span class="count_top"><i class="fa fa-money"></i>Projects Budget</span>
   <div class="">
-    <?=$projectBudget?>
+  <?= $formattedBudget ?>
   </div>
   <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
 </div>
@@ -173,133 +271,71 @@ foreach ($projects as $project) {
                   </div>
                 </div>
                 <?php if (Yii::$app->user->can('admin')) : ?>
-                <div class="col-md-9 col-sm-9 ">
-                  <div id="chart_plot_01" class="demo-placeholder"></div>
+                  <div class="col-md-9 col-sm-9 ">
+
+<div class="chart-container">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<center><h1>Tender Chart</h1></center>
+
+
+<div class="chart-container">
+  <center><canvas id="tenderChart" ></canvas></center>
+</div>
+
+
+<script>
+    var ctx = document.getElementById('tenderChart').getContext('2d');
+    
+    var chartData = {
+        labels: <?= json_encode($chartData['labels']) ?>,
+        datasets: [
+            {
+                label: '  win',
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: ' rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                data: <?= json_encode($chartData['datasets'][0]['data']) ?>
+            },
+            {
+                label: 'lose',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)' ,
+                borderWidth: 1,
+                data: <?= json_encode($chartData['datasets'][1]['data']) ?>
+            }
+        ]
+    };
+    
+    var chartOptions = <?= json_encode($options) ?>;
+    
+    var tenderChart = new Chart(ctx, {
+        type: 'bar',
+        data: chartData,
+        options: chartOptions
+    });
+</script>
+</div>
                 </div>
+              
+
               
                 <div class="col-md-3 col-sm-3  bg-white">
                   <div class="x_title">
 
-                  <h6 class="align-text-center mt-10 mr-20">
- Graph of Complete Tender per Moth|Year
-</h6>
-<!-- Add the canvas element where the graph will be rendered -->
-<canvas id="projectChart"></canvas>
-
 <!-- Include the Chart.js library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Create a script block to define and render the graph -->
-<script>
-    // Retrieve the data for the chart from the server
-    var chartData = <?= json_encode($chartData) ?>; // $chartData should be an array of data containing monthly and yearly counts
-
-    // Create a new Chart instance
-    var ctx = document.getElementById('projectChart').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartData.labels,
-            datasets: [{
-                label: 'Total Success Projects',
-                data: chartData.data,
-                backgroundColor: 'rgba(75, 192, 192, 0.5)', // Customize the bar background color
-                borderColor: 'rgba(75, 192, 192, 1)', // Customize the bar border color
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    precision: 0
-                }
-            }
-        }
-    });
-</script>
-
-                   
-                    <h6 class="align-text-center mt-10 mr-20">
- Graph of Incomplete Tender per Moth|Year
-</h6>
-<!-- Add the canvas element where the graph will be rendered -->
-<canvas id="projectCharts"></canvas>
-
-<!-- Include the Chart.js library -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Create a script block to define and render the graph -->
-<script>
-    // Retrieve the data for the chart from the server
-    var chartDatas = <?= json_encode($chartDatas) ?>; // $chartData should be an array of data containing monthly and yearly counts
-
-    // Create a new Chart instance
-    var ctx = document.getElementById('projectCharts').getContext('2d');
-    var chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: chartDatas.labels,
-            datasets: [{
-                label: 'Total Fail Projects',
-                data: chartDatas.data,
-                backgroundColor: 'rgba(255, 99, 132, 0.5)', // Customize the bar background color
-                borderColor: 'rgba(255, 99, 132, 1)', // Customize the bar border color
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    precision: 0
-                }
-            }
-        }
-    });
-</script>
 
                   </div>
 
                 
                 </div>
                
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-               
-                <canvas id="chart"></canvas>
-
-<script>
-    var data = <?= $data ?>;
-
-    // Prepare the data for the chart
-    var labels = data.map(item => item.year);
-    var values = data.map(item => item.total_budget);
-
-    // Create the chart
-    var ctx = document.getElementById('chart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Total Budget',
-                data: values,
-                backgroundColor: 'blue'
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
+  
 <?php endif; ?>
+
+
+
+
 
                 <div class="clearfix"></div>
               </div>

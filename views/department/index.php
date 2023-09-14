@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Department;
+use app\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -37,11 +38,13 @@ $sidebarItems = [
 <div class="department-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    
+    <?php if (Yii::$app->user->can('admin')) : ?>
     <p>
         <?= Html::a('Create Department', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
+    <?php endif; ?>
+    
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
@@ -50,11 +53,30 @@ $sidebarItems = [
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            // 'id',
             'name',
-            'created_at',
-            'updated_at',
-            'created_by',
+            'email',
+            [
+                'attribute' => 'created_at',
+                'value' => function ($model) {
+                    return Yii::$app->formatter->asDatetime($model->created_at);
+                },
+            ],
+            [
+                'attribute' => 'updated_at',
+                'value' => function ($model) {
+                    return Yii::$app->formatter->asDatetime($model->updated_at);
+                },
+            ],
+            [
+                'attribute'=>'created_by',
+                'format'=>'raw',
+                'value'=>function ($model){
+                    $createdByUser = User::findOne($model->created_by);
+                    $createdByName = $createdByUser ? $createdByUser->username : 'Unknown';
+                     return $createdByName;
+                },
+            ],
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Department $model, $key, $index, $column) {

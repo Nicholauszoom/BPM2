@@ -8,20 +8,32 @@
 @import url("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.0/font/bootstrap-icons.min.css");
 @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css");
 
+@import url("https://github.com/yiisoft/yii2-jui/blob/master/DatePicker.php");
+
 
 @import url("node_modules/chart.js/dist/chart.min.js");
 
-* {
+.main_container {
     box-sizing: border-box;
-}
+    width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  }
+
 
 body {
     background-color: #f6f7fb;
     color: #888da8;
     letter-spacing: 0.2px;
     font-family: 'Roboto', sans-serif;
-    padding: 0;
-    margin: 0;
+    box-sizing: border-box;
+    width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 a,
@@ -378,7 +390,7 @@ a:hover {
 }
 
 .label-inactive {
-    background-color: rgb(215, 14, 14);
+    background-color: rgb(135, 67, 67);
     color:white;
     font-size: 11px;
     font-weight: bold;
@@ -389,4 +401,32 @@ a:hover {
     color:white;
     font-size: 11px;
     font-weight: bold;
+}
+
+
+.switch {
+    display: flex;
+    align-items: center;
+  }
+  
+  .switch input[type="radio"] {
+    display: none;
+  }
+  
+  .switch label {
+    padding: 8px 16px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  
+  .switch input[type="radio"]:checked + label {
+    background-color: #ccc;
+  }
+
+  .logo-cell {
+    background-image: url('/images/tera_inc.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.5; /* Adjust the opacity value to make the image transparent */
 }

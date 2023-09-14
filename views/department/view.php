@@ -1,5 +1,6 @@
 <?php
 
+use app\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -36,7 +37,7 @@ $sidebarItems = [
 <div class="department-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if (Yii::$app->user->can('admin')) : ?>
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
@@ -47,15 +48,35 @@ $sidebarItems = [
             ],
         ]) ?>
     </p>
+    <?php endif; ?>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
             'name',
-            'created_at',
-            'updated_at',
-            'created_by',
+            'email',
+            [
+              'attribute' => 'created_at',
+              'value' => function ($model) {
+                  return Yii::$app->formatter->asDatetime($model->created_at);
+              },
+          ],
+            [
+              'attribute' => 'updated_at',
+              'value' => function ($model) {
+                  return Yii::$app->formatter->asDatetime($model->updated_at);
+              },
+          ],
+          [
+            'attribute'=>'created_by',
+            'format'=>'raw',
+            'value'=>function ($model){
+                $createdByUser = User::findOne($model->created_by);
+                $createdByName = $createdByUser ? $createdByUser->username : 'Unknown';
+                 return $createdByName;
+            },
+        ],
         ],
     ]) ?>
 
@@ -78,7 +99,52 @@ $sidebarItems = [
       <th scope="row">1</th>
       <td><?= $user->username ?></td>
       <td><?= $user->email ?></td>
-      <td>2000000/tsh</td>
+      <td>------</td>
+      
+
+    </td>
+
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
+
+
+
+
+<h3 class="display-6">Tender details for this department</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Tender Title</th>
+      <th scope="col">Tender Complete Submitted Documents</th>
+      <th scope="col">Tender Submitted by</th>
+      <th scope="col">Tender Submitted date</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($tender as $tender): ?>
+    <tr>
+      <th scope="row">1</th>
+      <td><?= $tender->title ?></td>
+      <td>
+      <?php if (!empty($tender->submission)) : ?>
+        <a href="<?= Yii::$app->urlManager->baseUrl . 'upload/' . $tender->submission ?>" download><?=$tender->submission?></a>
+    <?php else : ?>
+        No document available
+    <?php endif; ?></td>
+      <td>
+        <?php
+        $user=User::findOne($tender->assigned_to)
+        ?>
+        
+      <?= $user->username?>
+    
+    </td>
+    <td><?= Yii::$app->formatter->asDatetime($tender->updated_at) ?></td>
       
 
     </td>

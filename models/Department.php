@@ -12,6 +12,7 @@ use yii\db\ActiveQuery;
  *
  * @property int $id
  * @property string $name
+ * @property string $email
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $created_by
@@ -46,7 +47,7 @@ class Department extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['created_at', 'updated_at', 'created_by'], 'integer'],
-            [['name'], 'string', 'max' => 255],
+            [['name','email'], 'string', 'max' => 255],
         ];
     }
 
@@ -58,6 +59,7 @@ class Department extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'email'=> 'Department Email',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',

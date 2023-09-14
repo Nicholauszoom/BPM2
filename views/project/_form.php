@@ -1,21 +1,43 @@
 <?php
-use kartik\date\DatePickerAsset;
+
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView;
+
+use Yii;
 use yii\jui\DatePicker;
+use yii\web\View;
 
 /** @var yii\web\View $this */
 /** @var app\models\Project $model */
 /** @var yii\widgets\ActiveForm $form */
-$this->context->layout = 'admin';
+ // Register jQuery UI from an online source
+// $this->registerJsFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js', ['position' => View::POS_HEAD]);
+// $this->registerCssFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css');
+// $this->context->layout = 'admin';
 // DatePickerAsset::register($this);
 
-$this->registerCssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
-$this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
+// $this->registerJs("
+// $(document).ready(function() {
+//     $('#datepicker-start').datepicker({
+//         dateFormat: 'yy-mm-dd',
+//     });
+//     $('#datepicker-end').datepicker({
+//         dateFormat: 'yy-mm-dd',
+//     });
+// });
+
+// jQuery('#w0').yiiActiveForm([
+//     // ... your other validation rules here ...
+// ]);
+// ");
+
+
+    
+
 ?>
 
 <div id="main-content">
@@ -37,14 +59,41 @@ $this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
 <div class="project-form">
 
     <?php $form = ActiveForm::begin(); ?>
+   <?php if(Yii::$app->user->can('admin')) :?>
 
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <!--<?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?> -->
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'budget')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'ducument')->fileInput() ?>
+    <?= $form->field($model, 'document')->fileInput() ?>
+
+    <?php echo $form->field($model, 'tender_id')->dropDownList(
+    ArrayHelper::map($details, 'id', 'title'),
+    ['prompt' => 'Select tender ']
+); ?>
+
+    <?php echo $form->field($model, 'user_id')->dropDownList(
+    ArrayHelper::map($users, 'id', 'username'),
+    ['prompt' => 'Select Project Manager']
+); ?>
+
+
+<?= $form->field($model, 'start_at')->widget(\yii\jui\DatePicker::class, [
+    'language' => 'ru',
+    'dateFormat' => 'MM/dd/yyyy',
+    'options' => ['class' => 'form-control', 'type' => 'date'],
+]) ?>
+<?= $form->field($model, 'end_at')->widget(\yii\jui\DatePicker::class, [
+    'language' => 'ru',
+    'dateFormat' => 'MM/dd/yyyy',
+    'options' => ['class' => 'form-control', 'type' => 'date'],
+]) ?>
+
+    <?php endif;?>
+
+    <?php if(Yii::$app->user->can('author')) :?>
 
     <?= $form->field($model, 'progress')->dropDownList([
     '0' => '0%',
@@ -53,33 +102,21 @@ $this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
     '70' => '70%',
     '90' => '90%',
     '100' => '100%',
-]) ?>
- 
- <?php echo $form->field($model, 'user_id')->dropDownList(
-    \yii\helpers\ArrayHelper::map($users, 'id', 'username'),
-    ['prompt' => 'Select Project Manager']
-); ?>
-
-
-<?= $form->field($model, 'start_at')->widget(DatePicker::class, [
-    'dateFormat' => 'yyyy-MM-dd',
-    'options' => ['class' => 'form-control'],
+    
 ]) ?>
 
-<?= $form->field($model, 'end_at')->widget(DatePicker::class, [
-    'dateFormat' => 'yyyy-MM-dd',
-    'options' => ['class' => 'form-control'],
-]) ?>
 
-    <?= $form->field($model, 'status')->dropDownList(
+
+<?php endif;?>
+<?= $form->field($model, 'status')->dropDownList(
     [
-        1 => 'Active',
-        2 => 'Inactive',
+        1 => 'Completed',
+        2 => 'Onpregress',
         3 => 'On Hold',
     ],
     ['prompt' => 'Select Project Status']
 ); ?>
-
+ 
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

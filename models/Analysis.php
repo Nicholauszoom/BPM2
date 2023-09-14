@@ -10,12 +10,16 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "analysis".
  *
  * @property int $id
- * @property string $title
+ * @property int $unit
+ * @property int $setunit
+ * @property int $unitprofit
  * @property string $item
+ * @property string $source
  * @property string $description
  * @property int $quantity
  * @property int $cost
  * @property int $project
+ * @property int $status
  * @property string $boq
  * @property string $files
  * @property int|null $created_at
@@ -52,9 +56,12 @@ class Analysis extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'item', 'description', 'quantity', 'cost','project'], 'required'],
-            [['quantity', 'cost', 'created_at', 'updated_at', 'created_by','project'], 'integer'],
-            [['title', 'item', 'description'], 'string', 'max' => 255],
+            // [[ 'item', 'quantity', 'unit','project','source','cost'], 'required'],
+            [['files'], 'required'],
+            [['quantity', 'cost', 'created_at', 'updated_at', 'created_by','project','status','unit','setunit','unitprofit'], 'integer'],
+            [['item', 'description','source'], 'string', 'max' => 255],
+            [['files'],'file'],
+            [['boq','status'],'default','value'=>0],
         ];
     }
 
@@ -65,14 +72,18 @@ class Analysis extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
             'item' => 'Item',
-            'description' => 'Description',
+            'description' =>'Unit',
             'quantity' => 'Quantity',
-            'cost' => 'Cost',
-            'boq' => 'Boq',
+            'cost' => 'Amount(By.price)',
+            'unit'=> 'Unit Price(TSH)',
+            'setunit'=> 'Amount(BOQ/Customer)',
+            'boq' => 'attachment(analysis)',
             'project' => 'Project',
             'files' => 'Files',
+            'status'=>'Status',
+            'source'=>'Source',
+            'unitprofit'=> 'Unit Profit',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
@@ -82,4 +93,5 @@ class Analysis extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Project::class, ['id' => 'project']);
     }
+    
 }

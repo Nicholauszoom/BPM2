@@ -144,6 +144,17 @@ function init_sidebar() {
 }
 // /Sidebar
 
+$(document).ready(function() {
+    $('#datepicker').datepicker({
+        dateFormat: 'yy-mm-dd',
+    });
+});
+$(document).ready(function() {
+    $('#datepickers').datepicker({
+        dateFormat: 'yy-mm-dd',
+    });
+});
+
 // Panel toolbox
 $(document).ready(function () {
     $('.collapse-link').on('click', function () {

@@ -53,7 +53,7 @@ $sidebarItems = [
 
             'id',
             'username',
-            'password',
+            'email',
            
             [
                 'class' => ActionColumn::className(),

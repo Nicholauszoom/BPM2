@@ -6,6 +6,8 @@
 use app\assets\AppAsset;
 use app\assets\CustomAsset;
 use app\assets\RealAsset;
+use app\models\Project;
+use app\models\Tender;
 use app\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -61,11 +63,11 @@ $sidebarItems = [
       echo Html::cssFile('@web/vendors/jqvmap/dist/jqvmap.min.css');
       echo Html::cssFile('@web/vendors/bootstrap-daterangepicker/daterangepicker.css');
       echo Html::cssFile('@web/build/css/custom.min.css');
-      echo Html::cssFile('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.3/font/bootstrap-icons.css');
+      // echo Html::cssFile('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.3/font/bootstrap-icons.css');
       echo Html::cssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
 
       // $this->registerCssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
-      $this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
+      // $this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
 
 
 
@@ -97,20 +99,25 @@ $sidebarItems = [
 
 
     ?>
+
+
   
    
 </head>
 <body class="nav-md">
   <?php $this->beginBody() ?>
-  <div class="container body">
+  <div class="container  body">
       <div class="main_container">
+     
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
               <a href="index.html" class="site_title"> <span>BPM-Tera</span></a>
             </div>
 
+
             <div class="clearfix"></div>
+        
 
             <!-- menu profile quick info -->
 
@@ -139,38 +146,71 @@ $sidebarItems = [
                       <li><a href="/dashboard/admin">Dashboard</a></li>
                     </ul>
                   </li>
-
-
                  
-                  <li><a><i class="fa fa-clone"></i> Project<span class="fa fa-chevron-down"></span></a>
+                    <?php 
+                
+                  // Retrieve the projects assigned to the user
+                  $newTender = Tender::find()
+                      ->where(['isViewed'=>0])
+                      ->count();
+                  ?>
+
+                  <li><a><i class="fa fa-recycle"></i>Tender<span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                    <?php if (Yii::$app->user->can('admin')) : ?>
+                      <li><a href="/tender">index</a></li>
+                      <?php endif; ?>
+                     
+                      <li><a href="/tender/pm">Assigned Tender</a></li>
+                    
+                    </ul>
+                  </li>
+                 
+                  <?php 
+                  
+                    $userId = Yii::$app->user->id;
+                    // Retrieve the projects assigned to the user
+                    $newProjects = Project::find()
+                        ->where(['user_id' => $userId])
+                        ->andWhere(['isViewed'=>0])
+                        ->count();
+                    ?>
+                  <li><a><i class="fa fa-clone"></i> Project <span class="badge bg-green"><?=$newProjects?></span><span class="fa fa-chevron-down"></span> </a>
+                  
                     <ul class="nav child_menu">
                     <?php if (Yii::$app->user->can('admin')) : ?>
             <li><a href="/project">index</a></li>
         <?php endif; ?>
         <?php if (Yii::$app->user->can('author')) : ?>
-            <li><a href="/project/pm">Project Assigned</a></li>
+            <li><a href="/project/pm">Project Assigned</a>
+           
+          </li>
         <?php endif; ?>
                     </ul>
                   </li>
                   <?php if (Yii::$app->user->can('admin')) : ?>
+                    <!--
                   <li><a><i class="fa fa-check-square"></i>Task<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/task">index</a></li>
                     </ul>
                   </li>
+                  -->
+              
                   <li><a><i class="fa fa-users"></i>Team<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/team">index</a></li>
                     </ul>
                   </li>
                   <?php endif; ?>
-                  <?php if (Yii::$app->user->can('admin')) : ?>
-                  <li><a><i class="fa fa-user"></i>User<span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-user"></i>User & Department<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
+                    <?php if (Yii::$app->user->can('admin')) : ?>
                       <li><a href="/user">index</a></li>
                       <li><a href="/role">role</a></li>
-                      <li><a href="/department">department</a></li>
                       <li><a href="/permission">permission</a></li>
+                      <?php endif; ?>
+                      <li><a href="/department">department</a></li>
                     </ul>
                   </li>
                  
@@ -179,14 +219,15 @@ $sidebarItems = [
                       <li><a href="#">index</a></li>
                     </ul>
                   </li>
-                 
+                 <!--
                   <li><a><i class="fa fa-folder-o"></i>Analysis & Requests<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/analysis">Analysis</a></li>
                       <li><a href="#">Request</a></li>
                     </ul>
                   </li>
-                  <?php endif; ?>
+                  -->
+                 
                   <li><a><i class="fa fa-gear"></i>Settings<span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="#">index</a></li>
@@ -195,13 +236,14 @@ $sidebarItems = [
                 </ul>
               </div>
             
-
             </div>
-</div>
-</div>
+            </div>
+        </div>
+      </div>
+
 
             <!-- top navigation -->
-        <div class="top_nav">
+            <div class="top_nav">
           <div class="nav_menu">
               <div class="nav toggle">
                 <a id="menu_toggle"><i class="fa fa-bars"></i></a>
@@ -247,20 +289,30 @@ $sidebarItems = [
                 </li>
 
                 <li role="presentation" class="nav-item dropdown open">
-                  <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-envelope-o"></i>
-                    <span class="badge bg-green">6</span>
-                  </a>
-               
-                </li>
+    <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1" data-toggle="dropdown" aria-expanded="false">
+        <?php
+        $userId = Yii::$app->user->id;
+        // Retrieve the projects assigned to the user
+        $newProjects = Project::find()
+            ->where(['user_id' => $userId])
+            ->andWhere(['isViewed' => 0])
+            ->count();
+        ?>
+        <i class="fa fa-envelope-o"></i>
+        <span class="badge bg-green"><?= $newProjects ?></span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown1">
+        <!-- Dropdown menu items go here -->
+    </ul>
+</li>
               </ul>
 
             </nav>
           </div>
         </div>
         <!-- /top navigation -->
-        <div class="right_col" role="main"> 
-         
+        <div class="right_col" role="main">
+        <div class="">
         <?php if (!empty($this->params['breadcrumbs'])): ?>
             <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
         <?php endif ?>
@@ -268,8 +320,9 @@ $sidebarItems = [
         <?= $content ?>
         
         
-
         </div>
+        </div>
+    
          <!-- /page content -->
 
         <!-- footer content -->
@@ -282,6 +335,8 @@ $sidebarItems = [
         <!-- /footer content -->
         </div>
         </div>
+    
+  
         <!--begin::Body-->
   
  

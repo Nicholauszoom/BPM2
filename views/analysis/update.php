@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Analysis $model */
 
-$this->title = 'Update Analysis: ' . $model->title;
+$this->title = 'Update Analysis: ' . $model->item;
 $this->params['breadcrumbs'][] = ['label' => 'Analyses', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->item, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 $this->context->layout = 'admin';
 ?>
@@ -18,8 +18,13 @@ $this->context->layout = 'admin';
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
+    <?= $this->render('_edit', [
         'model' => $model,
+        'projectId' => $model->project,
+        'details' =>$details,
+        // 'projectAmount'=>$projectAmount,
+        // 'profit'=>$profit,
+        // 'profitPerce'=>$profitPerce,
     ]) ?>
 
 </div>

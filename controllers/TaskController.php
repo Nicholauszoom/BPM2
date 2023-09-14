@@ -67,15 +67,21 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($projectId)
     {
         $model = new Task();
+        $model->project_id =$projectId;
+
         $projectList = Project::find()->all();
         $teamList = Team::find()->all();
+//Find all task by project it
+        $tasks=Task::find()
+        ->where(['project_id' => $projectId])
+        ->all();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['project/view', 'id' => $projectId]);
             }
         } else {
             $model->loadDefaultValues();
@@ -85,6 +91,8 @@ class TaskController extends Controller
             'model' => $model,
             'projectList'=> $projectList,
             'teamList'=> $teamList,
+            'tasks' => $tasks,
+            'projectId' =>$projectId,
         ]);
     }
 
@@ -123,7 +131,7 @@ class TaskController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['/project/pm']);
     }
 
     /**
