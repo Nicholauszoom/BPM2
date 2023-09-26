@@ -8,23 +8,26 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
+
 <div class="analysis-form-update">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?php if (Yii::$app->user->can('author')) : ?>
 
-    <?= $form->field($model, 'item')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'item')->textInput(['maxlength' => true,'disabled'=>true]) ?>
 
-    <?= $form->field($model, 'description')->textarea(['maxlength' => true]) ?>
+    <?= $form->field($model, 'description')->textinput(['maxlength' => true,'disabled'=>true]) ?>
 
-    <?= $form->field($model, 'setunit')->textInput() ?>
+    <?= $form->field($model, 'setunit')->textInput(['id' => 'setunit','disabled'=>true]) ?>
 
     <?= $form->field($model, 'source')->textarea(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'quantity')->textInput() ?>
+    <?= $form->field($model, 'quantity')->textInput(['id' => 'quantity','disabled'=>true]) ?>
 
-    <?= $form->field($model, 'unit')->textInput() ?>
+    <?= $form->field($model, 'unit')->textInput(['id' => 'unit']) ?>
+
+ 
     
     <?php endif;?>
 

@@ -2,6 +2,7 @@
 
 use app\models\Department;
 use app\models\User;
+use app\models\UserAssignment;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -48,9 +49,8 @@ $this->context->layout = 'admin';
             'PE',
             'TenderNo',
             'description',
-            'budget',
             [
-                'attribute' => 'published_at',
+                'attribute' => 'publish_at',
                 'format' => ['date', 'php:Y-m-d H:i:s'],
             ],
             // 'expired_at',
@@ -69,14 +69,25 @@ $this->context->layout = 'admin';
                 'format' => ['date', 'php:Y-m-d H:i:s'],
             ],
             [
-                'attribute'=>'assigned_to',
-                'format'=>'raw',
-                'value'=>function ($model){
-                    $createdByUser = User::findOne($model->assigned_to);
-                    $createdByName = $createdByUser ? $createdByUser->username : 'Unknown';
-                     return $createdByName;
-                },
-            ],
+            'attribute' => 'assigned_to',
+            'format' => 'raw',
+            'value' => function ($model) {
+                $assignments = UserAssignment::find()
+                    ->where(['tender_id' => $model->id])
+                    ->all();
+            
+                $assignedUsernames = [];
+            
+                foreach ($assignments as $assignment) {
+                    $user = User::findOne($assignment->user_id);
+                    if ($user) {
+                        $assignedUsernames[] = $user->username;
+                    }
+                }
+            
+                return implode(', ', $assignedUsernames);
+            },
+        ],
             [
                 'attribute'=>'supervisor',
                 'format'=>'raw',
@@ -109,7 +120,8 @@ $this->context->layout = 'admin';
                 'attribute' => 'document',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->document ? Html::a('<i class="fa fa-download"></i> Download tender Attachments', Url::to($model->document), ['class' => 'btn btn-primary']) : '';
+                    $filePath = Yii::getAlias('@webroot/' . $model->document);
+                    return $model->document ? Html::a('<i class="fa fa-download"></i> Download tender Attachments', $filePath, ['class' => 'btn btn-primary']) : '';
                 },
             ],
             [
@@ -135,34 +147,78 @@ $this->context->layout = 'admin';
 
 
 
+
+</div>
+
+
+<center>
+<h1 class="text-muted center mt-10" style=" color: blue;">More Details</h1>
+</center>
+<div class="text-muted">
+<h3 class="text-muted center mt-10">Tender More Detail's</h3>
+
+<table class="table">
+  <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th scope="col">#</th>
+      
+      <th scope="col">End Clarification Date</th>
+      <th scope='col'>Site visit date</th>
+      <td scope="col"></td>
+      
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($tdetail as $tdetail): ?>
+    <tr>
+      <th scope="row">1</th>
+
+     
+      <td><?= Yii::$app->formatter->asDatetime($tdetail->end_clarificatiion) ?></td>
+
+      <td><?= Yii::$app->formatter->asDatetime($tdetail->site_visit_date) ?></td>
+      
+      <td>
+               
+                <?= Html::a('<span class="glyphicon glyphicon-share-alt"></span>', ['task/create', 'projectId' => $model->id], [
+                    'title' => 'view',
+                    'data-method' => 'post',
+                    'data-pjax' => '0',
+                ]) ?>
+            </td>
+    
+
+    </tr>
+    <?php endforeach; ?>
+    <tr>
+      <td>
+      <?php if (Yii::$app->user->can('author')) : ?>
+        <?= Html::a('+ Add a line') ?>
+      <?php endif;?>
+    </td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+</div>
+
 <?php
-function getStatusLabel($status)
+    function getStatusLabel($status)
 {
     $statusLabels = [
-        1 => '<span class="badge badge-success">Win</span>',
-        2 => '<span class="badge badge-warning">fail</span>',
-        3 => '<span class="badge badge-secondary">pending</span>',
-
-
-        
+      1 => '<span class="">YES</span>',
+      2 => '<span class="">NO</span>',
+     
     ];
 
     return isset($statusLabels[$status]) ? $statusLabels[$status] : '';
 }
 
-function getStatusClass($status)
-{
-    $statusClasses = [
-       
-        1 => 'status-active',
-        2 => 'status-inactive',
-        3 => 'status-onhold',
-    ];
 
-    return isset($statusClasses[$status]) ? $statusClasses[$status] : '';
-}
 ?>
-
-</div>
-    </div>
-</div>

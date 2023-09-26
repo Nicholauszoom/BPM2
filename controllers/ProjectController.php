@@ -4,14 +4,17 @@ namespace app\controllers;
 
 use app\models\Analysis;
 use app\models\AuthAssignment;
+use app\models\Notification as ModelsNotification;
 use app\models\Project;
 use app\models\ProjectSearch;
 use app\models\Role;
 use app\models\RoleUser;
 use app\models\Task;
 use app\models\Tender;
+use app\models\Updates;
 use app\models\User;
 use app\models\Users;
+use Codeception\Lib\Notification;
 use Yii;
 use yii\base\Model;
 use yii\web\Controller;
@@ -134,17 +137,19 @@ class ProjectController extends Controller
         if ($model !== null) {
            
             // Set isViewed attribute to 1
-            $model->isViewed = 1;
+            $model->isViewed =1;
     
             // Save the model to persist the changes
-            $model->save();
+            $model->save(true);
         }
-        // $tasks = $project->tasks;
+       
 
         // find task by  project id
         $tasks= Task::find()
          ->where(['project_id'=> $id])
          ->all();
+
+        
 
 
         $analysis= Analysis::find()
@@ -183,6 +188,7 @@ class ProjectController extends Controller
             'profitPerce'=> $profitPerce,
             'projectId' =>$projectId,
             'id'=>$id,
+            
 
         ]);
     }
@@ -336,6 +342,8 @@ class ProjectController extends Controller
                         // $message->send();
                         $mailer->send($message);
                     }
+                    // Create a notification for the assigned user
+                
                     // return $this->redirect(['view', 'id' => $model->id]);
                     return $this->redirect(['index']);
                 }
@@ -374,7 +382,9 @@ class ProjectController extends Controller
     
          $model = $this->findModel($id);
                      // Retrieve project manager role
-
+                     $details= Tender::find()
+                     ->where(['status'=>1])
+                     ->all();
      
          if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
              return $this->redirect(['view', 'id' => $model->id]);
@@ -383,11 +393,41 @@ class ProjectController extends Controller
          return $this->render('update', [
              'model' => $model,
              'users'=>$users,
+             'id'=>$id,
+             'details'=>$details
             
          ]);
 
         
      }
+     public function actionEdit($id)
+     {
+        $users= User::find()->all();
+    
+    
+         $model = $this->findModel($id);
+                     // Retrieve project manager role
+                     $details= Tender::find()
+                     ->where(['status'=>1])
+                     ->all();
+     
+         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+             return $this->redirect(['project']);
+         }
+     
+         return $this->render('edit', [
+             'model' => $model,
+             'users'=>$users,
+             'id'=>$id,
+             'details'=>$details
+            
+         ]);
+
+        
+     }
+
+
+     
     // public function actionUpdate($id)
     // {
     //     if (Yii::$app->user->can('updateProject')) {

@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Tender;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -33,7 +34,13 @@ $this->context->layout = 'admin';
     
 
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+            $dataProvider = new ActiveDataProvider([
+                'query' => Tender::find()->orderBy(['created_at' => SORT_DESC]),
+                'sort' => false, // Disable sorting in the GridView
+            ]);
+            ?>
+
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -44,7 +51,6 @@ $this->context->layout = 'admin';
             'PE',
             'title',
             'TenderNo',
-            'budget',
             [
                 'attribute' => 'publish_at',
                 'format' => ['date', 'php:Y-m-d H:i:s'],
@@ -100,11 +106,11 @@ $this->context->layout = 'admin';
             ],
             // 'document',
             [
-                'attribute' => 'isViewed',
+                'attribute' => 'session',
                 'label' => 'alert',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->isViewed ? '' : Html::tag('span', 'New', ['class' => 'badge badge-success']);
+                    return $model->session ? '' : Html::tag('span', 'New', ['class' => 'badge badge-success']);
                 },
             ],
             // 'status',
@@ -149,11 +155,13 @@ $this->context->layout = 'admin';
 function getStatusLabel($status)
 {
     $statusLabels = [
-        1 => '<span class="badge badge-success">Win</span>',
-        2 => '<span class="badge badge-warning">fail</span>',
-        3 => '<span class="badge badge-secondary">pending</span>',
+        1 => '<span class="badge badge-success">awarded</span>',
+        2 => '<span class="badge badge-warning">not-awarded</span>',
+        3 => '<span class="badge badge-secondary">submitted</span>',
+        4 => '<span class="badge badge-secondary">not-submtted</span>',
+        5 => '<span class="badge badge-secondary">on-progress</span>',
 
-
+        
         
     ];
 

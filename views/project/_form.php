@@ -62,21 +62,30 @@ use yii\web\View;
     <?php $form = ActiveForm::begin(); ?>
    <?php if(Yii::$app->user->can('admin')) :?>
 
-
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-
     <?= $form->field($model, 'budget')->textInput(['type'=>'number']) ?>
 
     <?= $form->field($model, 'document')->fileInput() ?>
+    
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
     <?php echo $form->field($model, 'tender_id')->dropDownList(
     ArrayHelper::map($details, 'id', 'title'),
-    ['prompt' => 'Select tender ']
+    [
+        'prompt' => 'Select tender',
+        // 'value' => $model->tender_id
+    ]
 ); ?>
 
-    <?php echo $form->field($model, 'user_id')->dropDownList(
+ 
+
+<?php echo $form->field($model, 'user_id')->dropDownList(
     ArrayHelper::map($users, 'id', 'username'),
-    ['prompt' => 'Select Project Manager']
+    [
+        'prompt' => 'Select Project Manager',
+        'options' => [
+            $model->user_id => ['selected' => true]
+        ]
+    ]
 ); ?>
 
 
@@ -87,6 +96,7 @@ use yii\web\View;
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        // $model->start_at => ['selected' => true]
     ],
 ]) ?>
 
@@ -96,8 +106,11 @@ use yii\web\View;
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        // $model->end_at => ['selected' => true]
     ],
 ]) ?>
+
+
 
     <?php endif;?>
 
@@ -122,7 +135,9 @@ use yii\web\View;
         2 => 'Onpregress',
         3 => 'On Hold',
     ],
-    ['prompt' => 'Select Project Status']
+    ['prompt' => 'Select Project Status',
+    $model->status => ['selected' => true]
+    ]
 ); ?>
  
 

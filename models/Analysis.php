@@ -20,6 +20,8 @@ use yii\behaviors\TimestampBehavior;
  * @property int $cost
  * @property int $project
  * @property int $status
+ * property int $cotedAmount
+ * @property string $serio
  * @property string $boq
  * @property string $files
  * @property int|null $created_at
@@ -58,12 +60,23 @@ class Analysis extends \yii\db\ActiveRecord
         return [
             // [[ 'item', 'quantity', 'unit','project','source','cost'], 'required'],
             [['files'], 'required'],
-            [['quantity', 'cost', 'created_at', 'updated_at', 'created_by','project','status','unit','setunit','unitprofit'], 'integer'],
-            [['item', 'description','source'], 'string', 'max' => 255],
+            [['quantity', 'cost', 'created_at', 'updated_at', 'created_by','project','status','unit','unitprofit'], 'integer'],
+            [['item', 'description','source','serio','cotedAmount','setunit'], 'string', 'max' => 255],
             [['files'],'file'],
-            [['boq','status'],'default','value'=>0],
+            [['boq','status','unit'],'default','value'=>0],
+            [['source'], 'default', 'value'=>'source'],
+            [['setunit'], 'validateSetunit'],
         ];
     }
+    public function validateSetunit($attribute, $params)
+{
+    $setunit = str_replace(',', '', $this->$attribute);
+    $unit = $this->unit;
+
+    if ($setunit <= $unit) {
+        $this->addError($attribute, '*cross check at buying unit price must be less to cotted unit price.');
+    }
+}
 
     /**
      * {@inheritdoc}
@@ -75,14 +88,16 @@ class Analysis extends \yii\db\ActiveRecord
             'item' => 'Item',
             'description' =>'Unit',
             'quantity' => 'Quantity',
-            'cost' => 'Amount(By.price)',
+            'cost' => 'Amount(Buy.price)',
             'unit'=> 'Unit Price(TSH)',
-            'setunit'=> 'Amount(BOQ/Customer)',
+            'setunit'=> 'Unit Price(cotted)',
             'boq' => 'attachment(analysis)',
             'project' => 'Project',
             'files' => 'Files',
             'status'=>'Status',
             'source'=>'Source',
+            'serio'=>'Serio No',
+            'cotedAmount'=>'Amount(cotted)',
             'unitprofit'=> 'Unit Profit',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

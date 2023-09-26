@@ -100,6 +100,11 @@ Modal::end();
       <td><?= Yii::$app->formatter->asDatetime($task->end_at) ?></td>
       <td><?=getStatusLabel($task->status)?></td>
       <td>
+      <?= Html::a('<span class="fa fa-eye"></span>', ['task/view/', 'id' => $task->id], [
+                    'title' => 'view',
+                    'data-method' => 'post',
+                    'data-pjax' => '0',
+                ]) ?>
                 <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $task->id], [
                     'title' => 'Delete',
                     'data-confirm' => 'Are you sure you want to delete this task',

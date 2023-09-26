@@ -22,6 +22,7 @@ $this->context->layout = 'admin';
         'model' => $model,
         'projectId' => $model->project,
         'details' =>$details,
+       
         // 'projectAmount'=>$projectAmount,
         // 'profit'=>$profit,
         // 'profitPerce'=>$profitPerce,

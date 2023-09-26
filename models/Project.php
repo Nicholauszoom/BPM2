@@ -61,7 +61,7 @@ class Project extends \yii\db\ActiveRecord
         return [
             [[ 'description', 'budget','status'], 'required'],
             [['description'], 'string'],
-            [['created_at', 'updated_at','progress','status','isViewed', 'created_by','user_id','tender_id'], 'integer'],
+            [['created_at', 'updated_at','progress','status','created_by','user_id','tender_id'], 'integer'],
             [[ 'budget'], 'string', 'max' => 255],
             
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
@@ -72,6 +72,7 @@ class Project extends \yii\db\ActiveRecord
 
             ['start_at', 'date', 'format' => 'php:Y-m-d'],
             ['end_at', 'date', 'format' => 'php:Y-m-d'],
+            [['isViewed'], 'boolean'],
 
             [['isViewed'], 'safe'],
 

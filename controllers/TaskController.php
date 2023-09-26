@@ -4,8 +4,10 @@ namespace app\controllers;
 
 use app\models\Task;
 use app\models\Project;
+use app\models\Request;
 use app\models\Team;
 use app\models\TaskSearch;
+use app\models\Updates;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -57,8 +59,18 @@ class TaskController extends Controller
      */
     public function actionView($id)
     {
+         // find task by  project id
+         $updates= Updates::find()
+         ->where(['task_id'=> $id])
+         ->all();
+
+         $request =Request::find()
+         ->where(['task_id'=>$id])
+         ->all();
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'updates'=>$updates,
+            'request'=>$request,
         ]);
     }
 
@@ -78,6 +90,8 @@ class TaskController extends Controller
         $tasks=Task::find()
         ->where(['project_id' => $projectId])
         ->all();
+
+       
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {

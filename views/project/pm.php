@@ -190,7 +190,7 @@ $sidebarItems = [
 
 
                 'update' => function ($url, $model, $key) {
-                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $model->id], [
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['edit', 'id' => $model->id], [
                         // 'class' => 'btn btn-success',
                         'title' => 'view project',
                         'aria-label' => 'Project view',

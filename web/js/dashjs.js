@@ -113,3 +113,47 @@ function windowResize() {
     }
 }
 
+// Listen for changes in the site_visit dropdown
+$('#site-visit-dropdown').on('change', function() {
+    var selectedValue = $(this).val();
+    
+    // Show or hide the additional form based on the selected value
+    if (selectedValue == 1) {
+        $('#additional-form').show();
+    } else {
+        $('#additional-form').hide();
+    }
+});
+
+// Check the initial value of the site_visit dropdown on page load
+$(document).ready(function() {
+    var selectedValue = $('#site-visit-dropdown').val();
+    
+    // Show or hide the additional form based on the selected value
+    if (selectedValue == 1) {
+        $('#additional-form').show();
+    } else {
+        $('#additional-form').hide();
+    }
+});
+
+$(document).ready(function() {
+    $('#assigned-to-dropdown').select2({
+        placeholder: 'Assigned to',
+        allowClear: true,
+        closeOnSelect: false,
+        templateResult: formatUser,
+        templateSelection: formatUser,
+    });
+    
+    function formatUser(user) {
+        if (!user.id) {
+            return user.text;
+        }
+        
+        var checkbox = '<input type="checkbox" class="select2-checkbox" id="select2-assigned-to-' + user.id + '">';
+        var username = user.text;
+        
+        return checkbox + ' ' + username;
+    }
+});

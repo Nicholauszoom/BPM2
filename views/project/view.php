@@ -11,16 +11,18 @@ use yii\widgets\DetailView;
 /** @var app\models\Project $model */
 
      
-     $project = Project::findOne($id);
-$project_tender = $project ? $project->tender_id : '';
-$project_tender_id=Tender::findOne($project_tender);
-$projectName = $project_tender_id ? $project_tender_id->title : '';
-$this->title = 'View for :' . $projectName . ' Project';
 
 $this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $this->context->layout = 'admin';
+
+
+$project = Project::findOne($id);
+$project_tender = $project ? $project->tender_id : '';
+$project_tender_id=Tender::findOne($project_tender);
+$projectName = $project_tender_id ? $project_tender_id->title : '';
+$this->title = 'View for :' . $projectName . ' Project';
 
 ?>
 
@@ -169,9 +171,10 @@ $this->context->layout = 'admin';
       <th scope="col">item</th>
       <th scope="col">quantity</th>
       <th scope="col">Unit</th>
-      <th scope="col">Unit Price(Customer)</th>
-      <th scope="col">Unit Price(By.price)</th>
-      <th scope="col">Amount(TSH)</th>
+      <th scope="col">Unit Price(Cotted)</th>
+      <th scope="col">Amount(Cotted)</th>
+      <th scope="col">Unit Price(Buying.price)</th>
+      <th scope="col">Total Amount(Buying)</th>
       <th scope="col">Unit Profit</th>
       <th scope="col">source</th>
    <!--   <th scope="col">other attachment..</th>-->
@@ -187,6 +190,7 @@ $this->context->layout = 'admin';
       <td><?= $analysis->quantity ?></td>
       <td><?= $analysis->description ?></td>
       <td><?= $analysis->setunit?></td>
+      <td><?= $analysis->cotedAmount?></td>
       <td><?= $analysis->unit?></td>
       <td><?= $analysis->cost ?></td>
       <td><?= $analysis->unitprofit ?></td>
@@ -314,14 +318,9 @@ function getStatusClass($status)
       <td><?=getStatusLabel($task->status)?></td>
 
       <td>
-                <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $task->id], [
-                    'title' => 'Delete',
-                    'data-confirm' => 'Are you sure you want to delete this task',
-                    'data-method' => 'post',
-                    'data-pjax' => '0',
-                ]) ?>
-                <?= Html::a('<span class="glyphicon glyphicon-edit"></span>', ['update', 'id' => $task->id], [
-                    'title' => 'Update',
+               
+                <?= Html::a('<span class="glyphicon glyphicon-share-alt"></span>', ['task/create', 'projectId' => $model->id], [
+                    'title' => 'view',
                     'data-method' => 'post',
                     'data-pjax' => '0',
                 ]) ?>

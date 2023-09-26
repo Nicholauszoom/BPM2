@@ -169,20 +169,24 @@ foreach ($analysis as $analysis) {
                         // Import data into the database
                         foreach ($rowData as $row) {
                             $modelRow = new Analysis();
-                            $modelRow->item = $row[0];
-                            $modelRow->quantity = $row[1];
-                            $modelRow->description = $row[2];
-                            $modelRow->setunit = $row[3];
-                            $modelRow->source = $row[4];
-                            $modelRow->unit = $row[5];
+                            $modelRow->serio = isset($row[0]) ? $row[0] : null;
+                            $modelRow->item = isset($row[1]) ? $row[1] : null;
+                            $modelRow->quantity = isset($row[2]) ? $row[2] : null;
+                            $modelRow->description = isset($row[3]) ? $row[3] : null;
+                            $modelRow->setunit = isset($row[4]) ? $row[4] : null;
+                            $modelRow->cotedAmount = isset($row[5]) ? $row[5] : null;
+                            // $modelRow->source = $row[6];
+                            // $modelRow->unit = $row[7];
                         
                             // Ensure numeric values for unit and quantity
+                            // $modelRow->unit = is_numeric($modelRow->unit) ? (float)$modelRow->unit : 0;
+                            // $modelRow->quantity = is_numeric($modelRow->quantity) ? (float)$modelRow->quantity : 0;
                             $modelRow->unit = is_numeric($modelRow->unit) ? (float)$modelRow->unit : 0;
                             $modelRow->quantity = is_numeric($modelRow->quantity) ? (float)$modelRow->quantity : 0;
-                            $modelRow->setunit = is_numeric($modelRow->setunit) ? (float)$modelRow->setunit : 0;
+                            // $modelRow->setunit = is_numeric($modelRow->setunit) ? (float)$modelRow->setunit : 0;
                         
-                            $modelRow->cost = $modelRow->unit * $modelRow->quantity;
-                            $modelRow->unitprofit = $modelRow->setunit - $modelRow->unit;
+                            // $modelRow->cost = $modelRow->unit * $modelRow->quantity;
+                            // $modelRow->unitprofit = $modelRow->setunit - $modelRow->unit;
                         
                             $modelRow->project = $projectId;
                             $modelRow->files = $filePath;
@@ -328,8 +332,13 @@ foreach ($analysis as $analysis) {
      */
     public function actionUpdate($id)
 {
+
+    $costs=0;
+
     $model = $this->findModel($id);
 
+
+  
     $details = Analysis::find()
     ->where(['project' => $model->project])
     ->all();
@@ -362,16 +371,16 @@ $Aproject= Project::findOne($model->project);
 
 
 
-if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-    $model->cost = $model->unit * $model->quantity;
 
-            $model->unitprofit=$model->setunit - $model->unit;
+if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+  
+
     if (Yii::$app->user->can('admin')) {
     try {
         // Get the email message instance from the mailer component
         $message = Yii::$app->mailer->compose()
-            ->setTo($userE->email)
             ->setFrom('nicholaussomi5@gmail.com')
+            ->setTo($userE->email)
             ->setSubject('Analysis Approval')
             ->setHtmlBody('
             <html>
@@ -504,6 +513,20 @@ if ($this->request->isPost && $model->load($this->request->post()) && $model->sa
 }else{
     Yii::$app->session->setFlash('success', 'Updated successfully.');
 }
+ // Update the costs attribute
+ $model->cost = $model->unit * $model->quantity;
+
+ // Calculate costs
+ $costs = $model->cost;
+
+ // Remove commas from setunit attribute
+ $setunit = str_replace(',', '', $model->setunit);
+
+ // Perform the subtraction operation
+ $model->unitprofit = $setunit - $costs;
+
+ 
+ $model->save();
     return $this->redirect(['view', 'id' => $model->id]);
 }
 
@@ -614,6 +637,7 @@ if ($this->request->isPost && $model->load($this->request->post()) && $model->sa
         'projectId' => $model->project,
         'details' =>$details,
         'projectAmount'=>$projectAmount,
+        // 'costs'=>$costs,
         // 'profit'=> $profit,
         // 'profitPerce'=>$profitPerce,
     ]);

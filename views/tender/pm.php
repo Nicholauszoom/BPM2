@@ -104,11 +104,11 @@ $this->context->layout = 'admin';
             ],
             // 'document',
             [
-                'attribute' => 'isViewed',
+                'attribute' => 'session',
                 'label' => 'alert',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->isViewed ? '' : Html::tag('span', 'New', ['class' => 'badge badge-success']);
+                    return $model->session ? '' : Html::tag('span', 'New', ['class' => 'badge badge-success']);
                 },
             ],
             // 'status',
@@ -153,8 +153,8 @@ $this->context->layout = 'admin';
 function getStatusLabel($status)
 {
     $statusLabels = [
-        1 => '<span class="badge badge-success">Win</span>',
-        2 => '<span class="badge badge-warning">fail</span>',
+        1 => '<span class="badge badge-success">Success</span>',
+        2 => '<span class="badge badge-warning">Unsuccess</span>',
         3 => '<span class="badge badge-secondary">pending</span>',
 
 

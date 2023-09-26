@@ -34,17 +34,44 @@ $department=Department::find()->all();
 
     <?= $form->field($model, 'description')->textarea()?>
 
-    <?= $form->field($model, 'budget')->textInput(['type'=>'number'])?>
 
-    <?php echo $form->field($model, 'assigned_to')->dropDownList(
+    <?php echo $form->field($model, 'assigned_to')->checkboxList(
     ArrayHelper::map($users, 'id', 'username'),
-    ['prompt' => 'Assigned to']
+    [
+        'showDropdown' => true,
+        'prompt' => 'Assigned to',
+    ]
 ); ?>
  <?php echo $form->field($model, 'supervisor')->dropDownList(
     ArrayHelper::map($users, 'id', 'username'),
-    ['prompt' => 'Supervisor']
+    ['prompt' => 'Supervisor',
+    
+    ]
 ); ?>
 
+
+    <?= $form->field($model, 'document')->fileInput()?>
+
+  
+    <?php endif; ?>
+ 
+
+<?php if (Yii::$app->user->can('admin')) : ?>
+    
+    
+    <?= $form->field($model, 'status')->dropDownList(
+            [
+                1 => 'awarded',
+                2 => 'not-awarded',
+                3 => 'submitted',
+                4 => 'not submitted',
+                5 => 'on-progress',
+            ],
+            ['prompt' => 'Select tender Status'] // Disable the field if the expiration date is not greater than the current date
+
+        ); ?>
+<?php endif; ?>
+<?php if (Yii::$app->user->can('admin')) : ?>
 <?= $form->field($model, 'publish_at')->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',
@@ -52,6 +79,7 @@ $department=Department::find()->all();
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
     ],
+    'value' => Yii::$app->formatter->asDate($model->expired_at, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
 
 <?= $form->field($model, 'expired_at')->widget(DatePicker::class, [
@@ -61,22 +89,9 @@ $department=Department::find()->all();
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
     ],
+    'value' => Yii::$app->formatter->asDate($model->expired_at, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
-
-
-    
-    <?= $form->field($model, 'status')->dropDownList(
-    [
-        1 => 'win',
-        2 => 'fail',
-        3 => 'pending',
-    ],
-    ['prompt' => 'Select tender Status']
-); ?>
-
-    <?php endif; ?>
-    <?= $form->field($model, 'document')->fileInput()?>
-    
+<?php endif; ?>
     <?php if (Yii::$app->user->can('author')) : ?>
 
     <?= $form->field($model, 'submission')->fileInput()?>
@@ -85,7 +100,7 @@ $department=Department::find()->all();
     ['prompt' => 'Department document to be submitted']
 ); ?>
 
-    <?php endif;?>
+<?php endif; ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -53,13 +53,15 @@ Modal::end();
     <table class="table">
   <thead>
     <tr style="background-color: #f2f2f2;">
-      
+    <th scope="col">#</th>
       <th scope="col">item</th>
       <th scope="col">quantity</th>
       <th scope="col">Unit</th>
-      <th scope="col">Unit Price(Customer)</th>
-      <th scope="col">Unit Price(Buying.price)</th>
+      <th scope="col">Unit Price(Cotted)</th>
+      <th scope="col">Cotted Amount</th>
       <th scope="col">Amount(TSH)</th>
+      <th scope="col">Unit Price(Buying)</th>
+      <th scope="col">Unit Profit</th>
       <th scope="col">source</th>
       <th scope="col">status</th>
       <th scope="col"></th>
@@ -68,13 +70,15 @@ Modal::end();
   <tbody >
   <?php foreach ($details as $details): ?>
     <tr>
-      
+    <td><?= $details->serio ?></td>
       <td><?= $details->item ?></td>
       <td><?= $details->quantity ?></td>
       <td><?= $details->description ?></td>
       <td><?= $details->setunit?></td>
+      <td><?= $details->cotedAmount?></td>
       <td><?= $details->unit?></td>
       <td><?= $details->cost?></td>
+      <td><?= $details->unitprofit?></td>
       <td><?= $details->source?></td>
       <td><?= getStatusLabel($details->status)?></td>
       <td>

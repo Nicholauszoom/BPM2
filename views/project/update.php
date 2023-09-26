@@ -1,13 +1,20 @@
 <?php
 
+use app\models\Project;
+use app\models\Tender;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\Project $model */
 
-$this->title = 'Update Project: ' . $model->title;
+$project = Project::findOne($id);
+$project_tender = $project ? $project->tender_id : '';
+$project_tender_id=Tender::findOne($project_tender);
+$projectName = $project_tender_id ? $project_tender_id->title : '';
+$this->title = 'View for :' . $projectName . ' Project';
+
 $this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $projectName , 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 $this->context->layout = 'admin';
 
@@ -24,11 +31,13 @@ $this->context->layout = 'admin';
         <div class="row">
 <div class="project-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    
 
     <?= $this->render('_form', [
         'model' => $model,
         'users'=>$users,
+        'id'=>$id,
+        'details'=>$details,
         
      
     ]) ?>

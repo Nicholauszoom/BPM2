@@ -30,7 +30,8 @@
         "miloschuman/yii-highcharts": "^5.0",
         "practically/yii2-chartjs": "^1.1",
         "2amigos/yii2-chartjs-widget": "^3.0",
-        "sizeg/yii2-jqplot": "^1.0"
+        "sizeg/yii2-jqplot": "^1.0",
+        "bower-asset/select2": "^4.0.13"
         
         
         

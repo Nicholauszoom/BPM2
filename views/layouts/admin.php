@@ -63,6 +63,7 @@ $sidebarItems = [
       echo Html::cssFile('@web/vendors/jqvmap/dist/jqvmap.min.css');
       echo Html::cssFile('@web/vendors/bootstrap-daterangepicker/daterangepicker.css');
       echo Html::cssFile('@web/build/css/custom.min.css');
+      // echo Html::cssFile('@web/vendor/select2/dist/css/select2.min.css');
       // echo Html::cssFile('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.3/font/bootstrap-icons.css');
       echo Html::cssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
 
@@ -96,7 +97,11 @@ $sidebarItems = [
   $this->registerJsFile('@web/vendors/jqvmap/dist/maps/jquery.vmap.world.js', ['depends' => 'yii\web\YiiAsset']);
   $this->registerJsFile('@web/vendors/bootstrap-daterangepicker/daterangepicker.js', ['depends' => 'yii\web\YiiAsset']);
   $this->registerJsFile('@web/build/js/custom.min.js', ['depends' => 'yii\web\YiiAsset']);
+  $this->registerJsFile('https://code.jquery.com/jquery-3.6.0.min.js');
+  $this->registerJsFile('@web/js/dashjs.js', ['depends' => 'yii\web\YiiAsset']);
+  // $this->registerJsFile('@web/select2/dist/js/select2.min.js', ['depends' => 'yii\web\YiiAsset']);
 
+ 
 
     ?>
 
@@ -119,7 +124,7 @@ $sidebarItems = [
             <div class="clearfix"></div>
         
 
-            <!-- menu profile quick info -->
+            <!-- menu proconditionfile quick info -->
 
             <!--
             <div class="profile clearfix">
@@ -148,14 +153,19 @@ $sidebarItems = [
                   </li>
                  
                     <?php 
-                
+                $userId = Yii::$app->user->id;
                   // Retrieve the projects assigned to the user
-                  $newTender = Tender::find()
-                      ->where(['isViewed'=>0])
-                      ->count();
+                  // $newTender = Tender::find()
+                  //     ->where(['session'=>0])
+                  //     ->count();
+
+                  $newTender=Tender::find()
+                     ->where(['assigned_to' => $userId])
+                     ->andWhere(['session'=>0])
+                     ->count();
                   ?>
 
-                  <li><a><i class="fa fa-recycle"></i>Tender<span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-recycle"></i>Tender<span class="badge bg-blue"><?=$newTender?></span><span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                     <?php if (Yii::$app->user->can('admin')) : ?>
                       <li><a href="/tender">index</a></li>
@@ -209,8 +219,10 @@ $sidebarItems = [
                       <li><a href="/user">index</a></li>
                       <li><a href="/role">role</a></li>
                       <li><a href="/permission">permission</a></li>
-                      <?php endif; ?>
+                      <li><a href="/office">office</a></li>
                       <li><a href="/department">department</a></li>
+                      <?php endif; ?>
+                     
                     </ul>
                   </li>
                  
@@ -298,9 +310,12 @@ $sidebarItems = [
             ->andWhere(['isViewed' => 0])
             ->count();
         ?>
+       
         <i class="fa fa-envelope-o"></i>
-        <span class="badge bg-green"><?= $newProjects ?></span>
+        <span class="badge bg-blue"><?= $newProjects ?></span>
+        
     </a>
+
     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown1">
         <!-- Dropdown menu items go here -->
     </ul>

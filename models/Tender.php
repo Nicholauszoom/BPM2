@@ -23,13 +23,17 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $supervisor
  * @property int $status
  * @property int $budget
+ * 
  * @property int $isViewed
+ * @property int $session
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $created_by
  */
 class Tender extends \yii\db\ActiveRecord
 {
+
+    public $assigned_to = [];
     /**
      * {@inheritdoc}
      */
@@ -57,13 +61,14 @@ class Tender extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'description', 'status'], 'required'],
-            [['status', 'updated_at', 'created_by','budget','isViewed','assigned_to','supervisor','submit_to'], 'integer'],
+            [['status', 'updated_at', 'created_by','budget','session','supervisor','submit_to'], 'integer'],
             [['title', 'description','PE','TenderNo'], 'string', 'max' => 255],
-            [['isViewed'], 'default', 'value' => 0],
-            [['document','isViewed','submission'], 'safe'],
+            [['session','budget'], 'default', 'value' => 0],
+            [['document','session','submission','assigned_to'], 'safe'],
+            ['publish_at', 'compare', 'compareValue' => date('Y-m-d'), 'operator' => '<='],
             ['expired_at', 'date', 'format' => 'php:Y-m-d'],
             ['publish_at', 'date', 'format' => 'php:Y-m-d'],
-            
+            [['assigned_to'], 'each', 'rule' => ['integer']],
 
         ];
     }
@@ -82,7 +87,7 @@ class Tender extends \yii\db\ActiveRecord
             'budget'=>'bid price ',
             'PE'=>'Proqurement Entity',
             'TenderNo'=>'Tender Number',
-            'isViewed'=>'isViewed',
+            'session'=>'session',
             'publish_at'=>'Published Date',
             'document'=>'tender Attachment',
             'submission'=>'Tender Submition Document',
@@ -103,7 +108,7 @@ public static function findByTitle($title)
 
 public function getUser()
 {
-    return $this->hasOne(User::class, ['id' => 'assigned_to']);
+    return $this->hasMany(User::class, ['id' => 'assigned_to']);
 }
 
 public function getDepartment()
