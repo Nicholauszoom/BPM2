@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Department;
+use app\models\Office;
 use app\models\User;
 use app\models\UserAssignment;
 use yii\helpers\Html;
@@ -179,6 +180,7 @@ $this->context->layout = 'admin';
       <th scope='col'>Bid Meet Date</th>
       <th scope="col">End Clarification Date</th>
       <th scope='col'>Site visit date</th>
+      <th scope='col'>Office</th>
       <td scope="col"></td>
       
     </tr>
@@ -197,7 +199,12 @@ $this->context->layout = 'admin';
       <td><?= Yii::$app->formatter->asDatetime($tdetail->end_clarificatiion) ?></td>
 
       <td><?= Yii::$app->formatter->asDatetime($tdetail->site_visit_date) ?></td>
-      
+      <?php 
+      $office=Office::findOne($tdetail->office);
+       $office_loca=$office->location;
+      ?>
+      <td><?= $office_loca?></td>
+
       <td>
                
                 <?= Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['tdetail/update', 'id'=> $tdetail->id], [

@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Department;
+use app\models\Office;
 use app\models\Tdetails;
 use app\models\Tender;
 use app\models\TenderSearch;
@@ -397,144 +398,113 @@ $message->setCc($assignedUser->email);
                 if ($model->save()) {
                      // Send an email to a specific department by email
                      if (Yii::$app->user->can('author')) {
-                     try {
-                        $departmentId=Department::findOne($model->submit_to);
-                        $departmentEmail=$departmentId->email;
-                
-                        $user= User::findOne($model->assigned_to);
 
-                        $supervisor=User::findOne($model->supervisor);
-                        $supervEmail=$supervisor->email;
-                        
-                           $message = Yii::$app->mailer->compose()
-                            ->setFrom('nicholaussomi5@gmail.com')
-                            ->setTo($supervEmail)
-                            ->setCc('nicholauszoom95@gmail.com')
-                            ->setSubject('Tender Document Submition')
-                            ->setHtmlBody('
-                            <html>
-                            <head>
-                                <style>
-                                    /* CSS styles for the email body */
-                                    body {
-                                        font-family: Arial, sans-serif;
-                                        background-color: #f4f4f4;
-                                    }
-                                    .container {
-                                        max-width: 600px;
-                                        margin: 0 auto;
-                                        padding: 20px;
-                                        background-color: #ffffff;
-                                        border: 1px solid #dddddd;
-                                        border-radius: 4px;
-                                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-                                    }
-                                    h1 {
-                                        color: blue;
-                                        text-align: center;
-                                    }
-                                    p {
-                                        color: #666666;
-                                    }
-                                    .logo {
-                                        text-align: center;
-                                        margin-bottom: 20px;
-                                    }
-                                    .logo img {
-                                        max-width: 200px;
-                                    }
-                                    .assigned-by {
-                                        font-weight: bold;
-                                    }
-                                    .button {
-                                        display: inline-block;
-                                        padding: 10px 20px;
-                                        background-color: #3366cc;
-                                        color: white;
-                                        text-decoration: none;
-                                        border-radius: 4px;
-                                        margin-top: 20px;
-                                    }
-                                    .button:hover {
-                                        background-color: #235daa;
-                                    }
-                                    .status-label {
-                                        display: inline-block;
-                                        padding: 5px 10px;
-                                        color: #ffffff;
-                                        border-radius: 4px;
-                                    }
-                                    .status-pending {
-                                        background-color: #ffc107;
-                                    }
-                                    .status-approved {
-                                        background-color: #28a745;
-                                    }
-                                    .status-rejected {
-                                        background-color: #dc3545;
-                                    }
-                                </style>
-                        
-                                <script>
-                                    function getStatusLabel(status) {
-                                        switch (status) {
-                                            case 0:
-                                                return {
-                                                    name: "Pending",
-                                                    labelClass: "status-pending"
-                                                };
-                                            case 1:
-                                                return {
-                                                    name: "Approved",
-                                                    labelClass: "status-approved"
-                                                };
-                                            case 2:
-                                                return {
-                                                    name: "Rejected",
-                                                    labelClass: "status-rejected"
-                                                };
-                                            default:
-                                                return {
-                                                    name: "",
-                                                    labelClass: ""
-                                                };
-                                        }
-                                    }
-                                </script>
-                            </head>
-                            <body>
-                                <div class="container">
-                                    <div class="logo">
-                                        <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
-                                    </div>
-                                    <h1>TERATECH</h1>
-                                    <p>Dear ' . Html::encode($supervisor->username) . ',</p>
-                                    <p>tender is been submitted as a supervisor, as below:</p>
-                                    <ul>
-                                        <li>Tender Name: ' . Html::encode($model->title) . '</li>
-                                        <li>Tender submitted By: ' . Html::encode($user->username) . '</li>
-                                        <li>Submitted At: '. Html::encode($model->created_at) .'</li>
-                                    </ul>
-                                </div>
-                            </body>
-                            </html>
-                        ');
-                
-                        // Send the email
-                        if ($message instanceof MessageInterface && $message->send()) {
-                            // Display a success message
-                            Yii::$app->session->setFlash('success', 'Email sent successfully.');
-                        } else {
-                            // Handle email sending failure
-                            Yii::$app->session->setFlash('error', 'Failed to send the email.');
+                        $tender=Tender::findOne($id);
+                        $tender_supervisor=User::findOne($tender->supervisor);
+
+                        $userId = Yii::$app->user->id;
+                        $assigned_one=User::findOne($userId);
+                 
+                        $tdetails_office=Tdetails::find()
+                        ->where(['tender_id'=>$id])
+                        ->one();
+
+                        $office =Office::findOne($tdetails_office->office);
+
+                        if ($tender_supervisor && !empty($tender_supervisor->email)) {
+                            /** @var MailerInterface $mailer */
+                            $mailer = Yii::$app->mailer;
+                            $message = $mailer->compose()
+                                ->setFrom('nicholaussomi5@gmail.com')
+                                ->setTo($tender_supervisor->email)
+                                // ->setCc($tender_assigned->email) // Add CC recipient(s) here
+                                ->setSubject('Some one submitt the tender documents as detailed below: ')
+                                ->setHtmlBody('
+                                    <html>
+                                    <head>
+                                        <style>
+                                            /* CSS styles for the email body */
+                                            body {
+                                                font-family: Arial, sans-serif;
+                                                background-color: #f4f4f4;
+                                            }
+    
+                                            .container {
+                                                max-width: 600px;
+                                                margin: 0 auto;
+                                                padding: 20px;
+                                                background-color: #ffffff;
+                                                border: 1px solid #dddddd;
+                                                border-radius: 4px;
+                                                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                                            }
+    
+                                            h1 {
+                                                color: blue;
+                                                text-align: center;
+                                            }
+    
+                                            p {
+                                                color: #666666;
+                                            }
+    
+                                            .logo {
+                                                text-align: center;
+                                                margin-bottom: 20px;
+                                            }
+    
+                                            .logo img {
+                                                max-width: 200px;
+                                            }
+    
+                                            .assigned-by {
+                                                font-weight: bold;
+                                            }
+    
+                                            .button {
+                                                display: inline-block;
+                                                padding: 10px 20px;
+                                                background-color: #3366cc;
+                                                color: white;
+                                                text-decoration: none;
+                                                border-radius: 4px;
+                                                margin-top: 20px;
+                                            }
+    
+                                            .button:hover {
+                                                background-color: #235daa;
+                                            }
+                                        </style>
+                                    </head>
+                                    <body>
+                                        <div class="container">
+                                            <div class="logo">
+                                                <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
+                                            </div>
+                                            <h1>TERATECH ANNOUCEMENT</h1>
+                                            <p>Dear ' . Html::encode($tender_supervisor->username) . ',</p>
+                                            <p>Your project has been assigned to you. Please find the details below:</p>
+                                            <ul>
+                                                <li>Tender Title: ' . Html::encode($tender->title) . '</li>                                                
+                                                <li>Submitted By: ' . Html::encode($assigned_one->username) . '</li>
+                                                <li>Office: ' . Html::encode($office->location) . '</li>
+                                            </ul>
+                                            <p>If you have any questions or need further assistance, feel free to contact us.</p>
+                                            <a href="' . Yii::$app->request->getHostInfo() . '/upload/' . $tender->submission . '">View Submitted Document</a>                                </html>
+                                ');
+                                
+    
+                        // Attach the document file to the email
+        // foreach ($attachments as $attachment) {
+        //     $message->attach($attachment);
+        // }
+    
+                            // $message->send();
+                            $mailer->send($message);
                         }
-                    } catch (InvalidConfigException $e) {
-                        // Handle any configuration errors
-                        Yii::$app->session->setFlash('error', 'Email configuration error occurred.');
-                    } catch (\Throwable $e) {
-                        // Handle any other exceptions
-                        Yii::$app->session->setFlash('error', 'Error occurred while sending the email.');
-                    }
+
+
+
                     $model->expired_at=$model->expired_at;
                     $model->publish_at=$model->publish_at;
                     $model->save();
