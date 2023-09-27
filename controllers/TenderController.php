@@ -65,23 +65,30 @@ class TenderController extends Controller
     }
 }
 public function actionAssigned()
-    {
-        if (Yii::$app->user->can('author')) {
-      
-        $userId= Yii::$app->user->id;
-        $tender=Tender::find()
-        ->where(['assigned_to'=>$userId])
-        ->all();
+{
+    
+        $userId = Yii::$app->user->id;
 
+        // Find user assignments
+        $user_assignments = UserAssignment::find()
+            ->where(['user_id' => $userId])
+            ->all();
+
+        $assignedTenderIds = [];
+        foreach ($user_assignments as $user_assignment) {
+            $assignedTenderIds[] = $user_assignment->tender_id;
+        }
+
+        // Find assigned tenders
+        $tender = Tender::find()
+            ->where(['id' => $assignedTenderIds])
+            ->all();
 
         return $this->render('pm', [
-            
-            'tender'=>$tender,
+            'tenders' => $tender,
         ]);
-    }else {
-        throw new ForbiddenHttpException;
     }
-}
+
 
 
 
@@ -134,14 +141,15 @@ public function actionAssigned()
                   $model->document = UploadedFile::getInstance($model, 'document');
    
                 
-                      if ($model->document){
-                          $filePath = Yii::getAlias('@webroot/upload/') . $model->document;
-      
-                          if ($model->document->saveAs($filePath)) {
-                              $model->document = $filePath;
-                         
-                          
-                          }
+                  if ($model->document) {
+                    $uploadPath = Yii::getAlias('@webroot/upload/');
+                    $fileName = $model->document->baseName . '.' . $model->document->extension;
+                    $filePath = $uploadPath . $fileName;
+                
+                    if ($model->document->saveAs($filePath)) {
+                        $model->document = '' . $fileName;
+                    }
+                
                            // Process the CSV file
                       
                     
@@ -159,8 +167,8 @@ public function actionAssigned()
                            
                            
                               $message = Yii::$app->mailer->compose()
-                               ->setFrom('nicholaussomi5@gmail.com')
-                               ->setTo($supervisedBy->email)
+                               ->setFrom('')
+                               ->setTo('')
                             //    ->setCc($ccEmails) // Add CC recipient(s) here
                                ->setSubject('Tender Registration')
                                ->setHtmlBody('
@@ -260,14 +268,14 @@ public function actionAssigned()
                                            <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
                                        </div>
                                        <h1>TERATECH</h1>
-                                       <p>Dear ' . Html::encode($assigneTo->username) . ',</p>
+                                       <p>Dear ,</p>
                                        <p>You have been tassigned new tender, as below:</p>
                                        <ul>
-                                          <li>Tender Name: ' . Html::encode($model->title) . '</li>
-                                          <li>Registered By: ' . Html::encode($createdBy->username) . '</li>
-                                          <li> Supervised By: ' . Html::encode($supervisedBy->username) . '</li>
-                                          <li> Supervised By: ' . Html::encode($model->description) . '</li>
-                                          <li>Submit Date: ' . Html::encode($model->expired_at) . '</li>
+                                          <li>Tender Name: </li>
+                                          <li>Registered By:</li>
+                                          <li> Supervised By: </li>
+                                          <li> Message: </li>
+                                          <li>Submit Date:</li>
 
                                            
                                        </ul>
@@ -292,17 +300,17 @@ $message->setCc($assignedUser->email);
                            // Send the email
                            if ($message instanceof MessageInterface && $message->send()) {
                                // Display a success message
-                               Yii::$app->session->setFlash('success', 'Email sent successfully.');
+                               
                            } else {
                                // Handle email sending failure
-                               Yii::$app->session->setFlash('error', 'Failed to send the email.');
+                               Yii::$app->session->setFlash('');
                            }
                        } catch (InvalidConfigException $e) {
                            // Handle any configuration errors
-                           Yii::$app->session->setFlash('error', 'Email configuration error occurred.');
+                         
                        } catch (\Throwable $e) {
                            // Handle any other exceptions
-                           Yii::$app->session->setFlash('error', 'Error occurred while sending the email.');
+
                        }
                        $model->expired_at=$model->expired_at;
                        $model->publish_at=$model->publish_at;
@@ -371,20 +379,20 @@ $message->setCc($assignedUser->email);
 
            
                 // Handle document file upload
-        $documentFile = UploadedFile::getInstance($model, 'document');
-        if ($documentFile !== null) {
-            $documentPath = '/' . $documentFile->name;
-            $documentFile->saveAs($documentPath);
-            $model->document = $documentPath;
-        }
-
-        // Handle submission file upload
-        $submissionFile = UploadedFile::getInstance($model, 'submission');
-        if ($submissionFile !== null) {
-            $submissionPath = '/' . $submissionFile->name;
-            $submissionFile->saveAs($submissionPath);
-            $model->submission = $submissionPath;
-        }
+                $documentFile = UploadedFile::getInstance($model, 'document');
+                if ($documentFile !== null) {
+                    $documentPath = '' . $documentFile->name; // Adjusted file path
+                    $documentFile->saveAs($documentPath);
+                    $model->document = $documentPath;
+                }
+                
+                // Handle submission file upload
+                $submissionFile = UploadedFile::getInstance($model, 'submission');
+                if ($submissionFile !== null) {
+                    $submissionPath = '' . $submissionFile->name; // Adjusted file path
+                    $submissionFile->saveAs($submissionPath);
+                    $model->submission = $submissionPath;
+                }
 
                 if ($model->save()) {
                      // Send an email to a specific department by email
@@ -507,7 +515,6 @@ $message->setCc($assignedUser->email);
                                         <li>Tender submitted By: ' . Html::encode($user->username) . '</li>
                                         <li>Submitted At: '. Html::encode($model->created_at) .'</li>
                                     </ul>
-                                   
                                 </div>
                             </body>
                             </html>
@@ -550,16 +557,29 @@ $message->setCc($assignedUser->email);
 
     public function actionPm(){
 
-        $userId= Yii::$app->user->id;
-               $tender=Tender::find()
-               ->where(['assigned_to'=>$userId])
-               ->all();
-               
+        
+            $userId = Yii::$app->user->id;
+    
+            // Find user assignments
+            $user_assignments = UserAssignment::find()
+                ->where(['user_id' => $userId])
+                ->all();
+    
+            $assignedTenderIds = [];
+            foreach ($user_assignments as $user_assignment) {
+                $assignedTenderIds[] = $user_assignment->tender_id;
+            }
+    
+            // Find assigned tenders
+            $tender = Tender::find()
+                ->where(['id' => $assignedTenderIds])
+                ->all();
+    
            return $this->render('pm', [
                'tender'=>$tender,
            ]);
        }
-
+    
     /**
      * Deletes an existing Tender model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

@@ -120,17 +120,30 @@ $this->context->layout = 'admin';
                 'attribute' => 'document',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $filePath = Yii::getAlias('@webroot/' . $model->document);
-                    return $model->document ? Html::a('<i class="fa fa-download"></i> Download tender Attachments', $filePath, ['class' => 'btn btn-primary']) : '';
+                    $fileName = $model->document;
+                    $filePath = Yii::getAlias('@webroot/upload/' . $fileName);
+                    $downloadPath = Yii::getAlias('@web/upload/' . $fileName);
+                    return $model->document ? Html::a('<i class="fa fa-download"></i> Download tender Attachments', $downloadPath, ['class' => 'btn btn-primary', 'target' => '_blank']) : '';
                 },
             ],
+
             [
                 'attribute' => 'submission',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->submission ? Html::a('<i class="fa fa-download"></i> complete tender submitted document', Url::to($model->submission), ['class' => 'btn btn-warning']) : '';
+                    $fileName = $model->submission;
+                    $filePath = Yii::getAlias('@webroot/upload/' . $fileName);
+                    $downloadPath = Yii::getAlias('@web/upload/' . $fileName);
+                    return $model->submission ? Html::a('<i class="fa fa-download"></i> complete tender submitted document', $downloadPath, ['class' => 'btn btn-warning', 'target' => '_blank']) : '';
                 },
             ],
+            // [
+            //     'attribute' => 'submission',
+            //     'format' => 'raw',
+            //     'value' => function ($model) {
+            //         return $model->submission ? Html::a('<i class="fa fa-download"></i> complete tender submitted document', Url::to($model->submission), ['class' => 'btn btn-warning']) : '';
+            //     },
+            // ],
             [
                 'attribute'=>'submit_to',
                 'format'=>'raw',
@@ -154,14 +167,16 @@ $this->context->layout = 'admin';
 <center>
 <h1 class="text-muted center mt-10" style=" color: blue;">More Details</h1>
 </center>
-<div class="text-muted">
-<h3 class="text-muted center mt-10">Tender More Detail's</h3>
+
 
 <table class="table">
   <thead>
     <tr style="background-color: #f2f2f2;">
       <th scope="col">#</th>
-      
+      <th scope="col">Tender Security</th>
+      <th scope="col">Bid Security Amount(tsh)</th>
+      <th scope="col">Bid Security Percent(%)</th>
+      <th scope='col'>Bid Meet Date</th>
       <th scope="col">End Clarification Date</th>
       <th scope='col'>Site visit date</th>
       <td scope="col"></td>
@@ -172,16 +187,26 @@ $this->context->layout = 'admin';
   <?php foreach ($tdetail as $tdetail): ?>
     <tr>
       <th scope="row">1</th>
+      <td><?=getSecurityLabel($tdetail->tender_security)?></td>
 
-     
+      <td><?=$tdetail->amount?></td>
+      <td><?=$tdetail->percentage?></td>
+
+     <td><?= Yii::$app->formatter->asDatetime($tdetail->bidmeet)?></td>
+
       <td><?= Yii::$app->formatter->asDatetime($tdetail->end_clarificatiion) ?></td>
 
       <td><?= Yii::$app->formatter->asDatetime($tdetail->site_visit_date) ?></td>
       
       <td>
                
-                <?= Html::a('<span class="glyphicon glyphicon-share-alt"></span>', ['task/create', 'projectId' => $model->id], [
-                    'title' => 'view',
+                <?= Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['tdetail/update', 'id'=> $tdetail->id], [
+                    'title' => 'edit',
+                    'data-method' => 'post',
+                    'data-pjax' => '0',
+                ]) ?>
+                <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['tdetail/delete', 'id'=> $tdetail->id], [
+                    'title' => 'edit',
                     'data-method' => 'post',
                     'data-pjax' => '0',
                 ]) ?>
@@ -214,6 +239,17 @@ $this->context->layout = 'admin';
     $statusLabels = [
       1 => '<span class="">YES</span>',
       2 => '<span class="">NO</span>',
+     
+    ];
+
+    return isset($statusLabels[$status]) ? $statusLabels[$status] : '';
+}
+
+function getSecurityLabel($status)
+{
+    $statusLabels = [
+      1 => '<span class="">Security Declaration</span>',
+      2 => '<span class="">Bid/Tender Security</span>',
      
     ];
 

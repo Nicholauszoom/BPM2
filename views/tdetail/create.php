@@ -27,6 +27,7 @@ $this->context->layout = 'admin';
     <?= $this->render('_form', [
         'model' => $model,
         'tenderId'=>$tenderId,
+        'office'=>$office,
     ]) ?>
 
 </div>

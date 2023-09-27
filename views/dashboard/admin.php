@@ -5,6 +5,7 @@ use app\models\Department;
 use yii\helpers\Url;
 use app\models\Project;
 use app\models\Tender;
+use app\models\UserAssignment;
 use yii\helpers\Json;
 use yii\web\View;
 
@@ -166,10 +167,22 @@ $budgetDataJson = Json::encode($budgetData);
   <div class="col-md-2 col-sm-4 tile_stats_count">
     <?php
         $userId = Yii::$app->user->getId();
-        $tender = Tender::find()
-            ->where(['assigned_to' => $userId])
-            ->count();
+
+        $user_assignments = UserAssignment::find()
+        ->where(['user_id' => $userId])
+        ->all();
+
+    $assignedTenderIds = [];
+    foreach ($user_assignments as $user_assignment) {
+        $assignedTenderIds[] = $user_assignment->tender_id;
+    }
+
+        $tender=Tender::find()
+           ->where(['id' => $assignedTenderIds])
+           ->andWhere(['session'=>0])
+           ->count();
         ?>
+        
       <span class="count_top"><i class="fa fa-folder"></i> Assigned Tender</span>
       <div class="count"><?= $tender ?></div>
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>

@@ -157,3 +157,36 @@ $(document).ready(function() {
         return checkbox + ' ' + username;
     }
 });
+
+$('#tender-security-dropdown').on('change', function() {
+    var selectedValue = $(this).val();
+    
+    // Show or hide the additional form based on the selected value
+    if (selectedValue == 2) {
+        $('#add-form').show();
+    } else {
+        $('#add-form').hide();
+    }
+});
+
+// Check the initial value of the site_visit dropdown on page load
+$(document).ready(function() {
+    var selectedValue = $('#tender-security-dropdown').val();
+    
+    // Show or hide the additional form based on the selected value
+    if (selectedValue == 2) {
+        $('#add-form').show();
+    } else {
+        $('#add-form').hide();
+    }
+});
+
+$(document).ready(function() {
+    // Add icons to drop-down options
+    $('#site-visit-dropdown option[value="1"]').prepend('<span class="fa fa-check-circle" style="color: blue;"></span> ');
+    $('#site-visit-dropdown option[value="2"]').prepend('<span class="fa fa-times-circle" style="color: red;"></span> ');
+    $('#site-visit-dropdown option[value=""]').prepend('<span class="fa fa-question-circle" style="color: gray;"></span> ');
+
+    // Refresh the drop-down to apply the changes
+    $('#site-visit-dropdown').selectpicker('refresh');
+});

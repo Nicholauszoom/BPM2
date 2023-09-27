@@ -8,6 +8,7 @@ use app\assets\CustomAsset;
 use app\assets\RealAsset;
 use app\models\Project;
 use app\models\Tender;
+use app\models\UserAssignment;
 use app\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -67,7 +68,7 @@ $sidebarItems = [
       // echo Html::cssFile('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.3/font/bootstrap-icons.css');
       echo Html::cssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
 
-      // $this->registerCssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
+      $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
       // $this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
 
 
@@ -158,9 +159,17 @@ $sidebarItems = [
                   // $newTender = Tender::find()
                   //     ->where(['session'=>0])
                   //     ->count();
+                  $user_assignments = UserAssignment::find()
+                  ->where(['user_id' => $userId])
+                  ->all();
+      
+              $assignedTenderIds = [];
+              foreach ($user_assignments as $user_assignment) {
+                  $assignedTenderIds[] = $user_assignment->tender_id;
+              }
 
                   $newTender=Tender::find()
-                     ->where(['assigned_to' => $userId])
+                     ->where(['id' => $assignedTenderIds])
                      ->andWhere(['session'=>0])
                      ->count();
                   ?>
@@ -312,7 +321,7 @@ $sidebarItems = [
         ?>
        
         <i class="fa fa-envelope-o"></i>
-        <span class="badge bg-blue"><?= $newProjects ?></span>
+        <span class="badge bg-red"><?= $newProjects ?></span>
         
     </a>
 

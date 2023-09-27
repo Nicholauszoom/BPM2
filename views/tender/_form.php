@@ -26,15 +26,21 @@ $department=Department::find()->all();
 
     <?php $form = ActiveForm::begin(); ?>
     <?php if (Yii::$app->user->can('admin')) : ?>
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+        <div class="form-row">
+    <div class="col">
+        <?= $form->field($model, 'title', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-pencil'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder'=>''])->label('Title') ?>
+    </div>
+    <div class="col">
+    <?= $form->field($model, 'PE', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-home'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder' => ''])->label('Procurement Entity') ?>
+</div>
+    <div class="col">
+        <?= $form->field($model, 'TenderNo', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-terminal'></i></span></div>\n{error}"])->textInput(['maxlength' => true,'placeholder'=>''])->label('Tender Number') ?>
+    </div>
+</div>
 
-    <?= $form->field($model, 'PE')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'TenderNo')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'description')->textarea()?>
-
-
+    <div class="form-row">
+    <div class="col">
     <?php echo $form->field($model, 'assigned_to')->checkboxList(
     ArrayHelper::map($users, 'id', 'username'),
     [
@@ -42,24 +48,30 @@ $department=Department::find()->all();
         'prompt' => 'Assigned to',
     ]
 ); ?>
- <?php echo $form->field($model, 'supervisor')->dropDownList(
+  </div>
+    <div class="col mt-3">
+<?= $form->field($model, 'document')->fileInput()?>
+    </div>
+</div>
+    
+<div class="form-row">
+    <div class="col">
+ <?php echo $form->field($model, 'supervisor', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-user'></i></span></div>\n{error}"])->dropDownList(
     ArrayHelper::map($users, 'id', 'username'),
     ['prompt' => 'Supervisor',
     
     ]
 ); ?>
-
-
-    <?= $form->field($model, 'document')->fileInput()?>
-
-  
+    </div>
+    <div class="col">
+    
     <?php endif; ?>
  
 
 <?php if (Yii::$app->user->can('admin')) : ?>
     
     
-    <?= $form->field($model, 'status')->dropDownList(
+    <?= $form->field($model, 'status', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-info'></i></span></div>\n{error}"])->dropDownList(
             [
                 1 => 'awarded',
                 2 => 'not-awarded',
@@ -71,7 +83,12 @@ $department=Department::find()->all();
 
         ); ?>
 <?php endif; ?>
+</div>
+</div>
+
 <?php if (Yii::$app->user->can('admin')) : ?>
+<?= $form->field($model, 'description')->textarea(['placeholder'=>'add description..'])?>
+
 <?= $form->field($model, 'publish_at')->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',

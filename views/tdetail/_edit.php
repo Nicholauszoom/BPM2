@@ -32,7 +32,7 @@ use yii\jui\DatePicker;
     'dateFormat' => 'MM/dd/yyyy',
     'options' => [
         'class' => 'form-control',
-        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+         // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
     ],
     'value' => Yii::$app->formatter->asDate($model->site_visit_date, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
@@ -44,19 +44,19 @@ use yii\jui\DatePicker;
     'dateFormat' => 'MM/dd/yyyy',
     'options' => [
         'class' => 'form-control',
-        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+         // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
     ],
     'value' => Yii::$app->formatter->asDate($model->end_clarificatiion, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
 
-    <?= $form->field($model, 'tender_id')->hiddenInput(['value' => $tenderId])->label(false) ?>
 
     <?= $form->field($model, 'bidmeet', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-calender'></i></span></div>\n{error}"])->widget(DatePicker::class, [
     'language' => 'ru',
     'dateFormat' => 'MM/dd/yyyy',
     'options' => [
         'class' => 'form-control',
-        'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+         // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        'readonly' => true,
     ],
     'value' => Yii::$app->formatter->asDate($model->bidmeet, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
