@@ -7,6 +7,7 @@ use app\models\AuthAssignment;
 use app\models\Notification as ModelsNotification;
 use app\models\Project;
 use app\models\ProjectSearch;
+use app\models\Request;
 use app\models\Role;
 use app\models\RoleUser;
 use app\models\Task;
@@ -175,6 +176,16 @@ class ProjectController extends Controller
              
               $id = $projectId;
              
+
+
+           
+              $analyses = Analysis::find()
+              ->where(['project' => $id])
+              ->all();
+          
+          $request_on = Request::find()
+              ->where(['project_id' => $id])
+              ->all();
      
         }
 
@@ -188,6 +199,8 @@ class ProjectController extends Controller
             'profitPerce'=> $profitPerce,
             'projectId' =>$projectId,
             'id'=>$id,
+            'request_on'=>$request_on,
+            
             
 
         ]);
@@ -207,20 +220,26 @@ class ProjectController extends Controller
     
 
 
-     public function actionCreate()
+     public function actionCreate($tenderId)
 {
     if (Yii::$app->user->can('admin')) {
         $model = new Project();
         $users = User::find()->all();
         
-        $details= Tender::find()
-        ->where(['status'=>1])
-        ->all();
+
+        $model->tender_id=$tenderId;
+         $details= Tender::findOne($tenderId);
+        
+        // $details= Tender::find()
+        // ->where(['status'=>1])
+        // ->all();
          $model->tender_id=$details;
 
+
+           
          $tender = Tender::findOne($model->tender_id);
 
-        
+         
 
         if ($model->load(Yii::$app->request->post())) {
             // select to upload document
@@ -245,6 +264,8 @@ class ProjectController extends Controller
                          // Process the CSV file
                     
                     }
+
+
                     
                     
                 if ($model->save()) {
@@ -358,6 +379,7 @@ class ProjectController extends Controller
             'model'=> $model,
             'users' => $users,
             'details'=>$details,
+            'tenderId'=>$tenderId,
            
         ]);
     } else {

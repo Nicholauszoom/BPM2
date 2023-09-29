@@ -375,17 +375,12 @@ $message->setCc($assignedUser->email);
         
         if ($this->request->isPost) {
             $model->load($this->request->post());
-            $model->document = UploadedFile::getInstance($model, 'document');
+            // $model->document = UploadedFile::getInstance($model, 'document');
             $model->submission = UploadedFile::getInstance($model, 'submission');
 
            
                 // Handle document file upload
-                $documentFile = UploadedFile::getInstance($model, 'document');
-                if ($documentFile !== null) {
-                    $documentPath = '' . $documentFile->name; // Adjusted file path
-                    $documentFile->saveAs($documentPath);
-                    $model->document = $documentPath;
-                }
+                // $model->document = UploadedFile::getInstance($model, 'document');
                 
                 // Handle submission file upload
                 $submissionFile = UploadedFile::getInstance($model, 'submission');

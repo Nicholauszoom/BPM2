@@ -17,6 +17,8 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $department
  * @property string $description
  * @property int|null $amount
+ * @property int|null $analysis_id
+ * @property int|null $project_id
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -50,8 +52,9 @@ class Request extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['payment', 'item', 'ref', 'amount', 'created_at', 'updated_at', 'created_by','task_id','department','status'], 'integer'],
-            [['description'], 'string'],
+            [['item'], 'required'],
+            [['payment', 'ref', 'amount', 'created_at', 'project_id','updated_at', 'created_by','analysis_id','department','status'], 'integer'],
+            [['description','item'], 'string'],
             [['description'], 'default', 'value' => 'comments'],
             [['status'], 'default', 'value' => 0],
         ];
@@ -67,10 +70,11 @@ class Request extends \yii\db\ActiveRecord
             'payment' => 'Payment mode',
             'item' => 'Item',
             'ref' => 'Quantity',
-            'task_id'=> 'Task Id',
+            'analysis_id'=> 'analysis Id',
             'department'=>'Department',
             'amount' => 'Amount',
             'status'=> 'Approval',
+            'project_id'=>'Project Id',
             'description'=> 'Comment',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

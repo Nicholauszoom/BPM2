@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Analysis;
 use app\models\Project;
 use app\models\Tender;
 use app\models\User;
@@ -195,24 +196,7 @@ $this->title = 'View for :' . $projectName . ' Project';
       <td><?= $analysis->cost ?></td>
       <td><?= $analysis->unitprofit ?></td>
       <td><?= $analysis->source?></td>
-      <!--
-      <td>
-    <?php
-    $filePaths = explode(',', $analysis->files);
-    foreach ($filePaths as $filePath) {
-        $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
-        if ($fileExtension === 'pdf') {
-            echo '<iframe src="' . Yii::getAlias('@web') . '/' . $filePath . '" width="100%" height="600px"></iframe>';
-        } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif','pptx','pdf','docx','odt','xlsx'])) {
-            echo '<img src="' . Yii::getAlias('@web') . '/' . $filePath . '">';
-        } else {
-            echo '...';
-        }
-        echo '<br>';
-    }
-    ?>
-</td>
--->
+  
 <td>
       <?php
                 $createdByUser = User::findOne($analysis->created_by);
@@ -222,6 +206,11 @@ $this->title = 'View for :' . $projectName . ' Project';
       </td>
       <td><?=getStatusLabel($analysis->status)?></td>
       <td>
+      <?= Html::a('<span class="glyphicon glyphicon-file"></span>', ['request/create', 'analysisId' => $analysis->id], [
+    'title' => 'Update',
+    'data-method' => 'post',
+    'data-pjax' => '0',
+]) ?>
       <?= Html::a('<span class="glyphicon glyphicon-edit"></span>', ['analysis/update', 'id' => $analysis->id], [
             'title' => 'Update',
             'data-method' => 'post',
@@ -347,6 +336,78 @@ function getStatusClass($status)
 </div>
 
 
+
+<!--REquests for this project-->
+
+
+<center>
+<h1 class="text-muted center mt-10" style=" color: blue;">REQUEST/PAYMENT VOUCHER</h1>
+</center>
+<table class="table">
+  <thead>
+    <tr style="background-color: #f2f2f2;">
+  
+      <th scope="col">item</th>
+      <th scope="col">ref no</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Created</th>
+      <th scope="col">Updated</th>
+      <th scope="col">Created By</th>
+     
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($request_on as $request): ?>
+    <tr>
+
+<td><?= $request->item ?></td>
+      <td><?= $request->ref ?></td>
+      <td><?= $request->amount ?></td>
+      <td><?= Yii::$app->formatter->asDatetime($request->created_at) ?></td>
+      <td><?= Yii::$app->formatter->asDatetime($request->updated_at) ?></td>
+      <?php 
+      $user=User::findOne($request->created_by);
+      ?>
+      <td><?= $user->username ?></td>
+      <td><?=getStatusLabel($request->status)?></td>
+      <td>
+        <!--
+                <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $request->id], [
+                    'title' => 'Delete',
+                    'data-confirm' => 'Are you sure you want to delete this updates',
+                    'data-method' => 'post',
+                    'data-pjax' => '0',
+                ]) ?>
+          
+                <?= Html::a('<span class="glyphicon glyphicon-eye-0"></span>', [ 'request/create' , 'taskId'=> $model->id], [
+                    'title' => 'Update',
+                    'data-method' => 'post',
+                    'data-pjax' => '0',
+                ]) ?>
+        -->
+            </td>
+    
+
+    </tr>
+    <?php endforeach; ?>
+    
+    <tr>
+      <td>
+      
+      <?php if(Yii::$app->user->can('admin')) :?>
+      <?= Html::a('-> View Requests',  [ 'request/create' , 'taskId'=> $model->id]) ?>
+      <?php endif;?>
+    </td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 

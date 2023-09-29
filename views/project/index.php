@@ -43,10 +43,11 @@ $sidebarItems = [
         <!-- Sales Cards  -->
         <!-- ============================================================== -->
         <div class="row"></div>
-            <p>
+       
+           <!--<p>
                 <?= Html::a('Create Project', ['create'], ['class' => 'btn btn-success']) ?>
-            </p>
-
+            </p>-->
+          
             <?php // echo $this->render('_search', ['model' => $searchModel]); 
             $dataProvider = new ActiveDataProvider([
                 'query' => Project::find()->orderBy(['created_at' => SORT_DESC]),

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Tender;
 use kartik\datecontrol\DateControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -61,24 +62,26 @@ use yii\web\View;
 
     <?php $form = ActiveForm::begin(); ?>
    <?php if(Yii::$app->user->can('admin')) :?>
+    <div class="form-row">
+    <div class="col">
 
     <?= $form->field($model, 'budget')->textInput(['type'=>'number']) ?>
-
+    </div>
+    <div class="col mt-4">
     <?= $form->field($model, 'document')->fileInput() ?>
-    
+    </div>
+    </div>
+    <?= $form->field($model, 'tender_id')->hiddenInput(['value' => $tenderId])->label(false)?>
+
+    <div class="form-row">
+    <div class="col">
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?php echo $form->field($model, 'tender_id')->dropDownList(
-    ArrayHelper::map($details, 'id', 'title'),
-    [
-        'prompt' => 'Select tender',
-        // 'value' => $model->tender_id
-    ]
-); ?>
 
- 
-
-<?php echo $form->field($model, 'user_id')->dropDownList(
+    </div>
+   
+    <div class="col">
+ <?php echo $form->field($model, 'user_id', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-user'></i></span></div>\n{error}"])->dropDownList(
     ArrayHelper::map($users, 'id', 'username'),
     [
         'prompt' => 'Select Project Manager',
@@ -87,7 +90,8 @@ use yii\web\View;
         ]
     ]
 ); ?>
-
+    </div>
+    </div>
 
 
 <?= $form->field($model, 'start_at')->widget(DatePicker::class, [
@@ -113,10 +117,11 @@ use yii\web\View;
 
 
     <?php endif;?>
-
+    <div class="form-row">
+    <div class="col">
     <?php if(Yii::$app->user->can('author')) :?>
 
-    <?= $form->field($model, 'progress')->dropDownList([
+    <?= $form->field($model, 'progress' , ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-pencil'></i></span></div>\n{error}"])->dropDownList([
     '0' => '0%',
     '30' => '30%',
     '50' => '50%',
@@ -127,9 +132,10 @@ use yii\web\View;
 ]) ?>
 
 
-
+    </div>
+    <div class="col">
 <?php endif;?>
-<?= $form->field($model, 'status')->dropDownList(
+<?= $form->field($model, 'status' , ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-info'></i></span></div>\n{error}"])->dropDownList(
     [
         1 => 'Completed',
         2 => 'Onpregress',
@@ -139,7 +145,8 @@ use yii\web\View;
     $model->status => ['selected' => true]
     ]
 ); ?>
- 
+    </div>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

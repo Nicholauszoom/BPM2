@@ -1,0 +1,26 @@
+-tender[   
+      =tender registration with attached document, 
+      =with tender status(pending ,win ,onhold)
+      =management of tender(graph summary, notification on tender progress 1month before expiration)
+      =Count tender win, pending and onhold/fail
+
+-project management[
+      =Analysis(import prepaired analysis sheet(exel or csv)) in system.
+      =analysis approval
+      =manage project(graph summary project, total projects ,complete projects, incomplete ,onhold )
+]
+
+       PLANN
+       -Complete tender part according to requirements in management
+       -Project management proceed on implement (work plan, execution , updates, report).
+       
+              MEETING 2
+              
+       -Tender management 
+       
+       -project management [
+            -WORK PLAN MANAGEMENT, 
+            -UPDATES MANAGEMENT.
+            ]
+         
+       

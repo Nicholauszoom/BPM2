@@ -33,9 +33,12 @@ $this->context->layout = 'admin';
     <?= $this->render('_form', [
         'model' => $model,
         'analysis'=>$analysis,
-        'taskId'=>$taskId,
-        'request'=>$request,
+        // 'projectId'=>$projectId,
+        'analysisId'=>$analysisId,
         'department'=>$department,
+        'request'=>$request,
+        'existingQuantity' => $existingQuantity,
+
     ]) ?>
 
 </div>

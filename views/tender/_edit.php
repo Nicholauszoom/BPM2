@@ -83,9 +83,10 @@ $department=Department::find()->all();
         'readonly' => true, // Make the field read-only to prevent editing
     ],
 ]) ?>
+ <?= $form->field($model, 'document')->hiddenInput()->label(false)?>
 <?php endif; ?>
 
-<?= $form->field($model, 'document')->fileInput()?>
+ 
 
     <?php if (Yii::$app->user->can('author')) : ?>
 

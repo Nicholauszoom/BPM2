@@ -123,31 +123,32 @@ $this->context->layout = 'admin';
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],
+            
             // ///////////////////
-            // [
-            //     'class' => 'yii\grid\ActionColumn',
-            //     'template' => '{view} {create-project}  {update}',
-            //     'buttons' => [
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{project} ',
+                'buttons' => [
                     
-            //         'view' => function ($url, $model, $key) {
-            //             return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $model->id], [
-            //                 // 'class' => 'btn btn-success',
-            //                 'title' => 'view tender',
-            //                 'aria-label' => 'tender view',
-            //             ]);
-            //         },
+                    'project' => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-tasks"></span>', ['project/create', 'tenderId' => $model->id], [
+                            // 'class' => 'btn btn-success',
+                            'title' => 'register project',
+                            'aria-label' => 'register project',
+                        ]);
+                    },
     
     
-            //         'update' => function ($url, $model, $key) {
-            //             return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $model->id], [
-            //                 // 'class' => 'btn btn-success',
-            //                 'title' => 'view tender',
-            //                 'aria-label' => 'tender update',
-            //             ]);
-            //         },
-            //     ],
+                    // 'update' => function ($url, $model, $key) {
+                    //     return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $model->id], [
+                    //         // 'class' => 'btn btn-success',
+                    //         'title' => 'view tender',
+                    //         'aria-label' => 'tender update',
+                    //     ]);
+                    // },
+                ],
                 
-            // ],
+            ],
             // ///////////////
         ],
     ]); ?>

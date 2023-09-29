@@ -75,46 +75,55 @@ class RequestController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($taskId)
+    public function actionCreate($analysisId)
     {
         $model = new Request();
-        $model->task_id = $taskId;
-
+        $model->analysis_id = $analysisId;
+    
         $department = Department::find()->all();
-
-        //find items of analysis of a specific project
-        $task = Task::findOne($taskId);
-        $project=Project::findOne($task->project_id);
-        $analysis =Analysis::find()
-        ->where(['project'=> $project->id])
-        ->all();
-
-
-        //find tender title by project id
+    
+        // Find items of analysis of a specific project
+        $analysis = Analysis::findOne($analysisId);
+    
+        $project = Project::findOne($analysis->project);
+    
+        // Find tender title by project id
         $tender = Tender::findOne($project->tender_id);
-
-        $request =Request::find()
-         ->where(['task_id'=>$taskId])
-         ->all();
+    
+        $request = Request::find()
+        ->where(['analysis_id' => $analysisId])
+        ->all();
+    
+    $existingQuantity = 0;
+    foreach ($request as $requestItem) {
+        $existingQuantity += $requestItem->ref;
+    }
         
 
+    $model->project_id = $project->id;
+
+    
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+    
                 try {
                     $user = User::findOne($model->created_by);
-                    $userName= $user->username;
-
-                     //Analysis Item name used down there for email notification
-                    $anallyssById=Analysis::findOne($model->item);
-                    $itemName=$anallyssById->item;
-        
-                   $departmentById=Department::findOne($model->department);
-                   $departmentName=$departmentById->name;
-   
+                    $userName = $user->username;
+    
+                    // Analysis Item name used down there for email notification
+                    $anallyssById = Analysis::findOne($model->item);
+                    $itemName = $anallyssById->item;
+    
+                    $departmentById = Department::findOne($model->department);
+                    $departmentName = $departmentById->name;
+    
+                    // Send email to project manager
+                    $project_manager = User::findOne($project->user_id);
+    
                     // Get the email message instance from the mailer component
                     $message = Yii::$app->mailer->compose()
                         ->setFrom('nicholaussomi5@gmail.com')
-                        ->setTo('nicholauszoom95@gmail.com')
+                        ->setTo($project_manager->email)
                         ->setSubject('Request / payment voucher')
                         ->setHtmlBody('
                         <html>
@@ -179,34 +188,6 @@ class RequestController extends Controller
                                     background-color: #dc3545;
                                 }
                             </style>
-                    
-                            <script>
-                                function getStatusLabel(status) {
-                                    switch (status) {
-                                        case 0:
-                                            return {
-                                                name: "Pending",
-                                                labelClass: "status-pending"
-                                            };
-                                        case 1:
-                                            return {
-                                                name: "Approved",
-                                                labelClass: "status-approved"
-                                            };
-                                        case 2:
-                                            return {
-                                                name: "Rejected",
-                                                labelClass: "status-rejected"
-                                            };
-                                        default:
-                                            return {
-                                                name: "",
-                                                labelClass: ""
-                                            };
-                                    }
-                                }
-                                
-                            </script>
                         </head>
                         <body>
                             <div class="container">
@@ -215,51 +196,51 @@ class RequestController extends Controller
                                 </div>
                                 <h1>TERATECH</h1>
                                 <p>Dear ' . Html::encode('CEO') . ',</p>
-                                <p>You have been sent a project request , as detailed below :</p>
+                                <p>You have been sent a project request, as detailed below:</p>
                                 <ul>
                                     <li>Project Name: ' . Html::encode($tender->title) . '</li>
-                                    <li>Item name : ' . Html::encode($itemName) . '</li>
-                                    <li>Amount : ' . Html::encode($model->amount) . '</li>
-                                    <li>REF NO : ' . Html::encode($model->ref) . '</li>
-                                    <li>Department : ' . Html::encode($departmentName) . '</li>
-                                    <li>REquested By: ' . Html::encode($userName) . '</li>
+                                    <li>Item name: ' . Html::encode($itemName) . '</li>
+                                    <li>Amount: ' . Html::encode($model->amount) . '</li>
+                                    <li>REF NO: ' . Html::encode($model->ref) . '</li>
+                                    <li>Department: ' . Html::encode($departmentName) . '</li>
+                                    <li>Requested By: ' . Html::encode($userName) . '</li>
                                 </ul>
                                 <a href="http://localhost:8080/" class="button">View Project</a>
                             </div>
                         </body>
                         </html>
                     ');
-            
+    
                     // Send the email
                     if ($message instanceof MessageInterface && $message->send()) {
                         // Display a success message
-                        Yii::$app->session->setFlash('success', 'Email sent successfully.');
+                        Yii::$app->session->setFlash('success', 'Email sentsuccessfully.');
                     } else {
-                        // Handle email sending failure
+                        // Display an error message if email failed to send
                         Yii::$app->session->setFlash('error', 'Failed to send the email.');
                     }
-                } catch (InvalidConfigException $e) {
-                    // Handle any configuration errors
-                    Yii::$app->session->setFlash('error', 'Email configuration error occurred.');
-                } catch (\Throwable $e) {
-                    // Handle any other exceptions
-                    Yii::$app->session->setFlash('error', 'Error occurred while sending the email.');
+                } catch (\Exception $e) {
+                    // Log the exception or handle it as needed
+                    Yii::error($e->getMessage());
+                    // Display an error message if an exception occurred
+                    Yii::$app->session->setFlash('error', 'An error occurred while sending the email.');
                 }
-            }else{
-                Yii::$app->session->setFlash('success', 'Updated successfully.');
+    
+                return $this->redirect(['request/create', 'analysisId' => $analysisId]);
+            } else {
+                // Display an error message if model fails to save
+                Yii::$app->session->setFlash('error', 'Failed to save the model.');
             }
-                return $this->redirect(['view', 'id' => $model->id]);
-          
-        } else {
-            $model->loadDefaultValues();
         }
-
+    
         return $this->render('create', [
             'model' => $model,
-            'analysis'=>$analysis,
-            'taskId'=> $taskId,
-            'request'=>$request,
-            'department'=>$department,
+            'department' => $department,
+            'analysis' => $analysis,
+            'project' => $project,
+            'analysisId'=>$analysisId,
+            'request' => $request,
+            'existingQuantity' => $existingQuantity,
         ]);
     }
 
@@ -451,7 +432,9 @@ class RequestController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+       
+
+        return $this->redirect(['/pm']);
     }
 
     /**

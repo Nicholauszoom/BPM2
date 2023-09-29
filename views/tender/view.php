@@ -224,9 +224,8 @@ $this->context->layout = 'admin';
     <?php endforeach; ?>
     <tr>
       <td>
-      <?php if (Yii::$app->user->can('author')) : ?>
-        <?= Html::a('+ Add a line') ?>
-      <?php endif;?>
+             
+      <?= Html::a('+ Add',  [ 'tdetail/create' , 'tenderId'=> $model->id]) ?>
     </td>
       <td></td>
       <td></td>

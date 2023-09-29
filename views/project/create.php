@@ -37,6 +37,7 @@ $this->context->layout = 'admin';
         'model' => $model,
         'users'=>$users,
         'details'=>$details,
+        'tenderId'=>$tenderId,
         
     ]) ?>
 

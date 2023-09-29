@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Analysis;
+use app\models\Request;
 use app\models\User;
 use yii\bootstrap5\Modal;
 use yii\helpers\ArrayHelper;
@@ -41,19 +42,30 @@ echo $form->field($model, 'payment')->dropDownList(
 );
 
 
-echo $form->field($model, 'item')->dropDownList(
-\yii\helpers\ArrayHelper::map($analysis, 'id', 'item'),
-['prompt' => 'Select Item for this project']
-) ;
+// echo $form->field($model, 'item')->dropDownList(
+// \yii\helpers\ArrayHelper::map($analysis, 'id', 'item'),
+// ['prompt' => 'Select Item for this project']
+// ) ;
+
+
+echo $form->field($model, 'item')->textInput(['value' => $analysis->item,'readonly' => true,'id' => 'ref-input']);
 
 echo $form->field($model, 'department')->dropDownList(
   \yii\helpers\ArrayHelper::map($department, 'id', 'name'),
   ['prompt' => 'Select department']
   ) ;
 
-echo $form->field($model, 'ref')->textInput(['type' => 'number', 'id' => 'ref-input']);
-  
-echo $form->field($model, 'task_id')->hiddenInput(['value' => $taskId])->label(false);
+// echo $form->field($model, 'ref')->textInput(['type' => 'number', 'value'=>$analysis->quantity,'max' => $analysis->quantity,'id' => 'ref-input']);
+// $request_qty=Request::findOne(condition)
+
+$rem_qty=$analysis->quantity - $existingQuantity;
+echo $form->field($model, 'ref')->dropDownList(
+  range(0, $rem_qty),
+  ['prompt' => 'Select', 'id' => 'ref-input']
+);
+
+
+echo $form->field($model, 'analysis_id')->hiddenInput(['value' => $analysisId])->label(false);
 
 
 // echo $form->field($model, 'ref')->textInput(['type'=>'number','value'=>$analysis->]) ;
@@ -70,6 +82,7 @@ echo '</div>';
 ActiveForm::end();
 
 Modal::end();
+
 
 
 ?>
@@ -96,7 +109,7 @@ Modal::end();
     <tr>
     
     <?php 
-$analysis = Analysis::findOne($request->item);
+$analysis = Analysis::findOne($request->analysis_id);
 $item = $analysis->item;
 $wrappedItem = wordwrap($item, 70, "<br>", true);
 ?>

@@ -62,8 +62,9 @@ class Tender extends \yii\db\ActiveRecord
         return [
             [['title', 'description', 'status'], 'required'],
             [['status', 'updated_at', 'created_by','budget','session','supervisor','submit_to'], 'integer'],
-            [['title', 'description','PE','TenderNo'], 'string', 'max' => 255],
+            [['title', 'description','PE','TenderNo','document'], 'string', 'max' => 255],
             [['session','budget'], 'default', 'value' => 0],
+            // [['document','submission'], 'file'],
             [['document','session','submission','assigned_to'], 'safe'],
             ['publish_at', 'compare', 'compareValue' => date('Y-m-d'), 'operator' => '<='],
             ['expired_at', 'date', 'format' => 'php:Y-m-d'],
