@@ -2,6 +2,7 @@
 
 use app\models\Department;
 use app\models\Office;
+use app\models\Tattachmentss;
 use app\models\User;
 use app\models\UserAssignment;
 use yii\helpers\Html;
@@ -138,6 +139,8 @@ $this->context->layout = 'admin';
                     return $model->submission ? Html::a('<i class="fa fa-download"></i> complete tender submitted document', $downloadPath, ['class' => 'btn btn-warning', 'target' => '_blank']) : '';
                 },
             ],
+
+            
             // [
             //     'attribute' => 'submission',
             //     'format' => 'raw',
@@ -152,6 +155,20 @@ $this->context->layout = 'admin';
                     $department = Department::findOne($model->submit_to);
                     $departmentName =  $department ?  $department ->name : 'Unknown';
                      return $departmentName;
+                },
+            ],
+            [
+                'attribute' => 'Tender Opening Doc',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $attachment = Tattachmentss::findOne(['tender_id' => $model->id]);
+                    if ($attachment && $attachment->document) {
+                        $fileName = $attachment->document;
+                        $filePath = Yii::getAlias('@webroot/upload/' . $fileName);
+                        $fileUrl = Yii::getAlias('@web/upload/' . $fileName);
+                        return '<embed src="' . $fileUrl . '" type="application/pdf" width="100%" height="600px" />';
+                    }
+                    return '';
                 },
             ],
             // 'created_by',

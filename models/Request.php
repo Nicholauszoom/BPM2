@@ -53,10 +53,13 @@ class Request extends \yii\db\ActiveRecord
     {
         return [
             [['item'], 'required'],
-            [['payment', 'ref', 'amount', 'created_at', 'project_id','updated_at', 'created_by','analysis_id','department','status'], 'integer'],
+            [['payment', 'ref', 'amount', 'created_at', 'project_id','updated_at', 'created_by','analysis_id','department','status','viewed'], 'integer'],
             [['description','item'], 'string'],
             [['description'], 'default', 'value' => 'comments'],
-            [['status'], 'default', 'value' => 0],
+            [['status','viewed'], 'default', 'value' => 0],
+          
+
+            [['viewed'], 'safe'],
         ];
     }
 
@@ -74,6 +77,7 @@ class Request extends \yii\db\ActiveRecord
             'department'=>'Department',
             'amount' => 'Amount',
             'status'=> 'Approval',
+            'viewed'=>'Viewed',
             'project_id'=>'Project Id',
             'description'=> 'Comment',
             'created_at' => 'Created At',

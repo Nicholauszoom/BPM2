@@ -1,5 +1,8 @@
 <?php
 
+use app\models\Analysis;
+use app\models\Project;
+use app\models\User;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -30,12 +33,22 @@ use yii\widgets\ActiveForm;
   'value' => $model->department
   ]
   ) ?>
-  
-<?= $form->field($model, 'ref')->textInput(['type'=>'number']) ?>
+  <?php
+  $rem_qty=$analysis->quantity - $existingQuantity;
+  ?>
+<?= $form->field($model, 'ref')->textInput(['type'=>'number','max'=>$model->ref])?>
+
 
 <?= $form->field($model, 'amount')->textInput(['type'=>'number']) ?>
 <?php endif;?>
-<?php if(Yii::$app->user->can('admin')) :?>
+<?php 
+    $analysis=Analysis::findOne($model->analysis_id);
+    $project=Project::findOne($analysis->project);
+    $assined_to=User::findOne($project->user_id);
+    $userId = Yii::$app->user->id;
+
+?>
+<?php if(Yii::$app->user->can('admin') || $userId=$assined_to):?>
 
 <?= $form->field($model, 'status')->dropDownList(
   [

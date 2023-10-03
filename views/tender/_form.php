@@ -28,26 +28,26 @@ $department=Department::find()->all();
     <?php if (Yii::$app->user->can('admin')) : ?>
         <div class="form-row">
     <div class="col">
-        <?= $form->field($model, 'title', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-pencil'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder'=>''])->label('Title') ?>
+        <?= $form->field($model, 'title', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-pencil'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder'=>''])->label('Title*') ?>
     </div>
     <div class="col">
-    <?= $form->field($model, 'PE', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-home'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder' => ''])->label('Procurement Entity') ?>
+    <?= $form->field($model, 'PE', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-home'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder' => ''])->label('Procurement Entity*') ?>
 </div>
     <div class="col">
-        <?= $form->field($model, 'TenderNo', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-terminal'></i></span></div>\n{error}"])->textInput(['maxlength' => true,'placeholder'=>''])->label('Tender Number') ?>
+        <?= $form->field($model, 'TenderNo', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-terminal'></i></span></div>\n{error}"])->textInput(['maxlength' => true,'placeholder'=>''])->label('Tender Number*') ?>
     </div>
 </div>
 
 
     <div class="form-row">
     <div class="col">
-    <?php echo $form->field($model, 'assigned_to')->checkboxList(
+    
+<?= $form->field($model, 'assigned_to')->checkboxList(
     ArrayHelper::map($users, 'id', 'username'),
-    [
-        'showDropdown' => true,
-        'prompt' => 'Assigned to',
-    ]
-); ?>
+    ['prompt' => 'Assigned to', 'id' => 'assigned-to']
+)?>
+
+
   </div>
     <div class="col mt-3">
 <?= $form->field($model, 'document')->fileInput()?>

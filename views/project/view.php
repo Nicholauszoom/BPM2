@@ -12,6 +12,11 @@ use yii\widgets\DetailView;
 /** @var app\models\Project $model */
 
      
+$project = Project::findOne($model->id);
+$project_tender = $project ? $project->tender_id : '';
+$project_tender_id=Tender::findOne($project_tender);
+$projectName = $project_tender_id ? $project_tender_id->title : '';
+$this->title = 'View for :' . $projectName . ' Project';
 
 $this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -19,11 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->context->layout = 'admin';
 
 
-$project = Project::findOne($id);
-$project_tender = $project ? $project->tender_id : '';
-$project_tender_id=Tender::findOne($project_tender);
-$projectName = $project_tender_id ? $project_tender_id->title : '';
-$this->title = 'View for :' . $projectName . ' Project';
+
 
 ?>
 
@@ -119,6 +120,27 @@ $this->title = 'View for :' . $projectName . ' Project';
                 },
             ],
             [
+              'attribute' => 'remainingBudget',
+              'format' => 'raw',
+              'value' => function ($model) use ($budget_prog, $projectAmount) {
+                  $remainingBudget = $projectAmount - $budget_prog;
+                  $percentageComplete = ($projectAmount != 0) ? round(($budget_prog / $projectAmount) * 100, 2) : 0;
+                  $percentageRemaining = ($projectAmount != 0) ? round(($remainingBudget / $projectAmount) * 100, 2) : 0;
+          
+                  $progressBar = '<div class="progress progress_sm">';
+                  $progressBar .= '<div class="progress-bar bg-green" role="progressbar" style="width: ' . $percentageComplete . '%;"></div>';
+                  $progressBar .= '</div>';
+                  $progressBar .= '<small>' . $percentageComplete . '% Complete</small>';
+          
+                  $progressBar .= '<div class="progress progress_sm">';
+                  $progressBar .= '<div class="progress-bar bg-red" role="progressbar" style="width: ' . $percentageRemaining . '%;"></div>';
+                  $progressBar .= '</div>';
+                  $progressBar .= '<small>' . $remainingBudget . ' Remaining out of ' . $projectAmount . '</small>';
+          
+                  return $progressBar;
+              },
+          ],
+            [
                 'attribute'=>'created_by',
                 'format'=>'raw',
                 'value'=>function ($model){
@@ -144,8 +166,17 @@ $this->title = 'View for :' . $projectName . ' Project';
             //  'status',
             
             // 'created_by',
-            'document',
-        ],
+            [
+            'attribute'=>'document',
+            'format'=>'raw',
+            'value'=>function ($model){
+              $fileName = $model->document;
+              $filePath = Yii::getAlias('/upload/' . $fileName); 
+              $downloadPath =  Yii::getAlias('/upload/' . $fileName);
+              return $model->document ? Html:: a('<i class="fa fa-download"></i> complete project document', $downloadPath, ['class' => 'btn btn-warning', 'target' => '_blank']) : '';
+            },
+          ],
+        ]
     ]) ?>
 <?php
 
@@ -337,77 +368,7 @@ function getStatusClass($status)
 
 
 
-<!--REquests for this project-->
 
-
-<center>
-<h1 class="text-muted center mt-10" style=" color: blue;">REQUEST/PAYMENT VOUCHER</h1>
-</center>
-<table class="table">
-  <thead>
-    <tr style="background-color: #f2f2f2;">
-  
-      <th scope="col">item</th>
-      <th scope="col">ref no</th>
-      <th scope="col">Amount</th>
-      <th scope="col">Created</th>
-      <th scope="col">Updated</th>
-      <th scope="col">Created By</th>
-     
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-  <?php foreach ($request_on as $request): ?>
-    <tr>
-
-<td><?= $request->item ?></td>
-      <td><?= $request->ref ?></td>
-      <td><?= $request->amount ?></td>
-      <td><?= Yii::$app->formatter->asDatetime($request->created_at) ?></td>
-      <td><?= Yii::$app->formatter->asDatetime($request->updated_at) ?></td>
-      <?php 
-      $user=User::findOne($request->created_by);
-      ?>
-      <td><?= $user->username ?></td>
-      <td><?=getStatusLabel($request->status)?></td>
-      <td>
-        <!--
-                <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $request->id], [
-                    'title' => 'Delete',
-                    'data-confirm' => 'Are you sure you want to delete this updates',
-                    'data-method' => 'post',
-                    'data-pjax' => '0',
-                ]) ?>
-          
-                <?= Html::a('<span class="glyphicon glyphicon-eye-0"></span>', [ 'request/create' , 'taskId'=> $model->id], [
-                    'title' => 'Update',
-                    'data-method' => 'post',
-                    'data-pjax' => '0',
-                ]) ?>
-        -->
-            </td>
-    
-
-    </tr>
-    <?php endforeach; ?>
-    
-    <tr>
-      <td>
-      
-      <?php if(Yii::$app->user->can('admin')) :?>
-      <?= Html::a('-> View Requests',  [ 'request/create' , 'taskId'=> $model->id]) ?>
-      <?php endif;?>
-    </td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
 </div>
 
 

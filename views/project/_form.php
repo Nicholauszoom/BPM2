@@ -71,8 +71,7 @@ use yii\web\View;
     <?= $form->field($model, 'document')->fileInput() ?>
     </div>
     </div>
-    <?= $form->field($model, 'tender_id')->hiddenInput(['value' => $tenderId])->label(false)?>
-
+ 
     <div class="form-row">
     <div class="col">
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
@@ -101,8 +100,13 @@ use yii\web\View;
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
         // $model->start_at => ['selected' => true]
+        'value' => Yii::$app->formatter->asDate($model->start_at, 'MM/dd/yyyy'), // Set the value of the date picker
+
     ],
 ]) ?>
+
+
+<?= $form->field($model, 'tender_id')->hiddenInput(['value' => $tenderId])->label(false)?>
 
 <?= $form->field($model, 'end_at')->widget(DatePicker::class, [
     'language' => 'ru',
@@ -110,7 +114,9 @@ use yii\web\View;
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
-        // $model->end_at => ['selected' => true]
+        // $model->end_at => ['selected' => true]\
+        'value' => Yii::$app->formatter->asDate($model->end_at, 'MM/dd/yyyy'), // Set the value of the date picker
+
     ],
 ]) ?>
 

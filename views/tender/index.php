@@ -127,14 +127,22 @@ $this->context->layout = 'admin';
             // ///////////////////
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{project} ',
+                'template' => '{project} {attachment}',
                 'buttons' => [
                     
                     'project' => function ($url, $model, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-tasks"></span>', ['project/create', 'tenderId' => $model->id], [
+                        return Html::a('<span class="glyphicon glyphicon-plus"></span>', ['project/create', 'tenderId' => $model->id], [
                             // 'class' => 'btn btn-success',
                             'title' => 'register project',
                             'aria-label' => 'register project',
+                        ]);
+                    },
+
+                    'attachment' => function ($url, $model, $key) {
+                        return Html::a('<span class="fa fa-paperclip"></span>', ['tattachmentss/create', 'tenderId' => $model->id], [
+                            // 'class' => 'btn btn-success',
+                            'title' => 'tender attachment',
+                            'aria-label' => 'tender attachment',
                         ]);
                     },
     

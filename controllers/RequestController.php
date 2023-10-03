@@ -65,8 +65,41 @@ class RequestController extends Controller
      */
     public function actionView($id)
     {
+        $model= $this->findModel($id);
+        // Set isViewed attribute to 1
+        
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    public function actionAll($projectId)
+    {
+        $req = Request::find()
+        ->where(['project_id'=>$projectId])
+        ->andWhere(['status'=>1])
+        ->all();
+
+
+
+             //sum of the quantity
+    $existingQuantity = 0;
+    foreach ($req  as $requestItem) {
+        $existingQuantity += $requestItem->ref;
+    }
+        
+     //sum of the amount
+     $existingAmount = 0;
+     foreach ($req  as $requestAmount) {
+         $existingAmount += $requestAmount->amount;
+     }
+
+    //  $analysis = Analysis::findOne($);
+
+        return $this->render('all', [
+          'req'=>$req,
+          'existingQuantity'=>$existingQuantity,
+          'existingAmount'=>$existingAmount,
         ]);
     }
 
@@ -93,15 +126,28 @@ class RequestController extends Controller
         $request = Request::find()
         ->where(['analysis_id' => $analysisId])
         ->all();
+
+        //request of the approved one by pm
+        $request_status = Request::find()
+        ->where(['analysis_id' => $analysisId])
+        ->andWhere(['status'=>1])
+        ->all();
     
+        //sum of the quantity
     $existingQuantity = 0;
     foreach ($request as $requestItem) {
         $existingQuantity += $requestItem->ref;
     }
         
+     //sum of the amount of the approved status i.e = 1
+     $existingAmount = 0;
+     foreach ($request_status as $requestAmount) {
+         $existingAmount += $requestAmount->amount;
+     }
+    
 
     $model->project_id = $project->id;
-
+    
     
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -241,6 +287,8 @@ class RequestController extends Controller
             'analysisId'=>$analysisId,
             'request' => $request,
             'existingQuantity' => $existingQuantity,
+            'tender'=>$tender,
+            'existingAmount'=>$existingAmount,
         ]);
     }
 
@@ -256,20 +304,40 @@ class RequestController extends Controller
         $model = $this->findModel($id);
         $department = Department::find()->all();
     
-        $task = Task::findOne($model->task_id);
-        $project = Project::findOne($task->project_id);
-        $analysis = Analysis::find()
-            ->where(['project' => $project->id])
-            ->all();
+        $analysis = Analysis::findOne($model->analysis_id);
     
+        $project = Project::findOne($analysis->project);
         $tender = Tender::findOne($project->tender_id);
+
+        $request = Request::find()
+        ->where(['analysis_id' => $model->analysis_id])
+        ->all();
+
+             //sum of the quantity
+    $existingQuantity = 0;
+    foreach ($request as $requestItem) {
+        $existingQuantity += $requestItem->ref;
+    }
+        
+     //sum of the amount
+     $existingAmount = 0;
+     foreach ($request as $requestAmount) {
+         $existingAmount += $requestAmount->amount;
+     }
+        
     
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+
+
+        
+
               //Analysis Item name used down there for email notification
-              $anallyssById=Analysis::findOne($model->item);
-              $itemName=$anallyssById->item;
+            //   $anallyssById=Analysis::findOne($model->item);
+              $itemName=$model->item;
 
               //loged in user
+              $projectManager=User::findOne($project->user_id);
+              
               $userId = Yii::$app->user->id;
               $sentId=User::findOne($userId);
               $sentName=$sentId->username;
@@ -290,7 +358,8 @@ class RequestController extends Controller
             $mailer = Yii::$app->mailer;
             $mailer->compose()
                 ->setFrom('nicholaussomi5@gmail.com')
-                ->setTo($user->email)
+                ->setTo($projectManager->email)
+                ->setCc('samson@gmail.com')
                 ->setSubject('Approval for request')
                 ->setHtmlBody('
                         <html>
@@ -411,12 +480,21 @@ class RequestController extends Controller
             
                 ->send();
                 Yii::$app->session->setFlash('success', 'Email sent successfully.');
-            return $this->redirect(['view', 'id' => $model->id]);
+
+                if (Yii::$app->user->can('admin')){
+                    $model->viewed = 1;
+                    $model->save();
+                 }
+            return $this->redirect(['request/create', 'analysisId' => $model->analysis_id]);
         }
     
         return $this->render('update', [
             'model' => $model,
             'department' => $department,
+            'existingQuantity' => $existingQuantity,
+            'tender'=>$tender,
+            'existingAmount'=>$existingAmount,
+            'analysis'=>$analysis,
         ]);
     }
     
@@ -434,7 +512,7 @@ class RequestController extends Controller
 
        
 
-        return $this->redirect(['/pm']);
+        return $this->redirect(['']);
     }
 
     /**

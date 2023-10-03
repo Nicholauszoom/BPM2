@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Project;
+use app\models\Request;
 use app\models\Tender;
 use app\models\User;
 use yii\data\ActiveDataProvider;
@@ -151,11 +152,57 @@ $sidebarItems = [
                     //'updated_at',
                     //'created_by',
                     //'ducument',
+                    // [
+                    //     'class' => ActionColumn::className(),
+                    //     'urlCreator' => function ($action, Project $model, $key, $index, $column) {
+                    //         return Url::toRoute([$action, 'id' => $model->id]);
+                    //     }
+                    // ],
                     [
-                        'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, Project $model, $key, $index, $column) {
-                            return Url::toRoute([$action, 'id' => $model->id]);
-                        }
+                        'class' => 'yii\grid\ActionColumn',
+                        'header' => 'Actions',
+                        'headerOptions' => ['style' => 'text-align:center'],
+                        'contentOptions' => ['style' => 'text-align:center'],
+                        'template' => '<div style="display:flex; justify-content:center;">{view} {create-analysis} {create-task} {update}</div>',
+                        'buttons' => [
+                            'create-analysis' => function ($url, $model, $key) {
+                                $request_project_new = Request::find()
+                                    ->where(['viewed' => 0])
+                                    ->andWhere(['project_id' => $model->id])
+                                    ->andFilterWhere(['status' => 1])
+                                    ->count();
+                    
+                                $badge = ($request_project_new > 0)
+                                    ? '<span class="badge bg-blue">' . $request_project_new . '</span>'
+                                    : '';
+                    
+                                return Html::a($badge . '<span class="glyphicon glyphicon-file"></span>', ['request/all', 'projectId' => $model->id], [
+                                    // 'class' => 'btn btn-success',
+                                    'title' => 'View Requests',
+                                    'aria-label' => 'Requests',
+                                ]);
+                            },
+                   
+                           
+            
+                            'view' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $model->id], [
+                                    // 'class' => 'btn btn-success',
+                                    'title' => 'view project',
+                                    'aria-label' => 'Project view',
+                                ]);
+                            },
+            
+            
+                            'update' => function ($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['edit', 'id' => $model->id], [
+                                    // 'class' => 'btn btn-success',
+                                    'title' => 'view project',
+                                    'aria-label' => 'Project view',
+                                ]);
+                            },
+                        ],
+                        
                     ],
                    
                 ],

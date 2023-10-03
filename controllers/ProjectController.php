@@ -68,9 +68,14 @@ class ProjectController extends Controller
         $searchModel = new ProjectSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
+
+        $request_project=Request::find()->all();
+        
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'request_project'=>$request_project,
         ]);
 
     }else
@@ -103,7 +108,9 @@ class ProjectController extends Controller
         ->where(['user_id' => $userId])
         ->all();
 
-      
+    // $request_project=Request::find()
+    // ->where(['project_id'=>$projects->id])
+    // ->all();
 
     return $this->render('pm', [
         'projects' => $projects,
@@ -131,7 +138,7 @@ class ProjectController extends Controller
         $profit = 0;
         $profitPerce = 0;
         $projectId=0;
-        $project = Project::findOne($id);
+       $project = Project::findOne($id);
 
         $model= $this->findModel($id);
 
@@ -139,6 +146,8 @@ class ProjectController extends Controller
            
             // Set isViewed attribute to 1
             $model->isViewed =1;
+
+            
     
             // Save the model to persist the changes
             $model->save(true);
@@ -182,13 +191,27 @@ class ProjectController extends Controller
               $analyses = Analysis::find()
               ->where(['project' => $id])
               ->all();
-          
-          $request_on = Request::find()
-              ->where(['project_id' => $id])
-              ->all();
-     
+
+            //   $request_on = null;
+
+            //   if ($id !== null) {
+            //       $request_on = Request::find()
+            //           ->where(['project_id' => $id])
+            //           ->all();
+            //   }
         }
 
+    //project budget per request
+    $budgetss = Request::find()
+    ->where(['project_id' => $id])
+    ->andWhere(['status'=>1])
+    ->all();
+
+$budget_prog = 0;
+foreach ($budgetss as $progress) {
+    $budget_prog += $progress->amount;
+  
+}
         
         return $this->render('view', [
             'model' => $model,
@@ -199,7 +222,8 @@ class ProjectController extends Controller
             'profitPerce'=> $profitPerce,
             'projectId' =>$projectId,
             'id'=>$id,
-            'request_on'=>$request_on,
+            // 'request_on'=>$request_on,
+            'budget_prog'=>$budget_prog,
             
             
 
@@ -254,7 +278,14 @@ class ProjectController extends Controller
    
                 if ($model->validate()){
                     if ($model->document){
-                        $filePath = Yii::getAlias('@webroot/upload/') . $model->document;
+                        $uploadPath = Yii::getAlias('@webroot/upload/');
+                    $fileName = $model->document->baseName . '.' . $model->document->extension;
+                    $filePath = $uploadPath . $fileName;
+                
+                    if ($model->document->saveAs($filePath)) {
+                        $model->document = '' . $fileName;
+                    }
+                
     
                         // if ($model->document->saveAs($filePath)) {
                         //     $model->document = $filePath;
@@ -538,3 +569,4 @@ class ProjectController extends Controller
     
     
 }
+

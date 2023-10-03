@@ -13,79 +13,24 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\Task $model */
 /** @var yii\widgets\ActiveForm $form */
-
-
-
-// Modal pop-up
-Modal::begin([
-    'id' => 'createModal',
-    'title' => 'Create',
-]);
-
-// Header
-echo '<div class="modal-header">';
-echo '</div>';
-
-// Form
-$form = ActiveForm::begin([
-   
-]);
-
-// echo $form->field($model, 'payment')->textInput();
-echo $form->field($model, 'payment')->dropDownList(
-  [
-      1 => 'Cheque',
-      2 => 'Cash',
-      
-  ],
-  ['prompt' => 'Payment Mode']
-);
-
-
-// echo $form->field($model, 'item')->dropDownList(
-// \yii\helpers\ArrayHelper::map($analysis, 'id', 'item'),
-// ['prompt' => 'Select Item for this project']
-// ) ;
-
-
-echo $form->field($model, 'item')->textInput(['value' => $analysis->item,'readonly' => true,'id' => 'ref-input']);
-
-echo $form->field($model, 'department')->dropDownList(
-  \yii\helpers\ArrayHelper::map($department, 'id', 'name'),
-  ['prompt' => 'Select department']
-  ) ;
-
-// echo $form->field($model, 'ref')->textInput(['type' => 'number', 'value'=>$analysis->quantity,'max' => $analysis->quantity,'id' => 'ref-input']);
-// $request_qty=Request::findOne(condition)
-
-$rem_qty=$analysis->quantity - $existingQuantity;
-echo $form->field($model, 'ref')->dropDownList(
-  range(0, $rem_qty),
-  ['prompt' => 'Select', 'id' => 'ref-input']
-);
-
-
-echo $form->field($model, 'analysis_id')->hiddenInput(['value' => $analysisId])->label(false);
-
-
-// echo $form->field($model, 'ref')->textInput(['type'=>'number','value'=>$analysis->]) ;
-
-echo $form->field($model, 'amount')->textInput(['type'=>'number']) ;
-
-
-// Add remaining form fields...
-
-echo '<div class="modal-footer">';
-echo Html::submitButton('Save', ['class' => 'btn btn-success']);
-echo '</div>';
-
-ActiveForm::end();
-
-Modal::end();
-
-
+$this->context->layout = 'admin';
 
 ?>
+
+
+
+<a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
+
+<div id="main-content ">
+
+
+   <div id="page-container">
+       <!-- ============================================================== -->
+       <!-- Sales Cards  -->
+       <!-- ============================================================== -->
+       <div class="row"></div>
 
 <div class="task-form">
 
@@ -102,11 +47,11 @@ Modal::end();
       <th scope="col">Created By</th>
       <th scope="col">Approved/Not</th>
       <th scope="col"></th>
+      <th scope="col"></th>
     </tr>
     </thead>
 <tbody>
-<?php foreach ($request as $request): ?>
-    <?php if (Yii::$app->user->can('admin') && $request->status != 1) continue; ?>
+<?php foreach ($req as $request): ?>
     <tr>
         <?php 
         $analysis = Analysis::findOne($request->analysis_id);
@@ -124,21 +69,25 @@ Modal::end();
         <td><?= $user->username ?></td>
         <td><?= getStatusLabel($request->status) ?></td>
         <td>
-            <?php if (Yii::$app->user->can('author') ) : ?>
+    <?php if ($request->viewed == 0): ?>
+        <span class="badge bg-blue">New</span>
+    <?php else: ?>
+        <span class="badge bg-green">Viewed</span>
+    <?php endif; ?>
+</td>
+       
+        <td>
                 <?= Html::a('<span class="glyphicon glyphicon-edit"></span>', ['update', 'id' => $request->id], [
                     'title' => 'Update',
                     'data-method' => 'post',
                     'data-pjax' => '0',
                 ]) ?>
-            <?php endif; ?>
 
-            <?php if (Yii::$app->user->can('admin')) : ?>
                 <?= Html::a('<span class="fa fa-commenting" style="font-size: 20px;"></span>', ['update', 'id' => $request->id], [
                     'title' => 'for Approve',
                     'data-method' => 'post',
                     'data-pjax' => '0',
                 ]) ?>
-            <?php endif; ?>
 
             <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $request->id], [
                 'title' => 'Delete',
@@ -150,11 +99,6 @@ Modal::end();
     </tr>
 <?php endforeach; ?>
 <tr>
-    <td>
-        <?php if (Yii::$app->user->can('author')) : ?>
-            <?= Html::a('+ create request', '#', ['data-toggle' => 'modal', 'data-target' => '#createModal']) ?>
-        <?php endif; ?>
-    </td>
     <td></td>
     <td></td>
     <td></td>
@@ -162,20 +106,16 @@ Modal::end();
     <td></td>
     <td></td>
     <td></td>
-</tr>
-
-<tr>
     <td></td>
-    <td style="background-color: #f2f2f2;">Total Item Budget:TSH <?= $analysis->cost ?></td>
-    <?php
-    $rem_budget = $analysis->cost - $existingAmount;
-    ?>
-    <td style="background-color: #f2f2f2;">Remain Item Budget:TSH <?= $rem_budget ?></td>
-    <td style="background-color: #f2f2f2;"></td>
-    <td style="background-color: #f2f2f2;"></td>
-    <td style="background-color: #f2f2f2;"></td>
-    <td style="background-color: #f2f2f2;"></td>
-    <td style="background-color: #f2f2f2;"></td>
+    </tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
 </tr>
 </tbody>
 </table>
@@ -215,6 +155,8 @@ function getStatusClass($status)
 
 
 
+   </div>
+</div>
 
 
 

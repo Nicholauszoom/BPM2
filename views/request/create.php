@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Request $model */
 
-$this->title = 'Create Request';
+$this->title = $tender->title;
 $this->params['breadcrumbs'][] = ['label' => 'Requests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->context->layout = 'admin';
@@ -37,7 +37,8 @@ $this->context->layout = 'admin';
         'analysisId'=>$analysisId,
         'department'=>$department,
         'request'=>$request,
-        'existingQuantity' => $existingQuantity,
+        'existingQuantity' => $existingQuantity,        
+        'existingAmount'=>$existingAmount,
 
     ]) ?>
 

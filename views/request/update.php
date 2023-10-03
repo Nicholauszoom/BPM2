@@ -34,6 +34,10 @@ $this->context->layout = 'admin';
     <?= $this->render('_edit', [
         'model' => $model,
         'department'=>$department,
+        'existingQuantity' => $existingQuantity,
+        'tender'=>$tender,
+        'existingAmount'=>$existingAmount,
+        'analysis'=>$analysis,
     ]) ?>
 
 </div>

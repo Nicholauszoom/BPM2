@@ -6,7 +6,9 @@ use yii\helpers\Url;
 use app\models\Project;
 use app\models\Tender;
 use app\models\UserAssignment;
+use yii\helpers\Html;
 use yii\helpers\Json;
+use yii\web\JsExpression;
 use yii\web\View;
 
    // Get the current route URL
@@ -32,6 +34,7 @@ $this->context->layout = 'admin';
 
 $projectNamesJson = Json::encode($projectNames);
 $budgetDataJson = Json::encode($budgetData);
+
 ?>
 
 
@@ -281,77 +284,139 @@ $formattedBudget = number_format($projectBudget, 2)
         </div>
       </div>
       <?php if (Yii::$app->user->can('admin')) : ?>
-        <div>
-          <h2 class="text-muted mt-10 text-center">A Graph Of Project Against Profit</h2>
-          <div class="row">
-            <div class="col-md-8 offset-md-2">
-              <div class="chart-container">
-                <canvas id="lineChart" style="width: 100%; height: 400px;"></canvas>
-              </div>
-            </div>
-          </div>
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              var projectNames = <?= $projectNamesJson ?>;
-              var budgetData = <?= $budgetDataJson ?>;
+    <!-- Include the latest version of Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Include jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-              var ctx = document.getElementById('lineChart').getContext('2d');
-              new Chart(ctx, {
-                type: 'line',
-                data: {
-                  labels: projectNames,
-                  datasets: [{
-                    label: 'Profit',
-                    data: budgetData,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderWidth: 1,
-                  }]
-                },
-                options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      ticks: {
-                        stepSize: 1000,
-                      },
-                    },
-                  },
-                }
-              });
-            });
-          </script>
-        </div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2 class="text-muted mt-10 text-center">A Graph Of Project Against Profit</h2>
+      <div class="chart-container">
+        <canvas id="lineChart" style="width: 100%; height: 400px;"></canvas>
+      </div>
+    </div>
+  </div>
 
-        <h2 class="text-muted mt-20 text-center">A Graph Of Tender Status Against Time</h2>
-        <div class="col-md-8 offset-md-2 bg-white mt-20">
-          <div class="chart-container" style="margin-top: 20px;">
-            <canvas id="tenderChart" style="width: 100%; height: 400px;"></canvas>
-          </div>
+  <div class="row mt-30">
+    <div class="col-md-8 offset-md-2">
+      <h2 class="text-muted mt-20 text-center">A Graph of Tender per Day</h2>
+      <div class="chart-container">
+        <canvas id="myChart" style="width: 100%; height: 400px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
 
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <script>
-            document.addEventListener('DOMContentLoaded', function() {
-              var chartData = <?= json_encode($chartData) ?>;
-              var options = <?= json_encode($options) ?>;
+<script>
+  // Retrieve the data from the PHP controller
+  var projectNames = <?= $projectNamesJson ?>;
+  var budgetData = <?= $budgetDataJson ?>;
+  var dates = <?= json_encode($dates) ?>;
+  var counts = <?= json_encode($counts) ?>;
 
-              var ctx = document.getElementById('tenderChart').getContext('2d');
-              new Chart(ctx, {
-                type: 'bar',
-                data: chartData,
-                options: options
-              });
-            });
-          </script>
-        </div>
-      <?php endif; ?>
+  // Create the line chart
+  var ctxLine = document.getElementById('lineChart').getContext('2d');
+  new Chart(ctxLine, {
+    type: 'line',
+    data: {
+      labels: projectNames,
+      datasets: [{
+        label: 'Profit',
+        data: budgetData,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderWidth: 1,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1000,
+          },
+        },
+      },
+    }
+  });
+
+  // Create the bar chart
+  var ctxBar = document.getElementById('myChart').getContext('2d');
+  var myChart = new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+      labels: dates,
+      datasets: [{
+        label: 'Tenders per Day',
+        data: counts,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            precision: 0
+          }
+        }
+      }
+    }
+  });
+
+  // Add custom animations using jQuery
+  $(document).ready(function() {
+    // Animate the line chart on page load
+    $(".row:first-child .chart-container").hide().fadeIn(1500);
+
+    // Apply additional styling to the line chart container
+    $(".row:first-child .chart-container").css({
+      'border-radius': '10px',
+      'box-shadow': '0 4px 6px rgba(0, 0, 0, 0.1)'
+    });
+
+    // Animate the bar chart on page load
+    $(".row:last-child .chart-container").hide().fadeIn(1500);
+
+    // Apply additional styling to the bar chart container
+    $(".row:last-child .chart-container").css({
+      'border-radius': '10px',
+      'box-shadow': '0 4px 6px rgba(0, 0, 0, 0.1)'
+    });
+  });
+</script>
+<?php endif; ?>
       <div class="clearfix"></div>
     </div>
   </div>
 </div>
+
+
+<div>
+
+<!-- Include Chart.js library -->
+
+<!-- Create the canvas element -->
+
+        </div>
        
 
 

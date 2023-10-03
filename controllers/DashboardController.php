@@ -12,6 +12,8 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
 use Yii;
 use dosamigos\chartjs\ChartJs;
+use yii\db\Expression;
+use yii\helpers\ArrayHelper;
 
 class DashboardController extends \yii\web\Controller
 {
@@ -309,8 +311,24 @@ $options = [
 // Calculate the total budget
 $totalBudget = array_sum($budgets);
 
+$tendersPerDay = Tender::find()
+->select(["FROM_UNIXTIME(created_at, '%Y-%m-%d') AS date", 'COUNT(*) AS count'])
+->groupBy(['date'])
+->asArray()
+->all();
 
-        
+// Prepare the data for the graph
+$dates = [];
+$counts = [];
+
+foreach ($tendersPerDay as $tender) {
+$dates[] = $tender['date'];
+$counts[] = $tender['count'];
+}
+
+
+// Retrieve the data from the database or any other source
+
         
         $tenderPend=Tender::find()->where(['status'=>3])->count();
         $tenderFail=Tender::find()->where(['status'=>2])->count();
@@ -344,7 +362,10 @@ $totalBudget = array_sum($budgets);
             'projectNames' => $projectNames,//graph data for project name
             'budgetData' => $budgetData,//graph data for project name
 
+            'dates' => $dates,// for Tender per day graph
+        'counts' => $counts, //for Tender per day graph
             
+       
 
             
         ]);

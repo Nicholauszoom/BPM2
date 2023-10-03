@@ -26,6 +26,7 @@ use yii\behaviors\TimestampBehavior;
  * 
  * @property int $isViewed
  * @property int $session
+ * 
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $created_by
