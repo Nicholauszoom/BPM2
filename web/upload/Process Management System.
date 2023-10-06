@@ -1,0 +1,143 @@
+[
+BM
+=sales
+=marketing
+=      -tender
+=      -Project Management
+       :-planning, cost, monitor & eval..,payments,
+       
+       -Operation[hrm(employ..)),Offc.. expences,fleet             management,...,costs]   
+       
+       -Inventory system
+       
+       
+       
+       
+       project progress boq
+       
+       Analysis;-[
+       
+       management request(budget each request)
+       
+       profit per project]
+       ]
+       
+     		  PROCESS MANAGEMENT REQUIREMENT
+       TENDER:-
+       
+ 1.     BOQ[
+                          -Item,
+                          
+                          -Description,
+                          
+                          -Unit,
+                          
+                          -Quantity,
+                          
+                          -Unit Rate,
+                          
+                          -Amount(Tshs)
+                          ],
+                          
+ 2.     Analysis[
+                           -Item,
+                           
+                           -Description,
+                           
+                           -Unit,
+                           
+                           -Quantity,
+                           
+                           -source,
+                           
+                           -unit Cost,
+                           
+                           -Amount,
+                           
+                           -total Cost(for all items),
+                           
+                           -Profit Amount(Project Budget - total cost),
+                           
+                           -%profit
+                           
+                           ],
+                           
+ 3.     Assign Project Manager(project).
+ 
+ 4.     APPOINTMENT LATTER (PROJECT MANAGER FORM)
+ 
+ 5.     Request Process to each activity[
+ 
+                             -Payee Name,
+                             
+                             -Requested By(signature),
+                             
+                             -Created date, 
+                             
+                             -Depertment,
+                             
+                             -Payment Mode(cash/cheque),
+                             
+                             -Item Description,
+                             
+                             -Ref/No,
+                             
+                             -Amount,
+                             
+                             -Total amount,
+                             
+                             -Checked by{position,signature,date},
+                             
+                             -Authorized by{"""},
+                             
+                             -Payee Paid by{cash or cheque No},
+                             
+                             -Received By { name, signature , date},
+                             
+                             
+                             ]
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+                             
+            2. PROJECT MANAGEMENT  :-
+            
+            
+             [
+            -WORK PLAN [
+                   -activities, 
+                   -procur.. plan, 
+                   -timeline, 
+                   -team],
+            
+            ]
+           -Execution.
+           
+           -Updates [
+                    -quatity,
+                    -number,
+                    -pictures
+                    ] .
+           
+           -report.
+          
+           
+        
+        
+        ] 
+                             
+            
+            -Variations(details)  
+            
+                           
+                             
+     PROJECT[
+     BUDGET => CONTRACT VALUE
+     ONPROGRESS/COMPLETED/ONHOLD
+       

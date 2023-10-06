@@ -2,6 +2,8 @@
 
 use app\models\Analysis;
 use app\models\Project;
+use app\models\Request;
+use app\models\TeamAssignment;
 use app\models\Tender;
 use app\models\User;
 use yii\helpers\Html;
@@ -23,9 +25,21 @@ $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $this->context->layout = 'admin';
 
+       /*s AIM OF THIS OPERATION IS TO SHOW THE BUDGET PROGRESS / REMAINNING*/
+//project budget per request
+$remainingBudget = 0;
+$budgetss = Request::find()
+->where(['project_id' => $model->id])
+->andWhere(['status'=>1])
+->all();
 
+$budget_prog = 0;
+foreach ($budgetss as $progress) {
+$budget_prog += $progress->amount;
 
+$remainingBudget = $projectAmount - $budget_prog;
 
+}
 ?>
 
 <a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
@@ -84,6 +98,27 @@ $this->context->layout = 'admin';
             ],
 
             [
+              'attribute' => 'team',
+              'format' => 'raw',
+              'value' => function ($model) {
+                  $assignments = TeamAssignment::find()
+                      ->where(['project_id' => $model->id])
+                      ->all();
+              
+                  $assignedUsernames = [];
+              
+                  foreach ($assignments as $assignment) {
+                      $user = User::findOne($assignment->user_id);
+                      if ($user) {
+                          $assignedUsernames[] = $user->username;
+                      }
+                  }
+              
+                  return implode(', ', $assignedUsernames);
+              },
+          ],
+
+            [
                 'attribute' => 'start_at',
                 'value' => function ($model) {
                     return Yii::$app->formatter->asDatetime($model->start_at);
@@ -122,20 +157,20 @@ $this->context->layout = 'admin';
             [
               'attribute' => 'remainingBudget',
               'format' => 'raw',
-              'value' => function ($model) use ($budget_prog, $projectAmount) {
-                  $remainingBudget = $projectAmount - $budget_prog;
+              'value' => function ($model) use ($budget_prog, $projectAmount, $remainingBudget) {
+                  
                   $percentageComplete = ($projectAmount != 0) ? round(($budget_prog / $projectAmount) * 100, 2) : 0;
                   $percentageRemaining = ($projectAmount != 0) ? round(($remainingBudget / $projectAmount) * 100, 2) : 0;
           
                   $progressBar = '<div class="progress progress_sm">';
-                  $progressBar .= '<div class="progress-bar bg-green" role="progressbar" style="width: ' . $percentageComplete . '%;"></div>';
+                  $progressBar .= '<div class="progress-bar bg-blue" role="progressbar" style="width: ' . $percentageComplete . '%;"></div>';
                   $progressBar .= '</div>';
                   $progressBar .= '<small>' . $percentageComplete . '% Complete</small>';
           
                   $progressBar .= '<div class="progress progress_sm">';
-                  $progressBar .= '<div class="progress-bar bg-red" role="progressbar" style="width: ' . $percentageRemaining . '%;"></div>';
+                  $progressBar .= '<div class="progress-bar bg-warning" role="progressbar" style="width: ' . $percentageRemaining . '%;"></div>';
                   $progressBar .= '</div>';
-                  $progressBar .= '<small>' . $remainingBudget . ' Remaining out of ' . $projectAmount . '</small>';
+                  $progressBar .= '<small>' . $remainingBudget . ' Remaining out of ' . $projectAmount . ' and Used ' .  $budget_prog. '</small>';
           
                   return $progressBar;
               },
@@ -167,14 +202,24 @@ $this->context->layout = 'admin';
             
             // 'created_by',
             [
-            'attribute'=>'document',
-            'format'=>'raw',
-            'value'=>function ($model){
-              $fileName = $model->document;
-              $filePath = Yii::getAlias('/upload/' . $fileName); 
-              $downloadPath =  Yii::getAlias('/upload/' . $fileName);
-              return $model->document ? Html:: a('<i class="fa fa-download"></i> complete project document', $downloadPath, ['class' => 'btn btn-warning', 'target' => '_blank']) : '';
-            },
+              'attribute' => 'invite_letter',
+              'format' => 'raw',
+              'value' => function ($model) {
+                  $fileName = $model->invite_letter;
+                  $filePath = Yii::getAlias('/upload/' . $fileName);
+                  $downloadPath = Yii::getAlias('/upload/' . $fileName);
+                  return $model->invite_letter ? Html::a('<i class="fa fa-file-pdf" aria-hidden="true"></i> ' . $model->invite_letter, $downloadPath, ['class' => 'btn btn-', 'target' => '_blank']) : '';
+              },
+          ],
+            [
+              'attribute' => 'document',
+              'format' => 'raw',
+              'value' => function ($model) {
+                  $fileName = $model->document;
+                  $filePath = Yii::getAlias('/upload/' . $fileName);
+                  $downloadPath = Yii::getAlias('/upload/' . $fileName);
+                  return $model->document ? Html::a('<i class="fa fa-file-pdf" aria-hidden="true"></i> ' . $model->document, $downloadPath, ['class' => 'btn btn-', 'target' => '_blank']) : '';
+              },
           ],
         ]
     ]) ?>

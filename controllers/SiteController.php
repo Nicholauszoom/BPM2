@@ -100,7 +100,7 @@ class SiteController extends Controller
         $model = new  SignupForm();
         $authItems = AuthItem::find()->all();
         if ($model->load(Yii::$app->request->post()) && $model->signUp()){
-            return $this->redirect(Yii::$app->homeUrl);
+            return $this->redirect(['/user']);
         }
         return $this->render('signup',[
             'model'=>$model,
@@ -122,7 +122,9 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        
+        return $this->redirect(['site/login']);
+
     }
 
     /**

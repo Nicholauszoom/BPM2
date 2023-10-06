@@ -152,6 +152,9 @@ use yii\web\View;
     ]
 ); ?>
     </div>
+    <div class="col">
+    <?= $form->field($model, 'invite_letter')->fileInput() ?>
+    </div>
     </div>
 
     <div class="form-group">

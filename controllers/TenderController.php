@@ -104,13 +104,19 @@ public function actionAssigned()
     {
         $model= $this->findModel($id);
 
+        
         if ($model !== null) {
            
             // Set isViewed attribute to 1
-            $model->session= true;
+            $model->session= 1;
     
             // Save the model to persist the changes
             $model->save();
+            
+
+            
+
+            
         }
 
         $tdetail=Tdetails::find()
@@ -286,17 +292,28 @@ public function actionAssigned()
                                </html>
                            ');
                            // Retrieve the assigned use
- $assignedUsers = User::find()
-->where(['id' => $model->assigned_to])
-->all();
+                     // Get the selected user IDs from the form
+$selectedUserIds = $model->assigned_to;
 
-// Add CC recipients
+// Find the assigned users
+$assignedUsers = User::find()
+    ->where(['in', 'id', $selectedUserIds])
+    ->all();
+
+// Create an array to store the CC recipients' emails
+$ccRecipients = [];
+
+// Add CC recipients to the array
 foreach ($assignedUsers as $assignedUser) {
-$message->setCc($assignedUser->email);
+    $ccRecipients[] = $assignedUser->email;
 }
 
+// Set the CC recipients in the email message
+$message->setCc($ccRecipients);
+                       // Set the CC recipients from the array
+                       
 
-                          
+
                     //    $message->setCc($assignedUserEmails);
                            // Send the email
                            if ($message instanceof MessageInterface && $message->send()) {

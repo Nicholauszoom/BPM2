@@ -65,7 +65,7 @@ class Project extends \yii\db\ActiveRecord
             [[ 'budget'], 'string', 'max' => 255],
             
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
-            [['document'], 'file'],
+            [['document','invite_letter'], 'file'],
             [['progress'], 'integer', 'min' => 0, 'max' => 100],
             // [['start_at','end_at'], 'date', 'format' => 'MM-dd-yyyy'],
             [['isViewed'], 'default', 'value' => 0],
@@ -97,6 +97,7 @@ class Project extends \yii\db\ActiveRecord
             'user_id' => 'Project Manager',
             'start_at'=>'Start Date',
             'end_at'=> 'End Date',
+            'invite_letter'=>'Invitation Letter',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',

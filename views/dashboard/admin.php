@@ -5,6 +5,7 @@ use app\models\Department;
 use yii\helpers\Url;
 use app\models\Project;
 use app\models\Tender;
+use app\models\User;
 use app\models\UserAssignment;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -77,6 +78,18 @@ $budgetDataJson = Json::encode($budgetData);
     <div class="col-md-2 col-sm-4 tile_stats_count">
       <span class="count_top"><i class="fa fa-minus-circle"></i> Tender Lose</span>
       <div class="count "><?= $tenderFail?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <?php
+      $staff= User::find()
+      ->count();
+     
+      
+      ?>
+      <span class="count_top"><i class="fa fa-user"></i> Staff</span>
+      <div class="count "><?=$staff?></div>
       <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i></i> </span>
     </div>
 

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Tender;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -33,9 +34,19 @@ use yii\jui\DatePicker;
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        'id'=> 'site-visit-date-input'
     ],
     'value' => Yii::$app->formatter->asDate($model->site_visit_date, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
+
+<?php
+$tender_by_id = Tender::findOne($tenderId);
+$publish_date = $tender_by_id->publish_at;
+$submit_date = $tender_by_id->expired_at;
+
+?>
+<div id="site-visit-date-warning" style="display: none; color: red;"><i class="fas fa-warning" style="color:orange ;"></i> Date must be between <span style = "color:dimgray;"><?=Yii::$app->formatter->asDatetime($publish_date)?></span>  and <span style = "color:dimgray;"><?=Yii::$app->formatter->asDatetime($submit_date)?></span></div>
+
 </div>
 
 
@@ -45,9 +56,17 @@ use yii\jui\DatePicker;
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        'id'=>'clarification-date-input'
     ],
     'value' => Yii::$app->formatter->asDate($model->end_clarificatiion, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
+<?php
+$tender_by_id = Tender::findOne($tenderId);
+$publish_date = $tender_by_id->publish_at;
+$submit_date = $tender_by_id->expired_at;
+
+?>
+<div id="clarification-date-warning" style="display: none; color: red;"><i class="fas fa-warning" style="color:orange ;"></i> Date must be between <span style = "color:dimgray;"><?=Yii::$app->formatter->asDatetime($publish_date)?></span>  and <span style = "color:dimgray;"><?=Yii::$app->formatter->asDatetime($submit_date)?></span></div>
 
     <?= $form->field($model, 'tender_id')->hiddenInput(['value' => $tenderId])->label(false) ?>
 
@@ -57,9 +76,18 @@ use yii\jui\DatePicker;
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        'id'=> 'bidmeet-date-input'
     ],
     'value' => Yii::$app->formatter->asDate($model->bidmeet, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
+<?php
+$tender_by_id = Tender::findOne($tenderId);
+$publish_date = $tender_by_id->publish_at;
+$submit_date = $tender_by_id->expired_at;
+
+?>
+<div id="bidmeet-date-warning" style="display: none; color: red;"><i class="fas fa-warning" style="color:orange ;"></i> Date must be between <span style = "color:dimgray;"><?=Yii::$app->formatter->asDatetime($publish_date)?></span>  and <span style = "color:dimgray;"><?=Yii::$app->formatter->asDatetime($submit_date)?></span></div>
+
 
 <div class="form-row">
     <div class="col">
@@ -159,3 +187,92 @@ JS;
 
 $this->registerJs($script);
 ?>
+
+
+
+<?php
+$tender_by_id = Tender::findOne($tenderId);
+$submit_date = $tender_by_id->expired_at;
+?>
+
+<script>
+// Get the publish date input element
+var sitevisitDateInput = document.getElementById('site-visit-date-input');
+
+// Add an event listener to the change event
+sitevisitDateInput.addEventListener('change', function() {
+  // Get the entered publish date and current date
+  var enteredDate = new Date(this.value);
+  var currentDate = new Date();
+  var submitDate = new Date("<?php echo $submit_date; ?>"); // Convert PHP date to JavaScript date object
+
+  // Format the submitDate to compare it with the entered date
+  var formattedSubmitDate = submitDate.toLocaleDateString('en-ru', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  // Compare the entered publish date with the current date and submit date
+  if (enteredDate < currentDate || enteredDate > formattedSubmitDate ) {
+    // Display a warning message
+    var warningMessage = document.getElementById('site-visit-date-warning');
+    warningMessage.style.display = 'block';
+  } else {
+    // Hide the warning message
+    var warningMessage = document.getElementById('site-visit-date-warning');
+    warningMessage.style.display = 'none';
+  }
+});
+
+//bidmeet date script
+//Get the submit date input element
+var bidMeetDateInput = document.getElementById('bidmeet-date-input');
+
+// Add an event listener to the change event
+bidMeetDateInput .addEventListener('change', function() {
+  // Get the entered publish date and current date
+  var enterBidDate = new Date(this.value);
+  var currentDate = new Date();
+
+//   Remove the time information from the current date
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Compare the entered publish date with the current date
+  if (enterBidDate < currentDate) {
+    // Display a warning message
+    var warningMessage = document.getElementById('bidmeet-date-warning');
+    warningMessage.style.display = 'block';
+  } else {
+    // Hide the warning message
+    var warningMessage = document.getElementById('bidmeet-date-warning');
+    warningMessage.style.display = 'none';
+  }
+
+});
+
+
+
+//end clarification date script
+//Get the submit date input element
+var clarificationDateInput = document.getElementById('clarification-date-input');
+
+// Add an event listener to the change event
+clarificationDateInput .addEventListener('change', function() {
+  // Get the entered publish date and current date
+  var enterClarifDate = new Date(this.value);
+  var currentDate = new Date();
+
+//   Remove the time information from the current date
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Compare the entered publish date with the current date
+  if (enterClarifDate  < currentDate) {
+    // Display a warning message
+    var warningMessage = document.getElementById('clarification-date-warning');
+    warningMessage.style.display = 'block';
+  } else {
+    // Hide the warning message
+    var warningMessage = document.getElementById('clarification-date-warning');
+    warningMessage.style.display = 'none';
+  }
+
+});
+
+
+</script>

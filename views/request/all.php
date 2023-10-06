@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Analysis;
+use app\models\CommentRequest;
 use app\models\Request;
 use app\models\User;
 use yii\bootstrap5\Modal;
@@ -69,25 +70,25 @@ $this->context->layout = 'admin';
         <td><?= $user->username ?></td>
         <td><?= getStatusLabel($request->status) ?></td>
         <td>
-    <?php if ($request->viewed == 0): ?>
-        <span class="badge bg-blue">New</span>
-    <?php else: ?>
-        <span class="badge bg-green">Viewed</span>
-    <?php endif; ?>
-</td>
-       
+            <?php if ($request->viewed == 0): ?>
+                <span class="badge bg-blue">New</span>
+            <?php else: ?>
+                <span class="badge bg-green">Viewed</span>
+            <?php endif; ?>
+        </td>
         <td>
-                <?= Html::a('<span class="glyphicon glyphicon-edit"></span>', ['update', 'id' => $request->id], [
-                    'title' => 'Update',
-                    'data-method' => 'post',
-                    'data-pjax' => '0',
-                ]) ?>
+            <?= Html::a('<span class="glyphicon glyphicon-edit"></span>', ['update', 'id' => $request->id], [
+                'title' => 'Update',
+                'data-method' => 'post',
+                'data-pjax' => '0',
+            ]) ?>
 
-                <?= Html::a('<span class="fa fa-commenting" style="font-size: 20px;"></span>', ['update', 'id' => $request->id], [
-                    'title' => 'for Approve',
-                    'data-method' => 'post',
-                    'data-pjax' => '0',
-                ]) ?>
+            <?= Html::a('<span class="fa fa-commenting" style="font-size: 20px;"></span>', ['update', 'id' => $request->id], [
+                'title' => 'for Approve',
+                'data-toggle' => 'modal',
+                'data-target' => '#commentModal',
+                'data-request-id' => $request->id, // Pass the request ID as a data attribute
+            ]) ?>
 
             <?= Html::a('<span class="glyphicon glyphicon-trash"></span>', ['delete', 'id' => $request->id], [
                 'title' => 'Delete',
@@ -98,6 +99,38 @@ $this->context->layout = 'admin';
         </td>
     </tr>
 <?php endforeach; ?>
+
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Add Comment:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Comment form goes here -->
+                <form id="commentForm">
+                   
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Listen for click event on the comment link and update the form
+        var commentLinks = document.querySelectorAll('[data-target="#commentModal"]');
+        commentLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                var requestID = link.getAttribute('data-request-id');
+                document.getElementById('commentFormRequestID').value = requestID;
+            });
+        });
+    });
+</script>
 <tr>
     <td></td>
     <td></td>
@@ -119,6 +152,8 @@ $this->context->layout = 'admin';
 </tr>
 </tbody>
 </table>
+<!-- Comment Modal -->
+
 <!--
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

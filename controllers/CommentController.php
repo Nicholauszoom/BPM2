@@ -2,19 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\Task;
-use app\models\Team;
-use app\models\TeamAssignment;
-use app\models\TeamSearch;
-use app\models\User;
+use app\models\Comment;
+use app\models\CommentSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * TeamController implements the CRUD actions for Team model.
+ * CommentController implements the CRUD actions for Comment model.
  */
-class TeamController extends Controller
+class CommentController extends Controller
 {
     /**
      * @inheritDoc
@@ -35,13 +32,13 @@ class TeamController extends Controller
     }
 
     /**
-     * Lists all Team models.
+     * Lists all Comment models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new TeamSearch();
+        $searchModel = new CommentSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -51,7 +48,7 @@ class TeamController extends Controller
     }
 
     /**
-     * Displays a single Team model.
+     * Displays a single Comment model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,47 +61,29 @@ class TeamController extends Controller
     }
 
     /**
-     * Creates a new Team model.
+     * Creates a new Comment model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate($projectId)
+    public function actionCreate()
     {
-        $model = new Team();
-        $taskList = Task::find()->all();
-        $userList = User::find()->all();
-
-        $model->project_id =$projectId;
+        $model = new Comment();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-
-                if (is_array($model->user_id) && !empty($model->user_id)) {
-                    foreach ($model->user_id as $userId) {
-                        $assignment = new TeamAssignment();
-                        $assignment->team_id = $model->id;
-                        $assignment->user_id = $userId;
-                        $assignment->project_id=$projectId;
-                        $assignment->save();
-                    }
-                }
-                return $this->redirect(['project/view', 'id' => $model->project_id]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
         }
-        
 
         return $this->render('create', [
             'model' => $model,
-             'taskList'=> $taskList,
-             'userList'=> $userList,
-             'projectId'=>$projectId,
         ]);
     }
 
     /**
-     * Updates an existing Team model.
+     * Updates an existing Comment model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -113,7 +92,6 @@ class TeamController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $userList = User::find()->all();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -121,38 +99,11 @@ class TeamController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'userList'=> $userList,
-
         ]);
     }
 
-    public function actionDetail($projectId)
-    {
-         //find team memebers by specific project
-
-         $team_assigned=TeamAssignment::find()
-         ->where(['project_id'=>$projectId])
-         ->all();
-
-
-
-
-         $assignedTeamIds = [];
-         foreach ($team_assigned as $team_assigned) {
-             $assignedTeamIds[] = $team_assigned->team_id;
-         }
-       $team=Team::find()
-       ->where(['id'=>$assignedTeamIds])
-       ->all();
-
-        return $this->render('detail', [
-            'team'=>$team,
-            'projectId'=>$projectId,
-           
-        ]);
-    }
     /**
-     * Deletes an existing Team model.
+     * Deletes an existing Comment model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -166,15 +117,15 @@ class TeamController extends Controller
     }
 
     /**
-     * Finds the Team model based on its primary key value.
+     * Finds the Comment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Team the loaded model
+     * @return Comment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Team::findOne(['id' => $id])) !== null) {
+        if (($model = Comment::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

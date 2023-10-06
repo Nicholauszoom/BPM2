@@ -39,6 +39,7 @@ $this->context->layout = 'admin';
         'details'=>$details,
         'tenderId'=>$tenderId,
         
+        
     ]) ?>
 
 </div>

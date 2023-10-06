@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\models\Analysis;
+use app\models\Comment;
+use app\models\CommentRequest;
 use app\models\Department;
 use app\models\Project;
 use app\models\Request;
@@ -100,6 +102,25 @@ class RequestController extends Controller
           'req'=>$req,
           'existingQuantity'=>$existingQuantity,
           'existingAmount'=>$existingAmount,
+        ]);
+    }
+
+    public function actionComment()
+    {
+        $comment = new Comment();
+
+        if ($this->request->isPost) {
+            if ($comment->load($this->request->post()) && $comment->save()) {
+
+                 
+                return $this->redirect(['view', 'id' => $comment->id]);
+            }
+        } else {
+            $comment->loadDefaultValues();
+        }
+
+        return $this->render('all', [
+            'comment' => $comment,
         ]);
     }
 

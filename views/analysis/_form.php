@@ -21,7 +21,7 @@ echo '</div>';
 
 // Form
 $form = ActiveForm::begin([
-   
+
 ]);
 
 // echo $form->field($model, 'item')->textInput(['maxlength' => true]);
@@ -39,12 +39,13 @@ echo $form->field($model, 'files')->fileInput();
 // Add remaining form fields...
 
 echo '<div class="modal-footer">';
-echo Html::submitButton('Save', ['class' => 'btn btn-success']);
+echo Html::submitButton('Save', ['class' => 'btn btn-success','id' => 'save-button']);
 echo '</div>';
 
 ActiveForm::end();
 
 Modal::end();
+
 ?>
 
 <div class="analysis-form">
@@ -67,7 +68,7 @@ Modal::end();
       <th scope="col"></th>
     </tr>
   </thead>
-  <tbody >
+  <tbody>
   <?php foreach ($details as $details): ?>
     <tr>
     <td><?= $details->serio ?></td>
@@ -94,13 +95,13 @@ Modal::end();
             'data-pjax' => '0',
         ]) ?>
     </td>
-    
+
     </tr>
     <?php endforeach; ?>
-    
+
     <tr>
       <td>
-             
+
       <?= Html::a('+ Add (CSV/EXEL) document', '#', [ 'data-toggle' => 'modal', 'data-target' => '#createModal']) ?>
     </td>
       <td></td>
@@ -119,10 +120,12 @@ Modal::end();
       <td style="background-color: #f2f2f2;">Percentage Profit(%) <?=$profitPerce?>%</td>
       <td style="background-color: #f2f2f2;"></td>
     </tr>
-    
-    
+
+
   </tbody>
 </table>
+
+
 <?php
 function getStatusLabel($status)
 {
@@ -138,7 +141,7 @@ function getStatusLabel($status)
 function getStatusClass($status)
 {
     $statusClasses = [
-       
+
         1 => 'status-active',
         2 => 'status-inactive',
         3 => 'status-onhold',

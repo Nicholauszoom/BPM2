@@ -10,9 +10,11 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\mail\MessageInterface;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -85,112 +87,118 @@ class AnalysisController extends Controller
      */
 
      public function actionCreate($projectId)
-    {
-        $model = new Analysis();
-        $data = []; // Define the $data variable
-        $rowData = [];
-
-        $model->project = $projectId;
-
-        // $details = Analysis::find()->all();
-        
-        
-       //////////////
-        $details = Analysis::find()
-        ->where(['project' => $projectId])
-        ->all();
-    ///////////////
-        
-    //find and  calculate the  total amount of the each one  given project
-
-//count project by user_id
-
-// Find projects assigned 
-$analysis = Analysis::find()
-    ->where(['project' => $projectId])
-    ->all();
-
-// Calculate the total project budget for the assigned projects
-$projectAmount = 0;
-foreach ($analysis as $analysis) {
-    $projectAmount += $analysis->cost;
-}
-    //end
-
- // Calculate profit gained  
-        $project = Project::findOne($projectId);
-        $profit = $project->budget - $projectAmount;
-    
-        $profitPerce =0;
-        // Percent of the project profit gained
-        $profitPerce = ($profit / $project->budget) * 100;
-
-        $u_amount=0;
-        $unit_profit=$model->setunit - ($model->unit);
-    
-        if ($model->load(Yii::$app->request->post())) {
-    
-            // $model->cost = $model->unit * $model->quantity;
-
-            // $model->unitprofit=$model->setunit - $model->unit;
-
-            // $costt=$model->cost;
-            // $unitprof=$model->unitprofit;
-
-            // Create the upload directory if it doesn't exist
-            $uploadDir = Yii::getAlias('@webroot/upload/');
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-    
-            // Upload the files
-            $files = UploadedFile::getInstances($model, 'files');
-            if (!empty($files)) {
-                $filePaths = [];
-                foreach ($files as $file) {
-                    $filePath = $uploadDir . $file->baseName . '.' . $file->extension;
-                   ///////////////////////
-                    // if ($file->saveAs($filePath)) {
-                    //     $filePaths[] = $filePath;
-                    // }
-                    /////////////////
-
-                   // ..........................
-                   if ($file->saveAs($filePath)) {
-                      $filePaths[] = $filePath;
-
-                        // Import CSV data into the database
-                        $handle = fopen($filePath, 'r');
-                        while (($data = fgetcsv($handle)) !== false) {
-                            $rowData[] = $data;
-                        }
-                        fclose($handle);
-
-                        // Import data into the database
-                        foreach ($rowData as $row) {
-                            $modelRow = new Analysis();
-                            $modelRow->serio = isset($row[0]) ? $row[0] : null;
-                            $modelRow->item = isset($row[1]) ? $row[1] : null;
-                            $modelRow->quantity = isset($row[2]) ? $row[2] : null;
-                            $modelRow->description = isset($row[3]) ? $row[3] : null;
-                            $modelRow->setunit = isset($row[4]) ? $row[4] : null;
-                            $modelRow->cotedAmount = isset($row[5]) ? $row[5] : null;
-                            // $modelRow->source = $row[6];
-                            // $modelRow->unit = $row[7];
-                        
-                            // Ensure numeric values for unit and quantity
-                            // $modelRow->unit = is_numeric($modelRow->unit) ? (float)$modelRow->unit : 0;
-                            // $modelRow->quantity = is_numeric($modelRow->quantity) ? (float)$modelRow->quantity : 0;
-                            $modelRow->unit = is_numeric($modelRow->unit) ? (float)$modelRow->unit : 0;
-                            $modelRow->quantity = is_numeric($modelRow->quantity) ? (float)$modelRow->quantity : 0;
-                            // $modelRow->setunit = is_numeric($modelRow->setunit) ? (float)$modelRow->setunit : 0;
-                        
-                            // $modelRow->cost = $modelRow->unit * $modelRow->quantity;
-                            // $modelRow->unitprofit = $modelRow->setunit - $modelRow->unit;
-                        
+     {
+         $model = new Analysis();
+         $data = []; // Define the $data variable
+         $rowData = [];
+     
+         $model->project = $projectId;
+     
+         // $details = Analysis::find()->all();
+     
+     
+         //////////////
+         $details = Analysis::find()
+             ->where(['project' => $projectId])
+             ->all();
+         ///////////////
+     
+         //find and  calculate the  total amount of the each one  given project
+     
+         //count project by user_id
+     
+         // Find projects assigned
+         $analysis = Analysis::find()
+             ->where(['project' => $projectId])
+             ->all();
+     
+         // Calculate the total project budget for the assigned projects
+         $projectAmount = 0;
+         foreach ($analysis as $analysis) {
+             $projectAmount += $analysis->cost;
+         }
+         //end
+     
+         // Calculate profit gained
+         $project = Project::findOne($projectId);
+         $profit = $project->budget - $projectAmount;
+     
+         $profitPerce = 0;
+         // Percent of the project profit gained
+         $profitPerce = ($profit / $project->budget) * 100;
+     
+         $u_amount = 0;
+         $unit_profit = $model->setunit - ($model->unit);
+     
+         if ($model->load(Yii::$app->request->post())) {
+     
+             // $model->cost = $model->unit * $model->quantity;
+     
+             // $model->unitprofit=$model->setunit - $model->unit;
+     
+             // $costt=$model->cost;
+             // $unitprof=$model->unitprofit;
+     
+             // Create the upload directory if it doesn't exist
+             $uploadDir = Yii::getAlias('@webroot/upload/');
+             if (!is_dir($uploadDir)) {
+                 mkdir($uploadDir, 0777, true);
+             }
+     
+             // Upload the files
+             $files = UploadedFile::getInstances($model, 'files');
+             if (!empty($files)) {
+                 $filePaths = [];
+                 $fileCount = count($files);
+                 $uploadedCount = 0;
+     
+                 // Show the progress bar
+                 
+     
+                 foreach ($files as $file) {
+                     $filePath = $uploadDir . $file->baseName . '.' . $file->extension;
+     
+                     if ($file->saveAs($filePath)) {
+                         $filePaths[] = $filePath;
+     
+                         // Import CSV data into the database
+                         $handle = fopen($filePath, 'r');
+                         while (($data = fgetcsv($handle)) !== false) {
+                             $rowData[] = $data;
+                         }
+                         fclose($handle);
+     
+                         // Import data into the database
+                         foreach ($rowData as $row) {
+                             $modelRow = new Analysis();
+                             $modelRow->serio = isset($row[0]) ? $row[0] : null;
+                             $modelRow->item = isset($row[1]) ? $row[1] : null;
+                             $modelRow->quantity = isset($row[2]) ? $row[2] : null;
+                             $modelRow->description = isset($row[3]) ? $row[3] : null;
+                             $modelRow->setunit = isset($row[4]) ? $row[4] : null;
+                             $modelRow->cotedAmount = isset($row[5]) ? $row[5] : null;
+                             $modelRow->source = isset($row[6]) ? $row[6] : null;
+                             // $modelRow->unit = $row[7];
+     
+                             // Ensure numeric values for unit and quantity
+                             // $modelRow->unit = is_numeric($modelRow->unit) ? (float)$modelRow->unit : 0;
+                             // $modelRow->quantity = is_numeric($modelRow->quantity) ? (float)$modelRow->quantity : 0;
+                             $modelRow->unit = is_numeric($modelRow->unit) ? (float)$modelRow->unit : 0;
+                             $modelRow->quantity = is_numeric($modelRow->quantity) ? (float)$modelRow->quantity : 0;
+                             // $modelRow->setunit = is_numeric($modelRow->setunit) ? (float)$modelRow->setunit : 0;
+     
+                             // $modelRow->cost = $modelRow->unit * $modelRow->quantity;
+                             $setunitWithoutCommas = str_replace(',', '', $modelRow->setunit);
+                             $setunitAsInt = intval($setunitWithoutCommas);
+     
+                             $modelRow->unitprofit = $setunitAsInt - $modelRow->unit;        
                             $modelRow->project = $projectId;
                             $modelRow->files = $filePath;
                             $modelRow->save();
+
+
+
+                       
                         }
 
                         // // Redirect after importing
@@ -200,9 +208,14 @@ foreach ($analysis as $analysis) {
 
 
                 }
+                  // Set the final progress percentage to 100
+           
+
                 $model->files = implode(',', $filePaths);
             }
-    
+    // Show the progress bar
+    Yii::$app->response->format = Response::FORMAT_JSON;
+    return ['progressBar' => $this->renderPartial('progress')];
             // Upload the BOQ file
             $boqFile = UploadedFile::getInstance($model, 'boq');
             if ($boqFile !== null) {

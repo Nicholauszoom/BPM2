@@ -163,7 +163,7 @@ $sidebarItems = [
                         'header' => 'Actions',
                         'headerOptions' => ['style' => 'text-align:center'],
                         'contentOptions' => ['style' => 'text-align:center'],
-                        'template' => '<div style="display:flex; justify-content:center;">{view} {create-analysis} {create-task} {update}</div>',
+                        'template' => '<div style="display:flex; justify-content:center;">{view} {create-analysis} {create-task} {update} {team}</div>',
                         'buttons' => [
                             'create-analysis' => function ($url, $model, $key) {
                                 $request_project_new = Request::find()
@@ -197,8 +197,16 @@ $sidebarItems = [
                             'update' => function ($url, $model, $key) {
                                 return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['edit', 'id' => $model->id], [
                                     // 'class' => 'btn btn-success',
-                                    'title' => 'view project',
-                                    'aria-label' => 'Project view',
+                                    'title' => 'edit project',
+                                    'aria-label' => 'Project edit',
+                                ]);
+                            },
+
+                            'team' => function ($url, $model, $key) {
+                                return Html::a('<span class="fa fa-group"></span>', ['team/detail', 'projectId' => $model->id], [
+                                    // 'class' => 'btn btn-success',
+                                    'title' => ' project team',
+                                    'aria-label' => 'Project team',
                                 ]);
                             },
                         ],

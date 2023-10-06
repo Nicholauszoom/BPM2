@@ -125,7 +125,7 @@ $this->context->layout = 'admin';
                     $fileName = $model->document;
                     $filePath = Yii::getAlias('@webroot/upload/' . $fileName);
                     $downloadPath = Yii::getAlias('@web/upload/' . $fileName);
-                    return $model->document ? Html::a('<i class="fa fa-download"></i> Download tender Attachments', $downloadPath, ['class' => 'btn btn-primary', 'target' => '_blank']) : '';
+                    return $model->document ? Html::a('<i class="fa fa-file-pdf" aria-hidden="true" style="font-size: 24px;"></i>' . $model->document, $downloadPath, ['class' => 'btn btn-', 'target' => '_blank']) : '';
                 },
             ],
 
@@ -136,7 +136,7 @@ $this->context->layout = 'admin';
                     $fileName = $model->submission;
                     $filePath = Yii::getAlias('@webroot/upload/' . $fileName);
                     $downloadPath = Yii::getAlias('@web/upload/' . $fileName);
-                    return $model->submission ? Html::a('<i class="fa fa-download"></i> complete tender submitted document', $downloadPath, ['class' => 'btn btn-warning', 'target' => '_blank']) : '';
+                    return $model->submission ? Html::a('<i class="fa fa-file-pdf" aria-hidden="true" style="font-size: 24px;"></i> ' . $model->submission, $downloadPath, ['class' => 'btn btn-', 'target' => '_blank']) : '';
                 },
             ],
 
@@ -166,7 +166,7 @@ $this->context->layout = 'admin';
                         $fileName = $attachment->document;
                         $filePath = Yii::getAlias('@webroot/upload/' . $fileName);
                         $fileUrl = Yii::getAlias('@web/upload/' . $fileName);
-                        return '<embed src="' . $fileUrl . '" type="application/pdf" width="100%" height="600px" />';
+                        return '<embed src="' . $fileUrl . '" type="application/pdf" width="70%" height="400px" />';
                     }
                     return '';
                 },

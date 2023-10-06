@@ -24,7 +24,7 @@ $department=Department::find()->all();
 
 <div class="tender-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id'=>'my-form']); ?>
     <?php if (Yii::$app->user->can('admin')) : ?>
         <div class="form-row">
     <div class="col">
@@ -95,9 +95,12 @@ $department=Department::find()->all();
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        'id' => 'publish-date-input', // Add an ID to the input field for easier identification
     ],
-    'value' => Yii::$app->formatter->asDate($model->expired_at, 'MM/dd/yyyy'), // Set the value of the date picker
+    'value' => Yii::$app->formatter->asDate($model->publish_at, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
+<div id="publish-date-warning" style="display: none; color: red;"> <i class="fas fa-warning" style="color:orange ;"></i> Date must be less or equal to the current date.</div>
+
 
 <?= $form->field($model, 'expired_at')->widget(DatePicker::class, [
     'language' => 'ru',
@@ -105,9 +108,12 @@ $department=Department::find()->all();
     'options' => [
         'class' => 'form-control',
         'type' => 'date', // Use 'text' type instead of 'date' to ensure consistent behavior across browsers
+        'id'=>'submit-date-input'
     ],
     'value' => Yii::$app->formatter->asDate($model->expired_at, 'MM/dd/yyyy'), // Set the value of the date picker
 ]) ?>
+<div id="submit-date-warning" style="display: none; color: red;"><i class="fas fa-warning" style="color:orange ;"></i> Date must be greater to publish date</div>
+
 <?php endif; ?>
     <?php if (Yii::$app->user->can('author')) : ?>
 
@@ -125,4 +131,60 @@ $department=Department::find()->all();
 
     <?php ActiveForm::end(); ?>
 
+ 
 </div>
+<script> 
+
+
+// Get the publish date input element
+var publishDateInput = document.getElementById('publish-date-input');
+
+// Add an event listener to the change event
+publishDateInput.addEventListener('change', function() {
+  // Get the entered publish date and current date
+  var enteredDate = new Date(this.value);
+  var currentDate = new Date();
+
+  // Remove the time information from the current date
+//   currentDate.setHours(0, 0, 0, 0);
+
+  // Compare the entered publish date with the current date
+  if (enteredDate > currentDate) {
+    // Display a warning message
+    var warningMessage = document.getElementById('publish-date-warning');
+    warningMessage.style.display = 'block';
+  } else {
+    // Hide the warning message
+    var warningMessage = document.getElementById('publish-date-warning');
+    warningMessage.style.display = 'none';
+  }
+
+});
+
+//submit date script
+//Get the submit date input element
+var submitDateInput = document.getElementById('submit-date-input');
+
+// Add an event listener to the change event
+submitDateInput.addEventListener('change', function() {
+  // Get the entered publish date and current date
+  var enterDate = new Date(this.value);
+  var currentDate = new Date();
+
+//   Remove the time information from the current date
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Compare the entered publish date with the current date
+  if (enterDate < currentDate) {
+    // Display a warning message
+    var warningMessage = document.getElementById('submit-date-warning');
+    warningMessage.style.display = 'block';
+  } else {
+    // Hide the warning message
+    var warningMessage = document.getElementById('submit-date-warning');
+    warningMessage.style.display = 'none';
+  }
+
+});
+
+</script>

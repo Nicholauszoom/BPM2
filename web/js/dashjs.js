@@ -190,3 +190,54 @@ $(document).ready(function() {
     // Refresh the drop-down to apply the changes
     $('#site-visit-dropdown').selectpicker('refresh');
 });
+
+
+
+function updateProgressBar(percentage) {
+    var progressBar = document.querySelector('.progress-bar');
+    progressBar.style.width = percentage + '%';
+    progressBar.textContent = percentage + '%';
+}
+
+function updateProgressMessage(message) {
+    var progressMessage = document.querySelector('.progress-message');
+    progressMessage.textContent = message;
+}
+
+function handleProgressUpdate(response) {
+    var responseData = JSON.parse(response);
+
+    var uploadedCount = responseData.uploadedCount;
+    var totalCount = responseData.totalCount;
+    var progressPercentage = responseData.progressPercentage;
+
+    updateProgressBar(progressPercentage);
+
+    if (progressPercentage === 100) {
+        updateProgressMessage('Import complete.');
+    } else {
+        var message = 'Processed ' + uploadedCount + ' out of ' + totalCount + ' files.';
+        updateProgressMessage(message);
+    }
+}
+
+document.getElementById('progress-container').style.display = 'block';
+
+// Poll the progress endpoint every 1 second
+var progressInterval = setInterval(function () {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/analysis/create', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            handleProgressUpdate(xhr.responseText);
+        } else {
+            console.error('Error: ' + xhr.status);
+        }
+    };
+
+    xhr.send();
+}, 1000);
+
+

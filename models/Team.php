@@ -56,7 +56,7 @@ class Team extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'status','project_id','user_id'], 'required'],
-            [['status', 'created_at', 'updated_at','project_id', 'created_by'], 'integer'],
+            [['status', 'created_at', 'updated_at','project_id', 'created_by','team_no'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['user_id'], 'safe'],
         ];
@@ -72,6 +72,7 @@ class Team extends \yii\db\ActiveRecord
             'name' => 'Name',
             'user_id'=>'Member',
             'status' => 'Status',
+            'team_no'=>'Project  Req.. team',
             'project_id' => 'project_id',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

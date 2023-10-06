@@ -11,6 +11,7 @@ use app\models\Request;
 use app\models\Role;
 use app\models\RoleUser;
 use app\models\Task;
+use app\models\TeamAssignment;
 use app\models\Tender;
 use app\models\Updates;
 use app\models\User;
@@ -97,20 +98,11 @@ class ProjectController extends Controller
         {
      // Get the logged-in user
     $userId = Yii::$app->user->id;
-
-    // Find the assignments for the user with the "author" item_name
-    // $assignments = AuthAssignment::find()
-    //     ->where(['user_id' => $userId, 'item_name' => 'author'])
-    //     ->all();
-
+    
     // Retrieve the projects assigned to the user
     $projects = Project::find()
         ->where(['user_id' => $userId])
         ->all();
-
-    // $request_project=Request::find()
-    // ->where(['project_id'=>$projects->id])
-    // ->all();
 
     return $this->render('pm', [
         'projects' => $projects,
@@ -201,17 +193,7 @@ class ProjectController extends Controller
             //   }
         }
 
-    //project budget per request
-    $budgetss = Request::find()
-    ->where(['project_id' => $id])
-    ->andWhere(['status'=>1])
-    ->all();
-
-$budget_prog = 0;
-foreach ($budgetss as $progress) {
-    $budget_prog += $progress->amount;
-  
-}
+ 
         
         return $this->render('view', [
             'model' => $model,
@@ -223,8 +205,7 @@ foreach ($budgetss as $progress) {
             'projectId' =>$projectId,
             'id'=>$id,
             // 'request_on'=>$request_on,
-            'budget_prog'=>$budget_prog,
-            
+          
             
 
         ]);
@@ -260,7 +241,6 @@ foreach ($budgetss as $progress) {
          $model->tender_id=$details;
 
 
-           
          $tender = Tender::findOne($model->tender_id);
 
          
@@ -294,6 +274,13 @@ foreach ($budgetss as $progress) {
                         // }
                          // Process the CSV file
                     
+                    }
+
+                    $submissionFile = UploadedFile::getInstance($model, 'invite_letter');
+                    if ($submissionFile !== null) {
+                        $submissionPath = '' . $submissionFile->name; // Adjusted file path
+                        $submissionFile->saveAs($submissionPath);
+                        $model->invite_letter = $submissionPath;
                     }
 
 
@@ -379,12 +366,17 @@ foreach ($budgetss as $progress) {
                                         <p>Your project has been assigned to you. Please find the details below:</p>
                                         <ul>
                                             <li>Project Name: ' . Html::encode($tenderTitle) . '</li>
-                                            <li>Project Deadline: ' . Html::encode($model->end_at) . '</li>
+                                            <li>Project Deadline: ' .  Html::encode(date('Y-m-d',$model->end_at)) . '</li>
                                             <li>Assigned By: ' . Html::encode($projectManagers->username) . '</li>
                                         </ul>
                                         <p>If you have any questions or need further assistance, feel free to contact us.</p>
-                                        <a href="' . Yii::$app->request->getHostInfo() . '/upload/' . $model->document . '">View Attachment</a>                                </html>
+                                        <a href="' . Yii::$app->request->getHostInfo() . '/upload/' . $model->document . '">View Attachment</a>                       </html>
                             ');
+
+                            // Attach the invite letter document
+if ($model->invite_letter) {
+    $message->attach($model->invite_letter);
+}
 
                     // Attach the document file to the email
     foreach ($attachments as $attachment) {
@@ -397,7 +389,7 @@ foreach ($budgetss as $progress) {
                     // Create a notification for the assigned user
                 
                     // return $this->redirect(['view', 'id' => $model->id]);
-                    return $this->redirect(['index']);
+                return $this->redirect(['team/create', 'projectId' => $model->id]);
                 }
             }
     else {
@@ -478,6 +470,8 @@ foreach ($budgetss as $progress) {
 
         
      }
+
+   
 
 
      
