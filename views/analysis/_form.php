@@ -46,6 +46,9 @@ ActiveForm::end();
 
 Modal::end();
 
+
+ 
+
 ?>
 
 <div class="analysis-form">
@@ -110,18 +113,83 @@ Modal::end();
       <td></td>
       <td></td>
       <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
     </tr>
     <tr>
       <td></td>
       <td></td>
+      <td style="font-weight:bold;">TOTAL AMOUNT BEFORE VAT:</td>
+      <td> <?=$projectAmount + $vat?></td>
       <td></td>
-      <td style="background-color: #f2f2f2;">Total Amount: TSH <?=$projectAmount?></td>
-      <td style="background-color: #f2f2f2;">Profit:TSH <?=$profit?></td>
-      <td style="background-color: #f2f2f2;">Percentage Profit(%) <?=$profitPerce?>%</td>
-      <td style="background-color: #f2f2f2;"></td>
+      <td></td>
+      <td ></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="font-weight:bold;">TOTAL AMOUNT INCLUDING VAT:</td>
+      <td> <?=$projectAmount?></td>
+      <td></td>
+      <td></td>
+      <td ></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
     </tr>
 
-
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="font-weight:bold;">VAT</td>
+      <td >18%</td>
+      <td ><?=$vat?></td>
+      <td ></td>
+      <td ></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="font-weight:bold;">Profit:</td>
+      <td ><?=$profit?></td>
+      <td ></td>
+      <td ></td>
+      <td ></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="font-weight:bold;">Percentage Profit(%)</td>
+      <td > <?=$profitPerce?>%</td>
+      <td ></td>
+      <td ></td>
+      <td ></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
   </tbody>
 </table>
 

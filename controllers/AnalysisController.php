@@ -113,12 +113,16 @@ class AnalysisController extends Controller
              ->all();
      
          // Calculate the total project budget for the assigned projects
-         $projectAmount = 0;
+         $projectAmounts = 0;
          foreach ($analysis as $analysis) {
-             $projectAmount += $analysis->cost;
+             $projectAmounts += $analysis->cost;
          }
          //end
-     
+         //vat
+         $vat= $projectAmounts*(18/100);
+        
+         //Include vat
+         $projectAmount=$projectAmounts - $vat;
          // Calculate profit gained
          $project = Project::findOne($projectId);
          $profit = $project->budget - $projectAmount;
@@ -240,101 +244,11 @@ class AnalysisController extends Controller
            'profit' => $profit,
            'profitPerce'=> $profitPerce,
            'u_amount'=> $u_amount,
-           'unit_profit'=> $unit_profit
+           'unit_profit'=> $unit_profit,
+           'vat'=>$vat,
         ]);
     }
 
-    // public function actionCreate($projectId)
-    // {
-    //     $unit_profit = 0;
-        
-    //     $profit = 0;
-    //     $profitPerce = 0;
-    //     $model = new Analysis();
-        
-       
-    //    $model->cost = $model->unit*$model->quantity;
-    //    $cost = $model->cost ;
-
-    //     $model->project = $projectId;
-    
-    //     $details = Analysis::find()
-    //         ->where(['project' => $projectId])
-    //         ->all();
-    
-    //     // Find projects assigned
-    //     $analysis = Analysis::find()
-    //         ->where(['project' => $projectId])
-    //         ->all();
-    
-    //     // Calculate the total project budget for the assigned projects
-    //     $projectAmount = 0;
-    //     foreach ($analysis as $analysisItem) {
-    //         $projectAmount += $analysisItem->cost;
-    //     }
-    //      // Calculate item cost by default
-    //     //  $tcost = $model->unit * $model->quantity;
-    //     //  $unit_profit = $model->setunit - $model->unit;
-        
- 
-    
-    //     if ($this->request->isPost) {
-    //         $model->load($this->request->post());
-    
-           
-    //         // Create the upload directory if it doesn't exist
-    //         $uploadDir = Yii::getAlias('@webroot/upload/');
-    //         if (!is_dir($uploadDir)) {
-    //             mkdir($uploadDir, 0777, true);
-    //         }
-    
-    //         // Upload the files
-    //         $files = UploadedFile::getInstances($model, 'files');
-    //         if (!empty($files)) {
-    //             $filePaths = [];
-    //             foreach ($files as $file) {
-    //                 $filePath = $uploadDir . $file->baseName . '.' . $file->extension;
-    //                 if ($file->saveAs($filePath)) {
-    //                     $filePaths[] = $filePath;
-    //                 }
-    //             }
-    //             $model->files = implode(',', $filePaths);
-    //         }
-    
-    //         // Upload the BOQ file
-    //         $boqFile = UploadedFile::getInstance($model, 'boq');
-    //         if ($boqFile !== null) {
-    //             $boqFilePath = $uploadDir . $boqFile->baseName . '.' . $boqFile->extension;
-    //             if ($boqFile->saveAs($boqFilePath)) {
-    //                 $model->boq = $boqFilePath;
-    //             }
-    //         }
-    
-    //         if ($model->save()) {
-    //             return $this->redirect(['view', 'id' => $model->id]);
-    //         }
-    //     } else {
-    //         $model->loadDefaultValues();
-    //     }
-    
-    //     // Calculate profit gained  
-    //     $project = Project::findOne($projectId);
-    //     $profit = $project->budget - $projectAmount;
-    
-    //     // Percent of the project profit gained
-    //     $profitPerce = ($profit / $project->budget) * 100;
-    
-    //     return $this->render('create', [
-    //         'model' => $model,
-    //         'details' => $details,
-    //         'projectId' => $projectId,
-    //         'projectAmount' => $projectAmount,
-    //         'profit' => $profit,
-    //         'profitPerce' => $profitPerce,
-    //         'unit_profit' => $unit_profit,
-    //         '$cost'=>$cost,
-    //     ]);
-    // }
 
     /**
      * Updates an existing Analysis model.

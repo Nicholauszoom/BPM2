@@ -34,7 +34,7 @@ $department=Department::find()->all();
     <?= $form->field($model, 'PE', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-home'></i></span></div>\n{error}"])->textInput(['maxlength' => true, 'placeholder' => ''])->label('Procurement Entity*') ?>
 </div>
     <div class="col">
-        <?= $form->field($model, 'TenderNo', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-terminal'></i></span></div>\n{error}"])->textInput(['maxlength' => true,'placeholder'=>''])->label('Tender Number*') ?>
+        <?= $form->field($model, 'TenderNo', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fas fa-barcode'></i></span></div>\n{error}"])->textInput(['maxlength' => true,'placeholder'=>''])->label('Tender Number*') ?>
     </div>
 </div>
 

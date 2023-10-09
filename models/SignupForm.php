@@ -25,10 +25,10 @@ public $department;
 public function rules(){
     return [
         [['username','password','password_repeat','email', 'department'], 'required'],
-        [['username','password','password_repeat','email'],'string','min'=>4,'max'=>25],
+        [['username','password','password_repeat','email'],'string','min'=>4,'max'=>40],
         ['password_repeat','compare','compareAttribute'=>'password'],
         ['email', 'unique', 'targetClass' => User::class, 'message' => 'This email has already been taken.'],
-        ['email', 'string', 'max' => 25, 'tooLong' => 'Email should contain at most 16 characters.'],
+        ['email', 'string', 'max' => 40, 'tooLong' => 'Email should contain at most 16 characters.'],
         ];
 }
 

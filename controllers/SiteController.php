@@ -14,6 +14,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\helpers\Html;
 use yii\web\ForbiddenHttpException;
 
 class SiteController extends Controller
@@ -100,6 +101,100 @@ class SiteController extends Controller
         $model = new  SignupForm();
         $authItems = AuthItem::find()->all();
         if ($model->load(Yii::$app->request->post()) && $model->signUp()){
+
+            if ($model && !empty($model->email)) {
+
+                $department=Department::findOne($model->department);
+
+                /** @var MailerInterface $mailer */
+                $mailer = Yii::$app->mailer;
+                $message = $mailer->compose()
+                    ->setFrom('nicholaussomi5@gmail.com')
+                    ->setTo($model->email)
+                    // ->setCc($tender_assigned->email) // Add CC recipient(s) here
+                    ->setSubject('Now you have account in BPM-Teratech Management System ')
+                    ->setHtmlBody('
+                        <html>
+                        <head>
+                            <style>
+                                /* CSS styles for the email body */
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    background-color: #f4f4f4;
+                                }
+
+                                .container {
+                                    max-width: 600px;
+                                    margin: 0 auto;
+                                    padding: 20px;
+                                    background-color: #ffffff;
+                                    border: 1px solid #dddddd;
+                                    border-radius: 4px;
+                                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                                }
+
+                                h1 {
+                                    color: blue;
+                                    text-align: center;
+                                }
+
+                                p {
+                                    color: #666666;
+                                }
+
+                                .logo {
+                                    text-align: center;
+                                    margin-bottom: 20px;
+                                }
+
+                                .logo img {
+                                    max-width: 200px;
+                                }
+
+                                .assigned-by {
+                                    font-weight: bold;
+                                }
+
+                                .button {
+                                    display: inline-block;
+                                    padding: 10px 20px;
+                                    background-color: #3366cc;
+                                    color: white;
+                                    text-decoration: none;
+                                    border-radius: 4px;
+                                    margin-top: 20px;
+                                }
+
+                                .button:hover {
+                                    background-color: #235daa;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="logo">
+                                    <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
+                                </div>
+                                <h1>TERATECH ANNOUCEMENT</h1>
+                                <p>Dear ' . Html::encode($model->username) . ',</p>
+                                <p>Your account details as below:</p>
+                                <ul>
+                                    <li>Username: ' . Html::encode($model->username) . '</li>                                                
+                                    <li>Department ' . Html::encode($department->name) . '</li> 
+                                </ul>
+                                <p>If you have any questions or need further assistance, feel free to ask to email:nicholaussomi5@gmail.com.</p>
+                                                             </html>
+                    ');
+                    
+
+            // Attach the document file to the email
+// foreach ($attachments as $attachment) {
+//     $message->attach($attachment);
+// }
+
+                // $message->send();
+                $mailer->send($message);
+            }
             return $this->redirect(['/user']);
         }
         return $this->render('signup',[

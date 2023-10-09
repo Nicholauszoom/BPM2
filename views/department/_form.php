@@ -11,9 +11,15 @@ use yii\widgets\ActiveForm;
 <div class="department-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+<div class="form-row">
+    <div class="col">
+    <?= $form->field($model, 'name', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-pencil'></i></span></div>\n{error}"])->textInput(['maxlength' => true]) ?>
+    </div>
+    <div class="col">
+    <?= $form->field($model, 'email', ['template' => "{label}\n<div class='input-group'>{input}\n<span class='input-group-addon'><i class='fa fa-at'></i></span></div>\n{error}"])->textInput(['maxlength' => true]) ?>
+    </div>
+</div>
+   
 
 
     <div class="form-group">

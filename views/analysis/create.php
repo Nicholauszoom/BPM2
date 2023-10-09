@@ -46,7 +46,8 @@ $this->title = 'Create Analysis for :' . $projectName . ' Project';
         'profit' => $profit,
         'profitPerce'=> $profitPerce,
         'u_amount'=> $u_amount,
-        'unit_profit'=> $unit_profit
+        'unit_profit'=> $unit_profit,
+        'vat'=>$vat,
     ]) ?>
 
 
