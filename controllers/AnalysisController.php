@@ -6,6 +6,7 @@ use app\models\Analysis;
 use app\models\AnalysisSearch;
 use app\models\Project;
 use app\models\User;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\filters\VerbFilter;
@@ -148,29 +149,33 @@ class AnalysisController extends Controller
              if (!is_dir($uploadDir)) {
                  mkdir($uploadDir, 0777, true);
              }
-     
+             
              // Upload the files
              $files = UploadedFile::getInstances($model, 'files');
              if (!empty($files)) {
                  $filePaths = [];
                  $fileCount = count($files);
                  $uploadedCount = 0;
-     
-                 // Show the progress bar
-                 
-     
+             
                  foreach ($files as $file) {
                      $filePath = $uploadDir . $file->baseName . '.' . $file->extension;
-     
+             
                      if ($file->saveAs($filePath)) {
                          $filePaths[] = $filePath;
-     
+             
+                         // Convert Excel file to CSV
+                         $csvFilePath = $uploadDir . $file->baseName . '.csv';
+                         $spreadsheet = IOFactory::load($filePath);
+                         $writer = IOFactory::createWriter($spreadsheet, 'Csv');
+                         $writer->save($csvFilePath);
+             
                          // Import CSV data into the database
-                         $handle = fopen($filePath, 'r');
+                         $handle = fopen($csvFilePath, 'r');
                          while (($data = fgetcsv($handle)) !== false) {
                              $rowData[] = $data;
                          }
                          fclose($handle);
+             
      
                          // Import data into the database
                          foreach ($rowData as $row) {
