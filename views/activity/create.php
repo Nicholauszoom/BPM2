@@ -3,10 +3,10 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Office $model */
+/** @var app\models\Activity $model */
 
-$this->title = 'Create Office';
-$this->params['breadcrumbs'][] = ['label' => 'Offices', 'url' => ['index']];
+$this->title = 'Create Activity';
+$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->context->layout = 'admin';
 
@@ -18,13 +18,12 @@ $this->context->layout = 'admin';
 
 <div id="main-content ">
 
-
    <div id="page-container">
        <!-- ============================================================== -->
        <!-- Sales Cards  -->
        <!-- ============================================================== -->
        <div class="row"></div>
-<div class="office-create">
+<div class="activity-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -33,6 +32,5 @@ $this->context->layout = 'admin';
     ]) ?>
 
 </div>
-   </div>
+    </div>
 </div>
-

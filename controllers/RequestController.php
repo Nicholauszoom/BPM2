@@ -259,9 +259,8 @@ class RequestController extends Controller
                         <body>
                             <div class="container">
                                 <div class="logo">
-                                    <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
+                                    <img src="http://teratech.co.tz/local/images/uploads/logo/163277576061522e507c527.webp" alt="teralogo">
                                 </div>
-                                <h1>TERATECH</h1>
                                 <p>Dear ' . Html::encode('CEO') . ',</p>
                                 <p>You have been sent a project request, as detailed below:</p>
                                 <ul>

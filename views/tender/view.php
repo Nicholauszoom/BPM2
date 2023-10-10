@@ -1,9 +1,11 @@
 <?php
 
+use app\models\Activity;
 use app\models\Department;
 use app\models\Office;
 use app\models\Tattachmentss;
 use app\models\User;
+use app\models\UserActivity;
 use app\models\UserAssignment;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -88,6 +90,60 @@ $this->context->layout = 'admin';
                 }
             
                 return implode(', ', $assignedUsernames);
+            },
+        ],
+
+
+        // [
+        //     'attribute' => 'activity_id',
+        //     'format' => 'raw',
+        //     'value' => function ($model) {
+        //         $assignments = UserActivity::find()
+        //             ->where(['tender_id' => $model->id])
+        //             ->all();
+        
+        //         $assignedUsernames = [];
+        
+        //         foreach ($assignments as $assignment) {
+        //             $user = User::findOne($assignment->user_id);
+        //             $activity = Activity::findOne($assignment->activity_id);
+        
+        //             if ($user && $activity) {
+        //                 $assignedUsernames[] = $user->username . ' - ' . $activity->name;
+        //             }
+        //         }
+        
+        //         return implode(', ', $assignedUsernames);
+        //     },
+        // ],
+        [
+            'attribute' => 'activity',
+            'format' => 'raw',
+            'value' => function ($model) {
+                $assignments = UserActivity::find()
+                    ->where(['tender_id' => $model->id])
+                    ->all();
+        
+                $assignedUserActivities = [];
+        
+                foreach ($assignments as $assignment) {
+                    $user = User::findOne($assignment->user_id);
+                    $activity = Activity::findOne($assignment->activity_id);
+        
+                    if ($user && $activity) {
+                        if (!isset($assignedUserActivities[$user->username])) {
+                            $assignedUserActivities[$user->username] = [];
+                        }
+                        $assignedUserActivities[$user->username][] = $activity->name;
+                    }
+                }
+        
+                $assignedUsernames = [];
+                foreach ($assignedUserActivities as $username => $activities) {
+                    $assignedUsernames[] = $username . ' - ' . implode(', ', $activities);
+                }
+        
+                return implode('<br>', $assignedUsernames);
             },
         ],
             [

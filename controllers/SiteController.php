@@ -5,7 +5,10 @@ namespace app\controllers;
 use app\models\Analysis;
 use app\models\AuthItem;
 use app\models\Department;
+use app\models\ForgotPasswordForm;
+use app\models\ResetPasswordForm;
 use app\models\SignupForm;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -173,9 +176,8 @@ class SiteController extends Controller
                         <body>
                             <div class="container">
                                 <div class="logo">
-                                    <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
+                                    <img src="http://teratech.co.tz/local/images/uploads/logo/163277576061522e507c527.webp" alt="teralogo">
                                 </div>
-                                <h1>TERATECH ANNOUCEMENT</h1>
                                 <p>Dear ' . Html::encode($model->username) . ',</p>
                                 <p>Your account details as below:</p>
                                 <ul>
@@ -272,6 +274,68 @@ class SiteController extends Controller
 
     // Return the response to end the action
     return Yii::$app->response;
+}
+
+
+public function actionForgotPassword()
+{
+    $model = new ForgotPasswordForm();
+
+    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        // Find the user by email
+        $user = User::findOne(['email' => $model->email]);
+
+        if ($user) {
+            // Generate a password reset token and save it in the user's record
+            $user->generatePasswordResetToken();
+
+            if ($user->save(false)) {
+                // Send the password reset email to the user
+                Yii::$app->mailer->compose('passwordResetToken', ['user' => $user])
+                    ->setFrom('nicholaussomi5@gmail.com')
+                    ->setTo($user->email)
+                    ->setSubject('Password Reset')
+                    ->send();
+
+                Yii::$app->session->setFlash('success', 'A password reset link has been sent to your email.');
+                return $this->refresh();
+            }
+        }
+
+        Yii::$app->session->setFlash('error', 'Email address not found.');
+    }
+
+    return $this->render('forgotPassword', [
+        'model' => $model,
+    ]);
+}
+
+
+public function actionResetPassword($token)
+{
+  // Find the user by password reset token
+    $user = User::findOne(['access_token' => $token]);
+
+    if (!$user) {
+        throw new NotFoundHttpException('Invalid password reset token.');
+    }
+
+    $model = new ResetPasswordForm();
+    $model->token = $token;
+
+    if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        // Reset the user's password
+        $user->setPassword($model->password);
+        $user->removePasswordResetToken();
+        if ($user->save(false)) {
+            Yii::$app->session->setFlash('success', 'Your password has been reset successfully.');
+            return $this->redirect(['site/login']);
+        }
+    }
+
+    return $this->render('resertPassword', [
+        'model' => $model,
+    ]);
 }
 
 }

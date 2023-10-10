@@ -4,29 +4,25 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\User $model */
+/** @var app\models\UserActivity $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'User Activities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $this->context->layout = 'admin';
-
 ?>
-
 <a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
     <span class="arrow">&#8592;</span> Back
 </a>
-
 <div id="main-content ">
-
-
-   <div id="page-container">
-       <!-- ============================================================== -->
-       <!-- Sales Cards  -->
-       <!-- ============================================================== -->
-       <div class="row"></div>
-<div class="user-view">
+   
+    <div id="page-container">
+        <!-- ============================================================== -->
+        <!-- Sales Cards  -->
+        <!-- ============================================================== -->
+        <div class="row"></div>
+<div class="user-activity-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -45,14 +41,12 @@ $this->context->layout = 'admin';
         'model' => $model,
         'attributes' => [
             'id',
-            'username',
-            'email',
-            // 'password',
-            // 'auth_key',
-            // 'access_token',
+            'user_id',
+            'activity_id',
+            'tender_id',
         ],
     ]) ?>
 
 </div>
-   </div>
+    </div>
 </div>

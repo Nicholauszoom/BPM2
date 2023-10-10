@@ -190,9 +190,8 @@ function getSiteVisitLabel($status)
                                 <body>
                                     <div class="container">
                                         <div class="logo">
-                                            <img src="https://teratechcomponents.com/wp-content/uploads/2011/06/Tera_14_screen-234x60.png" alt="teralogo">
+                                            <img src="http://teratech.co.tz/local/images/uploads/logo/163277576061522e507c527.webp" alt="teralogo">
                                         </div>
-                                        <h1>TERATECH ANNOUCEMENT</h1>
                                         <p>Dear ' . Html::encode($tender_supervisor->username) . ',</p>
                                         <p>Your project has been assigned to you. Please find the details below:</p>
                                         <ul>
@@ -240,7 +239,8 @@ function getSiteVisitLabel($status)
                         $mailer->send($message);
                     }
                 }
-                return $this->redirect(['tender/view', 'id' => $tenderId]);
+               
+                return $this->redirect(['adetail/create', 'tenderId' => $tenderId]);
 
 
 

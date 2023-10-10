@@ -23,11 +23,11 @@ AppAsset::register($this);
     <?php $this->head() ?>
 
     <style>
-
 .bg-login-image {
-  background: url("https://img.freepik.com/premium-photo/white-bar-chart-blue-arrow_698953-10771.jpg?size=626&ext=jpg&ga=GA1.1.812721869.1686883631&semt=ais");
+  background: url("http://teratech.co.tz/local/images/uploads/logo/163277576061522e507c527.webp");
   background-position: center;
-  background-size: cover;
+  background: 500;
+  background-repeat: no-repeat;
 }
     </style>
 </head>

@@ -3,14 +3,17 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Office $model */
+/** @var app\models\Activity $model */
 
-$this->title = 'Create Office';
-$this->params['breadcrumbs'][] = ['label' => 'Offices', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Update Activity: ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = 'Update';
 $this->context->layout = 'admin';
 
 ?>
+
+
 
 <a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
     <span class="arrow">&#8592;</span> Back
@@ -24,7 +27,7 @@ $this->context->layout = 'admin';
        <!-- Sales Cards  -->
        <!-- ============================================================== -->
        <div class="row"></div>
-<div class="office-create">
+<div class="activity-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -35,4 +38,3 @@ $this->context->layout = 'admin';
 </div>
    </div>
 </div>
-

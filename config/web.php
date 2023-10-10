@@ -90,6 +90,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'report/generate' => 'report/generate-report',
+                'user-activity' => 'user-activity/index',
             ],
 
             

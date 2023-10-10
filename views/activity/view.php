@@ -4,15 +4,17 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\User $model */
+/** @var app\models\Activity $model */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 $this->context->layout = 'admin';
 
 ?>
+
+
 
 <a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
     <span class="arrow">&#8592;</span> Back
@@ -26,7 +28,7 @@ $this->context->layout = 'admin';
        <!-- Sales Cards  -->
        <!-- ============================================================== -->
        <div class="row"></div>
-<div class="user-view">
+<div class="activity-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -45,11 +47,10 @@ $this->context->layout = 'admin';
         'model' => $model,
         'attributes' => [
             'id',
-            'username',
-            'email',
-            // 'password',
-            // 'auth_key',
-            // 'access_token',
+            'name',
+            'created_at',
+            'updated_at',
+            'created_by',
         ],
     ]) ?>
 

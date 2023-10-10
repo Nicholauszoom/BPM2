@@ -32,8 +32,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password', 'auth_key', 'access_token','role_id'], 'required'],
-            [['username'], 'string', 'min'=>4 ,'max' => 55],
+            [['username', 'password','email'], 'required'],
+            [['username','email'], 'string', 'min'=>4 ,'max' => 55],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 255],
         ];
     }
@@ -45,9 +45,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'username' => 'Username',
+            'username' => 'Full Name',
             'password' => 'Password',
-            'role_id' => 'Role',
+            'email'=>'Email',
             'auth_key' => 'Auth Key',
             'access_token' => 'Access Token',
         ];
@@ -154,6 +154,21 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             ->exists();
 
         return $isAdmin;
+    }
+
+    public function generatePasswordResetToken()
+    {
+        $this->access_token = \Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    public function removePasswordResetToken()
+    {
+        $this->access_token = null;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
     }
     
 }

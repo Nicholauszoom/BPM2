@@ -7,7 +7,8 @@ use app\models\Project;
 use app\models\Task;
 use app\models\Team;
 use app\models\Tender;
-
+use app\models\User;
+use app\models\UserAssignment;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Json;
 use Yii;
@@ -372,6 +373,41 @@ $counts[] = $tender['count'];
     }
 
 
+
+    public function actionProfile(){
+
+        //get logged in user id
+        $userId= Yii::$app->user->id;
+
+        //get login user account profile
+        $profile = User::findOne($userId);
+
+        //get tender for specific user
+        $tender_user=UserAssignment::find()
+        ->where(['user_id'=>$userId])
+        ->all();
+
+
+        $tender = [];
+        foreach ($tender_user as $tendr) {
+            $tender =Tender::find()
+            ->where(['id'=>$tendr->tender_id])
+            ->all();
+        }
+
+        //get project for specific user
+        $project=Project::find()
+        ->where(['user_id'=>$userId])
+        ->all();
+
+
+        return $this->render('profile',[
+            'profile'=>$profile,
+            'tender'=>$tender,
+            'project'=>$project
+            
+        ]);
+    }
 
 
 }

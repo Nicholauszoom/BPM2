@@ -57,7 +57,7 @@ $budgetDataJson = Json::encode($budgetData);
     </div>
 
     <div class="col-md-2 col-sm-4 tile_stats_count">
-      <span class="count_top"><i class="fa fa-check-square"></i>Tender Win</span>
+      <span class="count_top"><i class="fa fa-check-square"></i>Awarded Tender</span>
       <div class="count "><?= $tenderWin ?></div>
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
     </div>
@@ -70,13 +70,13 @@ $budgetDataJson = Json::encode($budgetData);
             ->count();
             
         ?>
-      <span class="count_top"><i class="fa fa-circle-o-notch"></i>Tender Pending..</span>
+      <span class="count_top"><i class="fa fa-circle-o-notch"></i>Pending Tender..</span>
       <div class="count "><?= $tenderPend?></div>
       <span class="count_bottom"><i class="orange"><i class="fa fa-sort-desc"></i></i> </span>
     </div>
 
     <div class="col-md-2 col-sm-4 tile_stats_count">
-      <span class="count_top"><i class="fa fa-minus-circle"></i> Tender Lose</span>
+      <span class="count_top"><i class="fa fa-minus-circle"></i>Not-Awarded Tender</span>
       <div class="count "><?= $tenderFail?></div>
       <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
     </div>
