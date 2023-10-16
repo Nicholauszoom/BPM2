@@ -100,10 +100,13 @@ class AdetailController extends Controller
                             $assignment = new UserActivity();
                             $assignment->tender_id = $model->tender_id;
                             $assignment->user_id = $model->user_id;
+                            $assignment->submit_at = $model->submit_at;
+                            $assignment->assign = 1;
                             $assignment->activity_id = $activityId;
                             $assignment->save();
                         }
                     }
+
                     return $this->redirect(['tender/view', 'id' => $tenderId]);
             }
         } else {

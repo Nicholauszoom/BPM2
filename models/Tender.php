@@ -61,10 +61,11 @@ class Tender extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'status'], 'required'],
+            [['title', 'description', 'status','document'], 'required'],
             [['status', 'updated_at', 'created_by','budget','session','supervisor','submit_to'], 'integer'],
-            [['title', 'description','PE','TenderNo','document'], 'string', 'max' => 255],
+            [['title', 'description','PE','TenderNo','document','coment'], 'string', 'max' => 255],
             [['session','budget'], 'default', 'value' => 0],
+            [['coment'], 'default', 'value'=>'reason not submitted || not awarded'],
             // [['document','submission'], 'file'],
             [['document','session','submission','assigned_to'], 'safe'],
             ['publish_at', 'compare', 'compareValue' => date('Y-m-d'), 'operator' => '<='],
@@ -90,6 +91,7 @@ class Tender extends \yii\db\ActiveRecord
             'PE'=>'Proqurement Entity',
             'TenderNo'=>'Tender Number',
             'session'=>'session',
+            'coment'=>'tender coment',
             'publish_at'=>'Published Date',
             'document'=>'tender Attachment',
             'submission'=>'Tender Submition Document',

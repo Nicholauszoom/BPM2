@@ -33,7 +33,10 @@ $sidebarItems = [
     ['url' => ['/setting'], 'label' => 'Settings', 'icon' => 'bi bi-gear'],
 ];
 ?>
-
+<!--
+<div id="loading-bar-container" class="loading-bar-container">
+  <div id="loading-bar" class="loading-bar"></div>
+</div>-->
 
 <div id="main-content "><a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
     <span class="arrow">&#8592;</span> Back
@@ -186,13 +189,17 @@ $sidebarItems = [
                            
             
                             'view' => function ($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['view', 'id' => $model->id], [
-                                    // 'class' => 'btn btn-success',
-                                    'title' => 'view project',
-                                    'aria-label' => 'Project view',
-                                ]);
+                                return Html::a(
+                                    '<span class="glyphicon glyphicon-eye-open"></span>',
+                                    ['view', 'id' => $model->id],
+                                    [
+                                        'title' => 'View project',
+                                        'aria-label' => 'Project view',
+                                        'id' => 'view',
+                                        'onclick' => 'showBar();',
+                                    ]
+                                );
                             },
-            
             
                             'update' => function ($url, $model, $key) {
                                 return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['edit', 'id' => $model->id], [
@@ -247,3 +254,32 @@ function getStatusClass($status)
         </div>
     </div>
 </div>
+
+<script>
+
+// Show the loading bar
+function showBar() {
+    document.getElementById('loading-bar-container').style.display = 'flex';
+  }
+
+  // Hide the loading bar
+  function hideLoadingBar() {
+    document.getElementById('loading-bar-container').style.display = 'none';
+  }
+
+  // Add click event listener to the "view" button
+  document.addEventListener('DOMContentLoaded', function() {
+    var viewBtn = document.getElementById('view');
+    if (viewBtn) {
+      viewBtn.addEventListener('click', function() {
+        showLoadingBar();
+      });
+    }
+  });
+
+  // Hide the loading bar when the URL changes
+  window.addEventListener('beforeunload', function() {
+    hideLoadingBar();
+  });
+</script>
+  

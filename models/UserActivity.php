@@ -27,7 +27,7 @@ class UserActivity extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id','activity_id','tender_id'], 'integer'],
+            [['user_id','activity_id','tender_id', 'assign'], 'integer'],
         ];
     }
 
@@ -41,6 +41,7 @@ class UserActivity extends \yii\db\ActiveRecord
             'user_id' => 'User',
             'activity_id' => 'Activity',
             'tender_id'=>'tender ID',
+            'assign'=> 'Assign',
         ];
     }
 

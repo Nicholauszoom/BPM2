@@ -300,6 +300,11 @@ $options = [
   
       foreach ($projects as $project) {
         $tender_det=Tender::findOne($project->tender_id);
+
+        if ($tender_det === null) {
+            continue;
+        }
+
           $projectNames[] = $tender_det->title;
           $analysis_proj_cost = Analysis::find()
           ->where(['project' => $project->id])
@@ -329,6 +334,34 @@ $counts[] = $tender['count'];
 
 
 // Retrieve the data from the database or any other source
+
+
+    // project and tender summary for a apecific user
+      //get logged in user id
+      $userId= Yii::$app->user->id;
+
+      //get login user account profile
+      $profile = User::findOne($userId);
+
+      //get tender for specific user
+      $tender_user=UserAssignment::find()
+      ->where(['user_id'=>$userId])
+      ->all();
+
+
+      $tender_summary = [];
+      foreach ($tender_user as $tendr) {
+          $tender_summary =Tender::find()
+          ->where(['id'=>$tendr->tender_id])
+          ->all();
+      }
+
+      //get project for specific user
+      $projectsum=Project::find()
+      ->where(['user_id'=>$userId])
+      ->all();
+
+
 
         
         $tenderPend=Tender::find()->where(['status'=>3])->count();
@@ -365,10 +398,11 @@ $counts[] = $tender['count'];
 
             'dates' => $dates,// for Tender per day graph
         'counts' => $counts, //for Tender per day graph
-            
-       
 
-            
+        'tender_summary'=>$tender_summary,
+        'profile'=>$profile,
+        'projectsum'=>$projectsum,
+        
         ]);
     }
 

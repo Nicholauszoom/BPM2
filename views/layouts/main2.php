@@ -23,6 +23,13 @@ AppAsset::register($this);
     <?php $this->head() ?>
 
     <style>
+
+html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 .bg-login-image {
   background: url("http://teratech.co.tz/local/images/uploads/logo/163277576061522e507c527.webp");
   background-position: center;
@@ -35,33 +42,7 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 <!-- Page Wrapper -->
 <header id="header">
-    <?php
-    NavBar::begin([
-        'brandLabel' => 'BPM',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            // ['label' => 'Home', 'url' => ['/site/index']],
-            // ['label' => 'About', 'url' => ['/site/about']],
-            // ['label' => 'Contact', 'url' => ['/site/contact']],
-			// ['label' => 'SignUp', 'url' => ['/site/signup']],
-            Yii::$app->user->isGuest
-                ? ['label' => '', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
-    ]);
-    NavBar::end();
-    ?>
+    
 </header>
 <main id="main" class="flex-shrink-0" role="main" style="padding: 105px; " >
 
@@ -70,7 +51,7 @@ AppAsset::register($this);
             <!-- Begin Page Content -->
 
             <!-- /.container-fluid -->
-           <div class="p-4">
+           <div class="p-3">
                <?php echo $content ?>
            </div>
 

@@ -105,13 +105,98 @@ $sidebarItems = [
  
 
     ?>
+<style>
 
+.loading-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-bar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.progresses{
+    display: flex;
+        align-items: center;
+   }
+
+   .line{
+
+        width: 120px;
+    height: 6px;
+    background: #63d19e;
+   }
+   .no_line{
+
+
+    width: 120px;
+    height: 6px;
+    background: #ccc;
+   }
+
+   
+   .steps{
+
+    display: flex;
+    background-color: #63d19e;
+    color: #fff;
+    font-size: 14px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+
+   }
+
+  .completed{
+
+display: flex;
+background-color: #ccc;
+color: #fff;
+font-size: 14px;
+width: 40px;
+height: 40px;
+align-items: button_viewcenter;
+justify-content: center;
+border-radius: 50%;
+
+}
+
+
+#counter {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 15px;
+    text-align: center;
+    margin: 15px;
+    background-color:slategray;
+    color: #fff;
+    padding: 8px;
+    border-radius: 50% 50% 10% 10%;
+}
+
+</style>
 
   
    
 </head>
 <body class="nav-md">
   <?php $this->beginBody() ?>
+  
   <div class="container  body">
       <div class="main_container">
      
@@ -229,11 +314,14 @@ $sidebarItems = [
                     <?php if (Yii::$app->user->can('admin')) : ?>
                       <li><a href="/user">index</a></li>
                       <li><a href="/role">role</a></li>
-                      <li><a href="/permission">permission</a></li>
-                      <li><a href="/office">office</a></li>
                       <li><a href="/department">department</a></li>
                       <?php endif; ?>
                      
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-building"></i>Office<span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="/office">index</a></li>
                     </ul>
                   </li>
                  

@@ -76,18 +76,94 @@ class TattachmentssController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) ) {
 
-                $model->document = UploadedFile::getInstance($model, 'document');
-   
+              
+                    $model->document = UploadedFile::getInstance($model, 'document');
+                    $model->evaluation = UploadedFile::getInstance($model, 'evaluation');
+                    $model->negotiation = UploadedFile::getInstance($model, 'negotiation');
+                    $model->award = UploadedFile::getInstance($model, 'award');
+                    $model->intention = UploadedFile::getInstance($model, 'intention');
+                    $model->arithmetic = UploadedFile::getInstance($model, 'arithmetic');
+                    $model->audit = UploadedFile::getInstance($model, 'audit');
+                    $model->cancellation = UploadedFile::getInstance($model, 'cancellation');
+                    
+                    // Perform additional validation or other operations here
+                    
+                    if ($model->validate()) {
+                        $uploadPath = Yii::getAlias('@webroot/upload/');
                 
-                if ($model->document) {
-                  $uploadPath = Yii::getAlias('@webroot/upload/');
-                  $fileName = $model->document->baseName . '.' . $model->document->extension;
-                  $filePath = $uploadPath . $fileName;
-    
-    
-                  if ($model->document->saveAs($filePath)) {
-                    $model->document = '' . $fileName;
-                }
+                        if ($model->document) {
+                            $documentFileName = $model->document->baseName . '.' . $model->document->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->document->saveAs($documentFilePath)) {
+                                $model->document = $documentFileName;
+                            }
+                        }
+
+                        if ($model->evaluation) {
+                            $documentFileName = $model->evaluation->baseName . '.' . $model->evaluation->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->evaluation->saveAs($documentFilePath)) {
+                                $model->evaluation = $documentFileName;
+                            }
+                        }
+
+                        if ($model->negotiation) {
+                            $documentFileName = $model->negotiation->baseName . '.' . $model->negotiation->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->negotiation->saveAs($documentFilePath)) {
+                                $model->negotiation = $documentFileName;
+                            }
+                        }
+
+
+                        if ($model->award) {
+                            $documentFileName = $model->award->baseName . '.' . $model->award->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->award->saveAs($documentFilePath)) {
+                                $model->award = $documentFileName;
+                            }
+                        }
+
+
+                        if ($model->intention) {
+                            $documentFileName = $model->intention->baseName . '.' . $model->intention->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->intention->saveAs($documentFilePath)) {
+                                $model->intention = $documentFileName;
+                            }
+                        }
+
+                        if ($model->arithmetic) {
+                            $documentFileName = $model->arithmetic->baseName . '.' . $model->arithmetic->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->arithmetic->saveAs($documentFilePath)) {
+                                $model->arithmetic = $documentFileName;
+                            }
+                        }
+
+                        if ($model->audit) {
+                            $documentFileName = $model->audit->baseName . '.' . $model->audit->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->audit->saveAs($documentFilePath)) {
+                                $model->audit = $documentFileName;
+                            }
+                        }
+
+                        if ($model->cancellation) {
+                            $documentFileName = $model->cancellation->baseName . '.' . $model->cancellation->extension;
+                            $documentFilePath = $uploadPath . $documentFileName;
+                            
+                            if ($model->cancellation->saveAs($documentFilePath)) {
+                                $model->cancellation = $documentFileName;
+                            }
+                        }
                 
                 }
                 if($model->save()){

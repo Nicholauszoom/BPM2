@@ -27,97 +27,157 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <head>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link rel="stylesheet" href="css/style.css">
-   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  
+    <link rel="stylesheet" href="css/style2.css">
 
 </head>
-<body class="d-flex flex-column h-100">
+<body>
 <?php $this->beginBody() ?>
+<div class="js-animsition animsition" id="site-wrap" data-animsition-in-class="fade-in" data-animsition-out-class="fade-out">
 
-<header id="header">
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
-    ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-			// ['label' => 'SignUp', 'url' => ['/site/signup']],
-            Yii::$app->user->isGuest
-                ? ['label' => 'Login', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
-    ]);
-    NavBar::end();
-    ?>
-</header>
 
-<main id="main" class="flex-shrink-" role="main" style="padding: 100px; margin-top: 20px; ">
-    <div class="container">
+<header class="templateux-navbar" role="banner">
+
+  <div class="container"  data-aos="fade-down">
+    <div class="row">
+
+      <div class="col-3 templateux-logo">
+        <a href="/" class="animsition-link">BPM-Tera</a>
+      </div>
+      <nav class="col-9 site-nav">
+        <button class="d-block d-md-none hamburger hamburger--spin templateux-toggle templateux-toggle-light ml-auto templateux-toggle-menu" data-toggle="collapse" data-target="#mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </button> <!-- .templateux-toggle -->
+
+        <ul class="sf-menu templateux-menu d-none d-md-block">
+          <li class="active">
+            <a href="/" class="animsition-link">Home</a>
+          </li>
+          <li><a href="site/login" class="animsition-link">Sign in</a></li>
+          <li>
+            <a href="" class="animsition-link">Services</a>
+            <ul>
+              <li><a href="#">HR Consulting</a></li>
+              <li><a href="#">Leadership Training</a></li>
+              <li>
+                <a href="#">HR Management</a>
+                <ul>
+                  <li><a href="#">Operational Management</a></li>
+                  <li><a href="#">Corporate Program</a></li>
+                  <li>
+                    <a href="#">Service 3</a>
+                    <ul>
+                      <li><a href="#">Service 1</a></li>
+                      <li><a href="#">Service 2</a></li>
+                      <li><a href="#">Service 3</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="" class="animsition-link">Blog</a></li>
+          <li><a href="" class="animsition-link">Contact</a></li>
+        </ul> <!-- .templateux-menu -->
+
+      </nav> <!-- .site-nav -->
+      
+
+    </div> <!-- .row -->
+  </div> <!-- .container -->
+</header> <!-- .templateux-navba -->
+
         <?php if (!empty($this->params['breadcrumbs'])): ?>
             <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
         <?php endif ?>
         <?= Alert::widget() ?>
         <?= $content ?>
-    </div>
-</main>
+  
 
-<footer class="footer" style="padding: 125px; margin-top: 20px">
-  	 <div class="container">
-  	 	<div class="row">
-  	 		<div class="footer-col">
-  	 			<h4>company</h4>
-  	 			<ul>
-  	 				<li><a href="#">about us</a></li>
-  	 				<li><a href="#">our services</a></li>
-  	 				<li><a href="#">privacy policy</a></li>
-  	 				<li><a href="#">affiliate program</a></li>
-  	 			</ul>
-  	 		</div>
-  	 		<div class="footer-col">
-  	 			<h4>get help</h4>
-  	 			<ul>
-  	 				<li><a href="#">FAQ</a></li>
-  	 				<li><a href="#">HRM</a></li>
-  	 				<li><a href="#">returns</a></li>
-  	 				<li><a href="#">order status</a></li>
-  	 				
-  	 			</ul>
-  	 		</div>
-  	 		<div class="footer-col">
-  	 			<h4>process</h4>
-  	 			<ul>
-  	 				<li><a href="#">employement</a></li>
-  	 				<li><a href="#">budgeting</a></li>
-  	 				<li><a href="#">profits</a></li>
-  	 				<li><a href="#">management</a></li>
-  	 			</ul>
-  	 		</div>
-  	 		<div class="footer-col">
-  	 			<h4>follow us</h4>
-  	 			<div class="social-links">
-  	 				<a href="#"><i class="fab fa-facebook-f"></i></a>
-  	 				<a href="#"><i class="fab fa-twitter"></i></a>
-  	 				<a href="#"><i class="fab fa-instagram"></i></a>
-  	 				<a href="#"><i class="fab fa-linkedin-in"></i></a>
-  	 			</div>
-  	 		</div>
-  	 	</div>
-  	 </div>
-  </footer>
+<footer class="templateux-footer bg-light">
+  <div class="container">
 
+    <div class="row mb-5">
+      <div class="col-md-4 pr-md-5">
+        <div class="block-footer-widget">
+          <h3>About</h3>
+          <p>Bussiness Processes Management .</p>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="block-footer-widget">
+              <h3>Learn More</h3>
+              <ul class="list-unstyled">
+                <li><a href="#">How it works?</a></li>
+                <li><a href="#">Useful Tools</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Sitemap</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="block-footer-widget">
+              <h3>Support</h3>
+              <ul class="list-unstyled">
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Help Desk</a></li>
+                <li><a href="#">Knowledgebase</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="block-footer-widget">
+              <h3>About Us</h3>
+              <ul class="list-unstyled">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Careers</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="block-footer-widget">
+              <h3>Connect With Us</h3>
+              <ul class="list-unstyled block-social">
+                <li><a href="#" class="p-1"><span class="icon-facebook"></span></a></li>
+                <li><a href="#" class="p-1"><span class="icon-twitter"></span></a></li>
+                <li><a href="#" class="p-1"><span class="icon-github"></span></a></li>
+              </ul>
+            </div>
+          </div>
+        </div> <!-- .row -->
+
+      </div>
+    </div> <!-- .row -->
+
+    <div class="row pt-5 text-center">
+      <div class="col-md-12 text-center"><p>
+        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This application is made with  <a href="" target="_blank" class="text-primary">teratech</a>
+        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+      </p></div>
+    </div> <!-- .row -->
+
+  </div>
+</footer> <!-- .templateux-footer -->
+
+
+</div> <!-- .js-animsition -->
+
+
+<script src="/js/scripts-all.js"></script>
+<script src="/js/main.js"></script>
+
+</body>
+</html>
 <?php $this->endBody() ?>
 </body>
 </html>

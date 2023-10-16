@@ -30,6 +30,7 @@ class Adetail extends \yii\db\ActiveRecord
         return [
             [['user_id','tender_id'], 'integer'],
            [['activity_id'], 'safe'],
+           ['submit_at', 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
@@ -42,6 +43,7 @@ class Adetail extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ',
             'activity_id' => 'Activity ',
+            'submit_at'=> 'tender task submit date',
             'tender_id' => 'Tender ID',
         ];
     }
@@ -55,4 +57,15 @@ class Adetail extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    public function beforeSave($insert)
+    {
+        if ($this->submit_at) {
+            $this->submit_at = strtotime($this->submit_at);
+           
+        }
+
+        return parent::beforeSave($insert);
+    }
+
 }

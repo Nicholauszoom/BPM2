@@ -241,3 +241,13 @@ var progressInterval = setInterval(function () {
 }, 1000);
 
 
+
+
+assignActivity.forEach(function (activity) {
+    if (activity.assign === 1) {
+        var label = document.getElementById('label-' + activity.user_id);
+        if (label) {
+            label.classList.add('assigned-label');
+        }
+    }
+});

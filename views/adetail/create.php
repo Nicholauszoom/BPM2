@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Adetail $model */
 
-$this->title = 'Create Adetail';
+$this->title = '';
 $this->params['breadcrumbs'][] = ['label' => 'Adetails', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 $this->context->layout = 'admin';

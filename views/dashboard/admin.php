@@ -291,11 +291,8 @@ $formattedBudget = number_format($projectBudget, 2)
            
           <div class="row">
   <div class="col-md-12 col-sm-12">
-    <div class="dashboard_graph">
-      <div class="row x_title">
-        <div class="col-md-6">
-        </div>
-      </div>
+    
+     
       <?php if (Yii::$app->user->can('admin')) : ?>
     <!-- Include the latest version of Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -429,7 +426,70 @@ $formattedBudget = number_format($projectBudget, 2)
 
 <!-- Create the canvas element -->
 
+
+     <!--   *** projects and tender for a specific user summary *** -->
+
+     <?php if (Yii::$app->user->can('author')) : ?>
+     <section style="display: flex; justify-content: center; ">
+  <div class="container py-5">
+   
+
+    
+      <div class="col-lg-8">
+        
+        <div class="row">
+
+ <!--
+          <div class="col-md-6">
+            <div class="card mb-4 mb-md-0">
+              <div class="card-body">
+                <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Tender Status
+                </p>
+                <?php foreach ($tender_summary as $tender):?>
+                  
+                <p class="mb-1" style="font-size: .77rem;"><?=$tender->title?></p>
+               
+                <p class="text-muted mb-0 " style="font-size: .60rem;">Publish: <?=Yii::$app->formatter->asDatetime($tender->publish_at)?>, Submitt:<?=Yii::$app->formatter->asDatetime($tender->expired_at)?></p>
+                <?php endforeach;?>
+              </div>
+              
+            </div>
+          </div>-->
+
+
+          <div class="col-md-20" style="margin-left:5px;">
+            <div class="card mb-4 mb-md-0" >
+              <div class="card-body">
+                <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
+                </p>
+               
+                <?php foreach ($projectsum as $project):?>
+                  
+                  <?php
+                    $project_title=Tender::findOne($project->tender_id);
+                    ?>
+                <p class="mb-1" style="font-size: .77rem;"><?=$project_title->title?>  <?=getStatusLabel($project->status)?></p>
+                <p class="text-muted mb-0 " style="font-size: .60rem;">
+           Start: <?=Yii::$app->formatter->asDatetime($project->start_at)?>, End: <?=Yii::$app->formatter->asDatetime($project->end_at)?> 
+             </p>
+               
+                <?php endforeach;?>
+              </div>
+              
+
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <?php endif;?>
+        </div>
+
+
+ 
        
 
 
@@ -440,4 +500,15 @@ $formattedBudget = number_format($projectBudget, 2)
              
                 
 
- 
+        <?php
+function getStatusLabel($status)
+{
+    $statusLabels = [
+      1 => '<span class="badge badge-success">Completed</span>',
+      2 => '<span class="badge badge-warning">Onprogress</span>',
+      3 => '<span class="badge badge-secondary">On Hold</span>',
+    ];
+
+    return isset($statusLabels[$status]) ? $statusLabels[$status] : '';
+}
+?>

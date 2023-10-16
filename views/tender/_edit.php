@@ -26,23 +26,38 @@ $department=Department::find()->all();
 
     <?php $form = ActiveForm::begin(); ?>
     <?php if (Yii::$app->user->can('admin')) : ?>
-    <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+        <div class="form-row">
+            <div class="col">
+            <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col">
+            <?= $form->field($model, 'PE')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col">
+            <?= $form->field($model, 'TenderNo')->textInput(['maxlength' => true]) ?>
+            </div>
 
-    <?= $form->field($model, 'PE')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="form-row">
+            <div class="col">
+            <?php echo $form->field($model, 'assigned_to')->dropDownList(
+                 ArrayHelper::map($users, 'id', 'username'),
+                 ['prompt' => 'Assigned to']
+             ); ?>          
+          </div>
+            <div class="col">
+             <?php echo $form->field($model, 'supervisor')->dropDownList(
+               ArrayHelper::map($users, 'id', 'username'),
+               ['prompt' => 'Supervisor']
+             ); ?>   
+            </div>
+            <div class="col">
+            <?= $form->field($model, 'description')->textarea()?>
+            </div>
 
-    <?= $form->field($model, 'TenderNo')->textInput(['maxlength' => true]) ?>
+        </div>
 
-    <?= $form->field($model, 'description')->textarea()?>
-
-
-    <?php echo $form->field($model, 'assigned_to')->dropDownList(
-    ArrayHelper::map($users, 'id', 'username'),
-    ['prompt' => 'Assigned to']
-); ?>
- <?php echo $form->field($model, 'supervisor')->dropDownList(
-    ArrayHelper::map($users, 'id', 'username'),
-    ['prompt' => 'Supervisor']
-); ?>
+        
 
 
 
@@ -52,7 +67,12 @@ $department=Department::find()->all();
  
 
     <?php if (Yii::$app->user->can('admin')) : ?>
-        <?= $form->field($model, 'status')->dropDownList(
+
+        <div class="form-row">
+            <div class="col">
+                
+            <?php if ($model->expired_at <= strtotime(date('Y-m-d'))) : ?>
+            <?= $form->field($model, 'status')->dropDownList(
             [
                 1 => 'awarded',
                 2 => 'not-awarded',
@@ -60,9 +80,25 @@ $department=Department::find()->all();
                 4 => 'not submitted',
                 5 => 'on-progress',
             ],
-            ['prompt' => 'Select tender Status'] // Disable the field if the expiration date is not greater than the current date
+            ['prompt' => 'Select tender Status',
+            ] // Disable the field if the expiration date is not greater than the current date
 
         ); ?>
+        <?php else: ?>
+            <?= $form->field($model, 'status')->hiddenInput(['disabled' => true])->label(false) ?>
+    <?php endif; ?>
+          </div>
+            <div class="col">
+            <?php if ($model->expired_at <= strtotime(date('Y-m-d')) && ($model->status == 2 || $model->status== 4 )) : ?>
+                <?= $form->field($model, 'coment')->textarea(['placeholder'=>'why! tender is not submitted || not awarded'])?>
+
+            <?php else:?>
+            <?= $form->field($model, 'coment')->hiddenInput()->label(false)?>
+            <?php endif;?>
+            </div>
+
+        </div>
+      
 
 <?php endif; ?>
 <?php if (Yii::$app->user->can('admin')||Yii::$app->user->can('author')) : ?>
